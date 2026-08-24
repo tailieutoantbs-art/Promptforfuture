@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TẠO PROMPT TOÁN TBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Charm:wght@700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Thư viện trích xuất file Word (.docx) & MathJax render công thức Toán -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root{
+    --board:#123832;
+    --board-2:#0e2d28;
+    --chalk:#F5F1E4;
+    --chalk-dim:#B9C4B9;
+    --yellow:#F2C14E;
+    --red:#E1523D;
+    --green:#4EBA74;
+    --line:#2F5C51;
+    --paper:#FBF7EC;
+    --paper-edge:#EDE3C8;
+    --ink:#20261F;
+    --ink-soft:#5B6B5C;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--board);color:var(--chalk);font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;}
+  a{color:var(--yellow);text-decoration:underline;}
+
+  /* Mobile menu toggle */
+  .mobile-bar{
+    display:none;padding:12px 18px;background:var(--board-2);border-bottom:1px dashed var(--line);
+    justify-content:space-between;align-items:center;position:sticky;top:0;z-index:40;
+  }
+  .mobile-bar .logo{font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:var(--yellow);}
+  .mobile-bar .menu-btn{background:transparent;border:1px solid var(--line);color:var(--chalk);padding:6px 12px;border-radius:6px;font-size:13px;cursor:pointer;}
+
+  .app{display:grid;grid-template-columns:300px 1fr;min-height:100vh;}
+  @media (max-width:860px){
+    .mobile-bar{display:flex;}
+    .app{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .sidebar.open{display:block;}
+  }
+
+  /* Sidebar — spiral notebook edge */
+  .sidebar{background:var(--board-2);border-right:1px dashed var(--line);position:relative;padding:26px 0 26px 24px;}
+  .sidebar::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:14px;
+    background-image:radial-gradient(circle 4px, var(--board) 4px, transparent 4.5px);
+    background-size:14px 34px;background-position:4px 12px;
+  }
+  .brand{padding:0 20px 18px 4px;border-bottom:1px dashed var(--line);margin-bottom:14px;}
+  .brand .eyebrow{font-family:'Charm',cursive,sans-serif;font-size:22px;font-weight:700;color:#002B49;background:#D0E1FD;padding:4px 14px;border-radius:8px;display:inline-block;letter-spacing:0.5px;text-transform:none;margin-bottom:4px;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+  .brand h1{font-family:'Baloo 2',sans-serif;font-size:22px;line-height:1.25;margin:6px 0 4px;font-weight:800;color:var(--chalk);}
+  .brand p{font-size:12px;color:var(--chalk-dim);margin:0;}
+  .nav-btns{display:flex;flex-direction:column;gap:6px;margin-top:12px;}
+
+  .tool-list{list-style:none;margin:0;padding:0 12px 0 4px;display:flex;flex-direction:column;gap:3px;}
+  .tool-item{
+    display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;
+    border:1px solid transparent;transition:background .15s, border-color .15s;
+  }
+  .tool-item:hover{background:rgba(245,241,228,.06);}
+  .tool-item.active{background:rgba(242,193,78,.12);border-color:rgba(242,193,78,.35);}
+  .tool-num{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;color:var(--yellow);min-width:20px;padding-top:1px;}
+  .tool-name{font-size:13.5px;line-height:1.35;color:var(--chalk);font-weight:500;}
+  .tool-item:not(.active) .tool-name{color:var(--chalk-dim);}
+
+  /* Main */
+  main{padding:30px 40px 60px;max-width:940px;}
+  @media (max-width:860px){main{padding:20px 16px 50px;}}
+  .tool-head{border-bottom:1px dashed var(--line);padding-bottom:16px;margin-bottom:20px;}
+  .tool-head .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);font-weight:600;margin-bottom:4px;}
+  .tool-head h2{font-family:'Baloo 2',sans-serif;font-size:26px;margin:0 0 6px;font-weight:800;}
+  .tool-head p{color:var(--chalk-dim);margin:0;font-size:14px;max-width:680px;line-height:1.6;}
+
+  /* Form & Fields */
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--chalk);margin-bottom:6px;}
+  .field label .req{color:var(--yellow);margin-left:2px;}
+  .field .hint{font-size:11.5px;color:var(--chalk-dim);margin-top:4px;}
+  .field input[type=text], .field input[type=number], .field textarea, .field select{
+    width:100%;background:rgba(245,241,228,.06);border:1px solid var(--line);color:var(--chalk);
+    border-radius:8px;padding:9px 12px;font-family:'Be Vietnam Pro',sans-serif;font-size:13.5px;box-sizing:border-box;
+  }
+  .field textarea{min-height:84px;resize:vertical;line-height:1.5;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--yellow);outline-offset:1px;}
+  .field select{cursor:pointer;}
+  .field select option{background:var(--board-2);color:var(--chalk);}
+  
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .row4{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px;}
+  @media (max-width:640px){.row2,.row3,.row4{grid-template-columns:1fr;}}
+  
+  .checkline{display:flex;align-items:center;gap:8px;}
+  .checkline input{width:16px;height:16px;cursor:pointer;}
+  .checkline label{margin:0;font-size:13.5px;font-weight:500;color:var(--chalk);cursor:pointer;}
+
+  /* Buttons */
+  .btn{
+    font-family:'Be Vietnam Pro',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer;
+    border-radius:8px;padding:10px 18px;border:none;transition:background .15s, opacity .15s;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .btn-primary{background:var(--yellow);color:#2B2000;}
+  .btn-primary:hover{background:#f6cd70;}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--chalk);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--chalk-dim);background:rgba(245,241,228,.04);}
+  .btn-sm{padding:6px 12px;font-size:12px;border-radius:6px;}
+  
+  .actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  .status{font-size:12.5px;color:var(--chalk-dim);}
+  .status.err{color:#FF9E8A;}
+  .status.ok{color:#8CE99A;}
+  .status.loading{color:var(--yellow);}
+
+  /* Banner notification */
+  .top-banner{
+    background:rgba(225,82,61,.15);border:1px dashed var(--red);border-radius:8px;
+    padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:#FFB4A2;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+  }
+  .top-banner button{background:transparent;border:none;color:var(--yellow);font-weight:600;cursor:pointer;text-decoration:underline;}
+
+  /* Output "worksheet" panel */
+  .output-wrap{margin-top:26px;}
+  .output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;}
+  .output-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--chalk-dim);font-weight:600;}
+  .view-tabs{display:flex;gap:4px;}
+  .view-tab{
+    background:rgba(245,241,228,.08);border:1px solid var(--line);color:var(--chalk-dim);
+    padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;
+  }
+  .view-tab.active{background:var(--yellow);color:#2B2000;border-color:var(--yellow);font-weight:600;}
+
+  .sheet{
+    background:var(--paper);color:var(--ink);border-radius:4px 4px 10px 10px;
+    box-shadow:0 14px 30px rgba(0,0,0,.28);position:relative;overflow:hidden;
+  }
+  .sheet-tear{height:10px;background:
+    linear-gradient(135deg, var(--paper) 25%, transparent 25%) -5px 0,
+    linear-gradient(225deg, var(--paper) 25%, transparent 25%) -5px 0;
+    background-size:10px 10px;background-color:var(--paper-edge);
+  }
+  .sheet-body{padding:18px 22px;}
+  .sheet pre{
+    white-space:pre-wrap;word-break:break-word;font-family:'JetBrains Mono','Be Vietnam Pro',monospace;
+    font-size:13px;line-height:1.65;margin:0;color:var(--ink);max-height:540px;overflow:auto;
+  }
+  .sheet-foot{
+    display:flex;justify-content:space-between;align-items:center;padding:10px 22px;
+    border-top:1px dashed var(--paper-edge);font-size:11.5px;color:var(--ink-soft);
+  }
+  .preview-frame{width:100%;height:520px;border:1px solid var(--paper-edge);border-radius:6px;background:#fff;}
+
+  .info-card{background:rgba(245,241,228,.05);border:1px dashed var(--line);border-radius:10px;padding:18px 20px;margin-bottom:14px;}
+  .info-card h3{font-family:'Baloo 2',sans-serif;margin:0 0 8px;font-size:17px;color:var(--yellow);}
+  .info-card ol{margin:0;padding-left:20px;font-size:13.5px;line-height:1.7;color:var(--chalk-dim);}
+  .info-card a{font-weight:600;}
+
+  /* Modals */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(10,20,18,.75);z-index:90;
+    display:flex;align-items:center;justify-content:center;padding:16px;
+    backdrop-filter:blur(2px);
+  }
+  .modal-box{
+    background:var(--paper,#FBF7EC);color:#20281f;max-width:480px;width:100%;
+    border-radius:12px;padding:22px 24px;font-family:'Be Vietnam Pro',sans-serif;
+    box-shadow:0 20px 40px rgba(0,0,0,.4);max-height:85vh;overflow-y:auto;
+  }
+  .modal-box h3{margin:0 0 8px;font-size:17px;font-weight:700;}
+  .modal-box p{font-size:12.5px;color:#5a6350;line-height:1.6;margin:0 0 14px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;}
+  
+  .pw-wrap{position:relative;display:flex;align-items:center;margin-bottom:10px;}
+  .pw-wrap input{
+    width:100%;padding:10px 40px 10px 12px;border-radius:6px;border:1px solid #c9c0a4;
+    font-family:'JetBrains Mono',monospace;font-size:13px;box-sizing:border-box;background:#fff;
+  }
+  .pw-toggle{
+    position:absolute;right:8px;background:none;border:none;cursor:pointer;
+    color:#73806a;font-size:14px;padding:4px 6px;
+  }
+  .pw-toggle:hover{color:#20281f;}
+
+  /* Spinner */
+  .spinner{
+    display:inline-block;width:14px;height:14px;border:2px solid rgba(43,32,0,.3);
+    border-top-color:#2B2000;border-radius:50%;animation:spin .6s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="mobile-bar">
+  <div class="logo">TẠO PROMPT TOÁN TBS</div>
+  <button class="menu-btn" id="mobileMenuBtn">☰ Menu Công cụ</button>
+</div>
+
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="eyebrow">Thầy Hùng TBS</div>
+      <h1>TẠO PROMPT<br>TOÁN TBS</h1>
+      <p>Chọn công cụ, điền thông tin và bấm Tạo prompt.</p>
+      <div class="nav-btns">
+        <button class="btn btn-ghost" id="settingsBtn" style="width:100%;font-size:12.5px;">⚙ Cài đặt API key</button>
+        <button class="btn btn-ghost" id="historyBtn" style="width:100%;font-size:12.5px;">🗂 Lịch sử tạo prompt</button>
+        <button class="btn btn-ghost" id="archiveBtn" style="width:100%;font-size:12.5px;color:var(--yellow);border-color:rgba(242,193,78,0.45);">📦 Kho lưu trữ kết quả</button>
+      </div>
+    </div>
+    <ul class="tool-list" id="toolList"></ul>
+  </nav>
+
+  <main>
+    <div id="topBannerArea"></div>
+
+    <div class="tool-head">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div class="kicker" id="kicker">Công cụ</div>
+          <h2 id="toolTitle" style="margin:0 0 4px;"></h2>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="toolGuideBtn" style="font-size:12px;color:var(--yellow);border-color:rgba(242,193,78,0.45);">📘 Hướng dẫn chi tiết</button>
+      </div>
+      <p id="toolDesc" style="margin-top:6px;"></p>
+    </div>
+
+    <div id="sourceArea"></div>
+    <div id="formArea"></div>
+
+    <div class="output-wrap" id="outputWrap" style="display:none;">
+      <div class="output-header">
+        <div class="output-label">Kết quả xuất bản</div>
+        <div class="view-tabs" id="viewTabs" style="display:flex;">
+          <button class="view-tab active" id="tabText">📄 Xem văn bản</button>
+          <button class="view-tab" id="tabMath">📐 Xem công thức Toán</button>
+          <button class="view-tab" id="tabPreview" style="display:none;">👁 Xem trước giao diện</button>
+          <button class="view-tab" id="tabCode" style="display:none;">💻 Xem mã HTML</button>
+        </div>
+      </div>
+      <div class="sheet">
+        <div class="sheet-tear"></div>
+        <div class="sheet-body">
+          <pre id="outputText"></pre>
+          <div id="mathPreview" style="display:none;background:#ffffff;color:#111827;font-family:'Be Vietnam Pro',sans-serif;font-size:14.5px;line-height:1.7;max-height:540px;overflow:auto;padding:20px;border-radius:6px;white-space:pre-wrap;word-break:break-word;"></div>
+          <iframe class="preview-frame" id="previewFrame" style="display:none;" sandbox="allow-scripts allow-same-origin allow-modals"></iframe>
+        </div>
+        <div class="sheet-foot">
+          <span id="tokenStatus">Độ dài: 0 ký tự</span>
+          <span>Thiết kế bởi Math_DTH</span>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn btn-primary" id="copyBtn">📋 Sao chép</button>
+        <button class="btn btn-ghost" id="downloadBtn">💾 Tải file về máy</button>
+        <button class="btn btn-ghost" id="docBtn">📄 Xuất file Word (.doc)</button>
+        <button class="btn btn-ghost" id="saveArchiveBtn" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);">⭐ Lưu vào kho</button>
+        <button class="btn btn-ghost" id="beautifyBtn" style="display:none;">✨ Định dạng JSON</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Cài đặt API Key -->
+<div id="settingsModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box">
+    <h3>⚙ Cài đặt API key Gemini</h3>
+    <p>
+      Dán API key Google Gemini của bạn (lấy miễn phí tại
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>).
+      Key được bảo mật an toàn trên trình duyệt hoặc máy chủ Google Apps Script.
+    </p>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Gemini API Key:</label>
+    <div class="pw-wrap">
+      <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+      <button type="button" class="pw-toggle" id="apiKeyToggle" title="Hiện/Ẩn key">👁</button>
+    </div>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Mô hình Gemini (Model):</label>
+    <select id="apiModelSelect" style="width:100%;padding:9px 10px;border-radius:6px;border:1px solid #c9c0a4;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;margin-bottom:12px;background:#fff;">
+      <option value="gemini-2.5-flash">Gemini 2.5 Flash (Mới nhất, khuyên dùng)</option>
+      <option value="gemini-2.5-pro">Gemini 2.5 Pro (Tư duy toán & phân tích chuyên sâu)</option>
+      <option value="gemini-2.0-flash">Gemini 2.0 Flash (Tốc độ cao & ổn định)</option>
+      <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite (Tốc độ phản hồi cực nhanh)</option>
+      <option value="gemini-1.5-flash">Gemini 1.5 Flash (Ổn định, quota cao)</option>
+      <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B (Tiết kiệm dung lượng)</option>
+      <option value="gemini-1.5-pro">Gemini 1.5 Pro (Chi tiết & dung lượng ngữ cảnh lớn)</option>
+    </select>
+
+    <div id="apiKeyStatus" style="font-size:12px;margin-bottom:10px;min-height:16px;color:#5a6350;"></div>
+    
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" id="settingsCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+      <button class="btn btn-primary btn-sm" id="settingsSaveBtn" type="button">Lưu cấu hình</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Lịch sử -->
+<div id="historyModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:620px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <h3 style="margin:0;">🗂 Lịch sử tạo prompt</h3>
+      <button class="btn btn-ghost btn-sm" id="clearHistoryBtn" style="color:#a83232;border-color:#e0b2b2;padding:3px 8px;font-size:11px;">Xóa lịch sử</button>
+    </div>
+    <div id="historyList" style="font-size:12.5px;line-height:1.6;max-height:55vh;overflow-y:auto;"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-ghost btn-sm" id="historyCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Hướng Dẫn Chi Tiết -->
+<div id="guideModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:640px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:8px;">
+      <h3 id="guideModalTitle" style="margin:0;color:#123832;">📘 Hướng dẫn chi tiết</h3>
+      <button class="btn btn-ghost btn-sm" id="guideCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+    <div id="guideModalBody" style="font-size:13px;line-height:1.7;color:#2c352b;max-height:65vh;overflow-y:auto;padding-right:6px;"></div>
+  </div>
+</div>
+
+<!-- Modal Kho Lưu Trữ Kết Quả -->
+<div id="archiveModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:760px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">📦 Kho lưu trữ kết quả (Prompt, File, Tài liệu)</h3>
+      <button class="btn btn-ghost btn-sm" id="archiveCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+    
+    <!-- Thanh tìm kiếm & lọc -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input type="text" id="archiveSearchInput" placeholder="🔍 Tìm kiếm theo tên bài, công cụ, từ khóa..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+      <select id="archiveFilterType" style="padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+        <option value="ALL">Tất cả loại</option>
+        <option value="PROMPT">Prompt / Kịch bản</option>
+        <option value="HTML">Game Quiz HTML</option>
+        <option value="DOC">Tài liệu / Đề thi</option>
+        <option value="NOTE">Ghi chú / Khác</option>
+      </select>
+      <button class="btn btn-primary btn-sm" id="addNoteArchiveBtn" type="button">+ Thêm ghi chú/tài liệu</button>
+    </div>
+
+    <!-- Ô thêm tài liệu/ghi chú nhanh -->
+    <div id="addArchiveForm" style="display:none;background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:12px;margin-bottom:14px;">
+      <h4 style="margin:0 0 8px;font-size:14px;">Lưu thêm tài liệu / Prompt / Ghi chú mới</h4>
+      <input type="text" id="newArchiveTitle" placeholder="Tiêu đề tài liệu / prompt..." style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:13px;box-sizing:border-box;">
+      <textarea id="newArchiveContent" placeholder="Nội dung prompt, liên kết hình ảnh, mã nguồn hoặc tài liệu..." style="width:100%;height:80px;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:13px;box-sizing:border-box;"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" id="cancelAddArchiveBtn" type="button">Hủy</button>
+        <button class="btn btn-primary btn-sm" id="saveNewArchiveBtn" type="button">Lưu vào kho</button>
+      </div>
+    </div>
+
+    <!-- Danh sách item -->
+    <div id="archiveList" style="font-size:12.5px;line-height:1.6;max-height:55vh;overflow-y:auto;"></div>
+
+    <div class="modal-actions" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span id="archiveCountStatus" style="font-size:12px;color:#73806a;">Đang tải kho lưu trữ...</span>
+      <button class="btn btn-ghost btn-sm" id="clearArchiveBtn" type="button" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;">Xóa toàn bộ kho</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   SYSTEM PROMPTS & KHO DỮ LIỆU CÔNG CỤ
+   ========================================================================== */
+const SYS_VEO3 = {
+  "prompt_name": "AI VEO 3 - VIDEO KHOI DONG BAI HOC",
+  "version": "4.0",
+  "language": "vi",
+  "role": {
+    "primary": "Ban la chuyen gia thiet ke video giao duc, bien kich storyboard, dao dien hinh anh va chuyen gia viet prompt Veo 3.",
+    "mission": "Tu ten bai hoc/chu de, noi dung nguon va nhan vat do nguoi dung cung cap, hay xay dung video khoi dong ngan, hap dan, co tinh tuong tac va dan dat tu nhien vao bai hoc."
+  },
+  "user_inputs": {
+    "[BAI_HOC]": "Ten bai hoc hoac chu de. Bat buoc.",
+    "[SO_CANH]": "So phan canh. Tuy chon; mac dinh 5.",
+    "[TOM_TAT]": "Tom tat noi dung, kien thuc trong tam hoac tinh huong muon khai thac. Neu khong nhap, tu tom tat tu tai lieu nguon.",
+    "[NHAN_VAT]": "Ten, so luong, vai tro hoac dac diem nhan vat. Neu khong nhap, tu de xuat 2-3 nhan vat phu hop.",
+    "[PHONG_CACH]": "Tuy chon: dien anh chan thuc, hoat hinh 3D, giao duc hien dai, doi thuong, khoa hoc, lich su...",
+    "[TY_LE]": "Tuy chon: 16:9 hoac 9:16. Mac dinh 16:9.",
+    "[THOI_LUONG_CANH]": "Tuy chon. Mac dinh 6-8 giay/canh.",
+    "[CHAT_GIONG]": "Tuy chon chat giong. Neu khong nhap, chon mot chat giong tieng Viet tu nhien phu hop va khoa co dinh toan video."
+  },
+  "source_rules": {
+    "priority": [
+      "Uu tien tuyet doi tai lieu nguon.",
+      "Khong bia kien thuc trai voi tai lieu nguon.",
+      "Neu nguoi dung chi nhap chu de, xay dung noi dung dung kien thuc pho thong va phu hop lua tuoi.",
+      "Video chi dong vai tro khoi dong, khong giang giai toan bo bai hoc."
+    ]
+  },
+  "core_objectives": [
+    "Gay chu y ngay tu canh dau.",
+    "Tao tinh huong gan gui, bat ngo, co van de hoac mau thuan nhan thuc.",
+    "Cho nhan vat tuong tac tu nhien thay vi doc thoai dai.",
+    "Moi canh phai noi logic voi canh truoc.",
+    "Canh cuoi tuyet doi khong giai quyet hoan toan van de.",
+    "Canh cuoi phai dat cau hoi hoac tinh huong goi mo de giao vien chuyen truc tiep sang bai moi [BAI_HOC]."
+  ],
+  "character_lock": {
+    "task": "Truoc khi viet storyboard, tao HO SO KHOA NHAN VAT dung thong nhat cho tat ca cac canh.",
+    "describe_each_character": [
+      "Ten va vai tro.", "Gioi tinh va do tuoi tuong doi.", "Dac diem khuon mat.",
+      "Kieu toc va mau toc.", "Trang phuc, mau sac, phu kien.", "Chieu cao/voc dang tuong doi.",
+      "Tinh cach va bieu cam dac trung.", "Cach noi chuyen.",
+      "Chat giong: gioi tinh giong, vung giong, cao do, toc do, sac thai."
+    ],
+    "continuity_rule": "Khong tu y thay doi khuon mat, toc, tuoi, voc dang, trang phuc, phu kien hoac chat giong giua cac canh, tru khi kich ban bat buoc."
+  },
+  "voice_lock": {
+    "rule": "Chon chinh xac mot ho so giong cho moi nhan vat va lap lai nguyen van mo ta giong do trong moi prompt Veo 3 co nhan vat noi.",
+    "requirements": [
+      "Tieng Viet tu nhien.", "Phat am ro.", "Khong thay doi vung giong giua cac canh.",
+      "Khong thay doi gioi tinh, do tuoi cam nhan, cao do va toc do giong.",
+      "Khong tu chuyen sang giong thuyet minh neu kich ban khong yeu cau."
+    ]
+  },
+  "story_structure": {
+    "if_5_scenes": {
+      "1": "HOOK: hinh anh/tinh huong bat ngo gay to mo.",
+      "2": "PHAT HIEN: nhan vat nhan thay hien tuong hoac van de.",
+      "3": "TUONG TAC: cac nhan vat trao doi, du doan hoac tranh luan.",
+      "4": "MAU THUAN NHAN THUC: xuat hien chi tiet khien du doan ban dau chua du.",
+      "5": "GOI MO: dat cau hoi trung tam dan truc tiep vao bai moi."
+    },
+    "adaptation": "Neu [SO_CANH] khac 5, tu phan bo cau truc nhung van phai giu du Hook -> Kham pha -> Tuong tac -> Van de -> Goi mo."
+  },
+  "task_1_character_profile": {"title": "PHAN 1 - MO TA VA KHOA NHAN VAT"},
+  "task_2_storyboard": {
+    "title": "PHAN 2 - STORYBOARD",
+    "for_each_scene": ["So canh va ten ngan","Muc tieu canh","Boi canh","Nhan vat xuat hien","Dien bien","Cam xuc","Goc may chinh","Chuyen tiep sang canh ke tiep"]
+  },
+  "task_3_image_prompts": {
+    "title": "PHAN 3 - PROMPT TAO ANH TUNG PHAN CANH",
+    "each_prompt_must_include": ["Ten canh","Mo ta chinh xac nhan vat theo Character Lock","Boi canh va thoi gian","Trang phuc va dao cu","Vi tri tung nhan vat","Hanh dong","Bieu cam","Goc camera va co canh","Anh sang","Phong cach hinh anh","Do sau truong anh","Ty le [TY_LE]","Khong chu, khong phu de, khong watermark tru khi bat buoc"]
+  },
+  "task_4_veo3_prompts": {
+    "title": "PHAN 4 - PROMPT VEO 3 CHO TUNG CANH",
+    "critical_rule": "KHONG viet prompt Veo 3 duoi dang JSON. Moi canh la mot prompt van ban doc lap, hoan chinh, san sang copy vao Veo 3.",
+    "prompt_structure": ["SCENE [so] - [ten canh]","Reference frame","Duration [THOI_LUONG_CANH]","Aspect ratio [TY_LE]","Visual continuity","Scene","POV / Camera","Character actions","Facial expression","Dialogue","Voice lock","Audio","Ending frame","Negative constraints"]
+  },
+  "dialogue_rules": {
+    "language": "100% tieng Viet.", "max_words": "Toi da 25 tu moi canh.",
+    "speaker_format": "Ten nhan vat: \"Loi thoai\"",
+    "final_scene": "Loi thoai cuoi phai chua cau hoi hoac van de mo lien quan truc tiep [BAI_HOC]."
+  },
+  "camera_pov_rules": {"requirement": "Moi canh bat buoc ghi ro POV / Camera."},
+  "action_rules": {"requirement": "Mo ta hanh dong RIENG cho tung nhan vat, cu the, dong bo voi loi thoai."},
+  "veo3_negative_constraints": ["Khong tu sinh them nhan vat","Khong thay doi khuon mat","Khong doi trang phuc","Khong doi chat giong","Khong lip-sync sai nguoi","Khong chu chay","Khong subtitle tu dong","Khong watermark","Khong meo tay hoac thua ngon","Khong camera rung vo ly"],
+  "final_scene_rule": {"mandatory": true, "instruction": "Canh cuoi dung o khoanh khac chua giai quyet, khong dua dap an."},
+  "output_format": {
+    "order": ["THONG TIN VIDEO","PHAN 1 - HO SO KHOA NHAN VAT","PHAN 2 - STORYBOARD","PHAN 3 - PROMPT TAO ANH TUNG CANH","PHAN 4 - PROMPT VEO 3 TUNG CANH"],
+    "veo_prompt_separator": "Moi prompt Veo 3 dat trong mot code block rieng.",
+    "important": "Chi phan cau hinh loi nay dung JSON. Cac prompt Veo 3 dau ra tuyet doi khong dung JSON."
+  }
+};
+
+const SYS_PHIEUHOCTAP = `BAN LA AI TAO PROMPT INFOGRAPHIC PHIEU HOC TAP.
+NHIEM VU
+Khi nguoi dung nhap ten bai hoc, chu de, noi dung van ban hoac cung cap tai lieu nguon, hay:
+1. Phan tich du lieu nguon, xac dinh mon hoc, lop hoc, kien thuc trong tam, khai niem, quy tac, cong thuc, su kien va ky nang can luyen tap.
+2. Tao mot PROMPT JSON hoan chinh de dung cho AI tao infographic phieu hoc tap.
+3. Cau hoi phai bam sat du lieu nguon, dung kien thuc, phu hop hoc sinh va dung so luong nguoi dung yeu cau.
+4. Khong tu bia kien thuc, so lieu, cong thuc, su kien hoac dap an ngoai pham vi nguon.
+5. Chi tra ve PROMPT JSON hoan chinh, khong giai thich them.
+
+BIEN NGUOI DUNG
+[CHUDE], [PHONGCACH] (mac dinh: "hien dai giao duc, nhieu hinh minh hoa"), [LOI_GIAI] (BAT/TAT, mac dinh TAT),
+[GHEP_DOI] (mac dinh 2), [DIEN_KHUYET] (mac dinh 2), [DUNG_SAI] (mac dinh 2), [TRAC_NGHIEM] (mac dinh 2), [TU_LUAN] (mac dinh 2),
+[TI_LE] (mac dinh "9:16"), [DOI_TUONG], [MUC_DO] (mac dinh "nhan biet, thong hieu, van dung phu hop").
+
+QUY TAC BAT/TAT LOI GIAI
+Neu [LOI_GIAI]=TAT: chi tao PHAN 1 - PHIEU HOC TAP, tuyet doi khong co dap an, loi giai, goi y, huong dan cham.
+Neu [LOI_GIAI]=BAT: tao 2 phan tach biet: PHAN 1 - PHIEU HOC TAP (khong hien dap an) va PHAN 2 - DAP AN VA LOI GIAI (day du dap an, giai thich, thang diem).
+Neu so luong mot dang cau hoi bang 0, loai bo hoan toan tram do.
+
+CAU TRUC PROMPT JSON PHAI TAO
+{
+"project_type": "Infographic phieu hoc tap hoc sinh",
+"role": "Ban la Visual Notetaker chuyen thiet ke phieu hoc tap truc quan, sinh dong, giup hoc sinh luyen tap va tu danh gia kien thuc.",
+"language": "vi",
+"topic": "[CHUDE]",
+"target_learners": "[DOI_TUONG]",
+"style": "[PHONGCACH]",
+"aspect_ratio": "[TI_LE]",
+"solution_mode": "[LOI_GIAI]",
+"main_task": "Tao infographic phieu hoc tap hoan chinh dua tren noi dung nguon, dung kien thuc, ro rang, sinh dong, phu hop hoc sinh.",
+"source_analysis": {"requirement": "Tom tat ngan cac don vi kien thuc trong tam.", "rules": ["Chi dung kien thuc tu du lieu nguon", "Khong sao chep may moc toan bo van ban nguon", "Khong bia du kien"]},
+"worksheet": {
+  "title": "PHIEU HOC TAP", "subtitle": "[CHUDE]",
+  "student_info": ["Ho va ten:", "Lop:", "Ngay:"],
+  "learning_goals": "Tao 2-4 muc tieu ngan gon, do luong duoc.",
+  "instructions": "Doc ky yeu cau o tung tram va hoan thanh bai vao khoang trong.",
+  "stations": [
+    {"name": "Dang 1 - Dien khuyet", "quantity": "[DIEN_KHUYET]", "task": "Tao dung so cau dien khuyet, khong dien san dap an."},
+    {"name": "Dang 2 - Ghep doi", "quantity": "[GHEP_DOI]", "task": "Cot A va cot B, khong noi san."},
+    {"name": "Dang 3 - Dung sai", "quantity": "[DUNG_SAI]", "task": "Moi cau co 4 y a,b,c,d, khong danh dau san."},
+    {"name": "Dang 4 - Trac nghiem", "quantity": "[TRAC_NGHIEM]", "task": "4 lua chon A,B,C,D, chi 1 dap an dung, khong lam noi dap an."},
+    {"name": "Dang 5 - Tu luan", "quantity": "[TU_LUAN]", "task": "Cau hoi tu co ban den van dung, co dong cham trong, khong ghi loi giai mau."}
+  ],
+  "footer": {"self_assessment": "Can co gang / Da hieu / Hoan thanh tot / Rat tu tin", "questions_remaining": "Dieu em con thac mac:"}
+},
+"solutions": {"visibility": "Chi xuat hien khi [LOI_GIAI]=BAT", "title": "DAP AN VA LOI GIAI", "requirements": ["Dap an khop tuyet doi voi cau hoi", "Co thang diem hoac huong dan cham, uu tien tong 10 diem"]},
+"design_requirements": {
+  "layout": ["Chia phieu thanh cac khoi ro rang", "Moi tram co bieu tuong rieng", "Neu noi dung dai, tu chia nhieu trang"],
+  "color": ["Mau tieu de noi bat, nen nhe, hai hoa", "Do tuong phan cao, de doc va de in"],
+  "illustration": ["Hinh minh hoa dung chu de", "Khong che chu, cong thuc hoac vung lam bai", "Khong lam lo dap an"],
+  "typography": ["100% tieng Viet, dung chinh ta", "Cong thuc toan hoc dung LaTeX khi can"]
+},
+"difficulty_distribution": {"nhan_biet": "khoang 30%", "thong_hieu": "khoang 40%", "van_dung": "khoang 30%"},
+"strict_rules": ["Tao dung so luong cau nguoi dung yeu cau", "Trac nghiem chi co mot dap an dung", "Khi tat loi giai, khong tao muc dap an duoi bat ky hinh thuc nao", "Khong sai kien thuc, so lieu, cong thuc"],
+"final_output": "Xuat duy nhat mot PROMPT JSON hoan chinh, san sang dung de tao infographic phieu hoc tap."
+}
+
+Thieu bien thi tu su dung gia tri mac dinh. Khong hoi lai neu co the suy luan hop ly tu du lieu nguon.`;
+
+const SYS_GEOGEBRA = {
+  "prompt_name": "AI GEOGEBRA 2D-3D SCRIPT GENERATOR", "version": "3.0",
+  "role": "Ban la chuyen gia GeoGebra, hinh hoc phang, hinh hoc khong gian, vecto, toa do Oxy/Oxyz, do thi ham so va truc quan hoa toan hoc. Xuat SCRIPT GEOGEBRA hoan chinh de nguoi dung copy, dan truc tiep vao GeoGebra va tao dung hinh.",
+  "main_goal": ["Chuyen mo ta tu nhien thanh hinh GeoGebra 2D hoac 3D.", "Sinh code dung cu phap, dung thu tu phu thuoc.", "Uu tien tinh chinh xac toan hoc.", "Code phai co kha nang copy truc tiep vao GeoGebra."],
+  "user_input": {"main": "[YEU_CAU]", "options": ["[2D]","[3D]","[SCRIPT]","[TOADO]","[HINHHOC]","[LABEL]","[ANPHU]","[HIENPHU]","[MAU]","[DEN_TRANG]"]},
+  "commands": {
+    "[2D]": "Bat buoc dung GeoGebra 2D.", "[3D]": "Bat buoc dung GeoGebra 3D.",
+    "[SCRIPT]": "Chi xuat code, khong giai thich.", "[TOADO]": "Uu tien dung bang toa do.",
+    "[HINHHOC]": "Uu tien dung bang quan he hinh hoc.", "[LABEL]": "Hien thi nhan cac diem chinh.",
+    "[ANPHU]": "An doi tuong dung phu.", "[HIENPHU]": "Hien doi tuong dung phu.",
+    "[MAU]": "Phan mau truc quan.", "[DEN_TRANG]": "Dung phong cach den trang."
+  },
+  "core_rules": [
+    "Khong thay doi gia thiet cua nguoi dung.", "Khong bo sot doi tuong hoac quan he quan trong.",
+    "Tu dong chon 2D hoac 3D neu khong chi dinh.", "Uu tien dung chinh xac bang quan he hinh hoc thay vi dat toa do tuy y.",
+    "Neu thieu kich thuoc, duoc phep chon toa do mau don gian nhung phai bao toan tat ca gia thiet.",
+    "Khong chon toa do lam hinh suy bien.", "Doi tuong phai duoc tao truoc khi su dung.",
+    "Ten doi tuong phai nhat quan va khong trung.", "Moi lenh dat tren mot dong.",
+    "Khong chen LaTeX, TikZ, Python hay ma gia vao script.", "Uu tien lenh GeoGebra chuan, ngan va on dinh."
+  ],
+  "analysis_process": ["Doc toan bo yeu cau.", "Xac dinh 2D hoac 3D.", "Liet ke diem, duong, doan, vecto, duong tron, da giac, mat phang can dung.", "Nhan dien cac quan he hinh hoc.", "Xay dung thu tu phu thuoc.", "Chon phuong phap dung hoac he toa do phu hop.", "Sinh script.", "Tu kiem tra toan bo script truoc khi xuat."],
+  "2D_rules": {"preferred_commands": ["Point","Segment","Line","Ray","Vector","Polygon","Circle","Arc","Midpoint","Intersect","ParallelLine","PerpendicularLine","PerpendicularBisector","AngleBisector","Tangent","Angle","Distance","Reflect","Rotate","Translate"]},
+  "3D_rules": {"preferred_commands": ["Segment","Line","Vector","Polygon","Plane","Prism","Pyramid","Sphere","Cone","Cylinder","Intersect","PerpendicularLine","PerpendicularPlane","Distance","Angle"], "rules": ["Diem co dang (x,y,z).", "Neu khong co yeu cau khac, uu tien dat day tren z=0.", "Ba diem tao mat phang phai khong thang hang.", "Bon diem cua tu dien phai khong dong phang."]},
+  "missing_data": ["Neu thieu do dai nhung hinh van xac dinh ve ban chat, tu chon kich thuoc hop ly.", "Khong hoi lai neu co the tu dung mot cau hinh dung.", "Chi hoi khi du kien mau thuan hoac co nhieu cach hieu khac ban chat."],
+  "self_check": ["Co doi tuong nao duoc goi truoc khi tao khong?", "Co ten bi trung khong?", "Co toa do gay suy bien khong?", "Cac quan he vuong goc/song song co dung khong?", "Giao diem co ton tai khong?", "Nguoi dung co the copy truc tiep vao GeoGebra khong?"],
+  "output": {"default": ["PHAN TICH NGAN","SCRIPT GEOGEBRA","GHI CHU neu co gia dinh"], "script_mode": "Khi co [SCRIPT], chi xuat code GeoGebra trong mot khoi duy nhat, khong giai thich, khong danh so dong."},
+  "final_instruction": "Truoc khi tra loi, hay mo phong GeoGebra thuc thi tung dong tu dau den cuoi. Neu phat hien bien chua tao, ten trung, toa do gay suy bien, quan he hinh hoc sai hoac cu phap khong chac chan thi phai tu sua. Muc tieu cuoi cung la SCRIPT GEOGEBRA hoan chinh, chinh xac va co the copy truc tiep vao GeoGebra."
+};
+
+const SYS_DETHI22 = `Ban la chuyen gia bien soan de thi va thiet ke infographic de thi bang LaTeX/TikZ.
+Khi nhan [TIEUDE], [CHUDE] va tai lieu nguon, hay tao mot PROMPT JSON hoan chinh de dung cho AI tao infographic de thi dang anh (va co the xuat file .docx neu duoc yeu cau).
+
+CAU TRUC DE
+PHAN I. TRAC NGHIEM NHIEU LUA CHON — so cau [SO_CAU_P1] (mac dinh 12), so thu tu co chu "Cau", danh so tu 1.
+PHAN II. DUNG - SAI — so cau [SO_CAU_P2] (mac dinh 4), moi cau gom du kien chung va 4 y a,b,c,d, danh so lai tu Cau 1.
+PHAN III. TRA LOI NGAN — so cau [SO_CAU_P3] (mac dinh 6), co dong tra loi, danh so lai tu Cau 1, it nhat 1 cau thuc te.
+
+QUY TAC BAT BUOC
+- Bam sat tuyet doi tai lieu nguon, khong lay kien thuc ben ngoai, khong bia du kien, cong thuc, so lieu.
+- Moi cong thuc toan hoc viet chuan LaTeX, dat trong cap $...$.
+- Hinh hoc, vecto, do thi va bang bien thien BAT BUOC sinh tikz_code trong moi truong \\begin{tikzpicture}...\\end{tikzpicture} truoc khi xuat; bang bien thien uu tien tkz-tab.
+- Sap xep vi tri sao cho toi uu dien tich trang giay, han che chu nho, tranh khoang trong thua.
+- Dinh dang phang, kho giay A4, ty le [TI_LE] (mac dinh 3:4), khong dung toan bo cac khung/bang trang tri thua neu nguoi dung yeu cau loai bo.
+- Xong moi phan, danh so cau bat dau lai tu 1.
+- Chan trang phai: "Thiet ke boi Math_DTH".
+- Khong hien thi dap an tru khi nguoi dung yeu cau; neu co dap an, tach rieng phan DAP AN VA LOI GIAI voi giai thich day du.
+- Neu [XUAT_DOCX]=CO: sau khi hoan thien PROMPT JSON, mo ta quy trinh xuat .docx: chuan hoa LaTeX -> sinh & kiem tra tikz_code -> render vector -> chen dung vi tri -> kiem tra le/ngat dong -> xuat file .docx.
+
+DINH DANG TRA LOI
+Chi tra ve mot khoi JSON hop le duy nhat trong khung plaintext, khong giai thich them, gom cac truong: metadata, title, style, layout, content_sections (phan1/phan2/phan3 voi tung cau), latex_rules, tikz_code_rules, negative_prompt, quality_check, final_generation_prompt.`;
+
+function sysToanThucTeDeBai(v){
+  const soCau = (v && v.socau) || 10;
+  const chuDe = (v && v.chude) || "Toán 12";
+  return `Đóng vai chuyên gia đề thi môn Toán 12 (sách Kết nối tri thức). Biên soạn tập đề gồm ${soCau} câu hỏi thực tế ở các cấp độ khác nhau, tập trung vào chủ đề "${chuDe}", bám sát tài liệu nguồn được cung cấp, không tự bịa bài toán không thực tế.
+
+Cấu trúc bài viết bắt buộc: Đề bài (gồm ${soCau} câu hỏi thực tế).
+Định dạng: trình bày thành một văn bản dài, có cấu trúc phân cấp rõ ràng và chuyên nghiệp giống trang Word (dùng tiêu đề ##, ###, in đậm). Hoàn thành trọn vẹn nhiệm vụ, không thêm câu hỏi phụ hay menu lựa chọn ở cuối bài.`;
+}
+function sysToanThucTeInfographic(v){
+  const soCau = (v && v.socau) || 10;
+  const chuDe = (v && v.chude) || "Toán 12";
+  return `Bạn là chuyên gia thiết kế infographic toán học kết hợp minh họa nghệ thuật bằng gói TikZ.
+Bóc tách ${soCau} câu về chủ đề "${chuDe}" thành các bài toán thực tế áp dụng trong đời sống, bám sát dữ liệu nguồn, không tự chế ra những bài toán không thực tế.
+
+Bố cục: infographic dạng khung, mỗi khung chứa 1 bài, loại bỏ các đường line khung.
+Mỗi khung chia 3 cột: Cột 1 - Đề bài; Cột 2 - hình minh họa cho đề bài (dùng TikZ, chính xác hình học, dùng tính chất hình học bám sát đề); Cột 3 - gợi ý lời giải ngắn gọn và đáp số.
+Tạo chuỗi các bài theo thứ tự, từng bài một, tránh tạo nhiều bài cùng lúc làm hình minh họa không chính xác.
+Phong cách: giáo dục hiện đại. Khung hình 3:4 khổ giấy A4. Ảnh màu, sắc nét.
+Tiêu đề chính: "TOÁN THỰC TẾ TOÁN 12". Chân trang phải: "Thiết kế bởi Math_DTH".
+
+Chỉ xuất kết quả theo code JSON trong khung plaintext, không viết gì thêm.`;
+}
+
+const SYS_MINDMAP = `Ban la chuyen gia thiet ke infographic ket hop so do tu duy (mindmap) phuc vu giang day mon Toan.
+Khi nhan [BAI] (so thu tu va ten bai hoc) cung tai lieu nguon, hay tao PROMPT JSON hoan chinh de dung cho AI tao anh infographic-mindmap.
+
+QUY TAC BAT BUOC
+- Bo cuc: infographic ket hop voi so do mindmap.
+- Goc trai tren: "TOAN 12"; phan tren minh hoa cho bai hoc [BAI] chiem 1/5 dien tich tong the.
+- Cong thuc toan theo chuan LaTeX, dat trong cap $...$.
+- Hien thi hinh ve chinh xac khoa hoc bang cac phuong phap hinh hoc phang, hien thi ky hieu goc vuong chinh xac.
+- So thu tu [BAI] va ten [BAI] nam trung tam so do mindmap.
+- Chan trang phai: "Thiet ke boi Math_DTH".
+- Tao anh, khung hinh 3:4 kho giay A4.
+- Hien thi 1 vi du cho moi don vi kien thuc.
+- Noi dung bao quat khoang 95% kien thuc cua [BAI].
+- Mat do hien thi: noi dung chu chiem 3/4, hinh chiem 1/4 tong the.
+- Phong cach: retro, loai bo khung vien mac dinh.
+- Loai bo cac muc: "Ghi nho nhanh", "Luu y de nham", "Bai hoc nay noi ve dieu gi?", "Muc tieu bai hoc".
+- Bam sat tuyet doi tai lieu nguon, khong lay kien thuc ben ngoai nguon.
+
+DAU RA: Chi tra ve mot khoi code JSON duy nhat trong khung plaintext, khong giai thich gi them.`;
+
+const SYS_TRUYENTRANH = `Ban la chuyen gia bien kich truyen tranh giao duc.
+Nhan noi dung bai hoc (van ban hoac tai lieu nguon do nguoi dung cung cap), phong cach nhan vat va so canh do nguoi dung chon, hay tao cac canh truyen tranh tich hop bai hoc.
+
+CAC PHONG CACH NHAN VAT DUOC PHEP
+- Nhan vat trong phim "Doraemon" (Doraemon, Nobita, Xuka, Chaien, Xeko)
+- Nhan vat trong phim "Hay doi day" (Soi, Tho, Lon, Ga trong, Khi, Voi)
+- Nhan vat trong phim "Tom and Jerry" (Tom, Jerry, Spike, Tyke, Toodles Galore, Butch)
+- Nhan vat trong truyen tranh Viet Nam
+- Nhan vat bo doi Viet Nam
+- Nhan vat trong phim Nang tien ca
+- Phong cach sketchnote van hoc
+
+QUY TAC TRINH BAY
+Bat dau moi phan canh: "Canh [so]" roi den doan prompt dat trong dau ngoac kep "...".
+Mau: "Tao tranh truyen phong cach [PHONG_CACH], net ve dung nguyen tac. Mo ta: [boi canh, nhan vat, hanh dong, noi dung bai hoc duoc long ghep tu nhien]."
+Loi thoai nhan vat viet trong dau nhay don '...'.
+
+QUY TAC NOI DUNG
+- Bam sat noi dung bai hoc duoc cung cap, khong bia kien thuc ngoai nguon.
+- Long ghep kien thuc bai hoc mot cach tu nhien qua tinh huong, hoi-dap hoac hanh dong cua nhan vat, khong doc giang nhu sach giao khoa.
+- Tao dung so canh nguoi dung yeu cau, cac canh noi tiep logic voi nhau.
+- Bo cuc ro rang, mau sac tuoi sang, phu hop lua tuoi hoc sinh.
+
+Xuat lan luot tung canh theo dung mau tren.`;
+
+const SYS_QUIZGAME = `Bạn là chuyên gia thiết kế chatbot giáo dục, biên soạn câu hỏi trắc nghiệm và lập trình giao diện học tập bằng HTML, CSS, JavaScript.
+
+MỤC TIÊU CHÍNH
+Từ tài liệu hoặc chủ đề/bài học do người dùng nhập, hãy tạo một mini quiz trắc nghiệm tương tác dưới dạng MỘT FILE HTML HOÀN CHINH (HTML+CSS+JS trong cùng 1 file), chạy trực tiếp trên trình duyệt.
+
+BẮT BUỘC TRONG THẺ <head> CỦA FILE HTML:
+Phải chèn 2 thẻ script sau để hỗ trợ hiển thị công thức Toán LaTeX ($...$ và $$...$$):
+<script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\\\(', '\\\\)']] } };<\/script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+
+QUY TẮC TẠO CÂU HỎI
+- Bám sát nội dung bài học/tài liệu, không bịa kiến thức ngoài bài.
+- Mỗi câu có 4 phương án A,B,C,D (hoặc đúng/sai, hoặc nhiều đáp án đúng tùy [LOẠI_CÂU_HỎI]), có đáp án đúng rõ ràng và giải thích ngắn sau khi nộp bài.
+- Kiểm tra nhiều mức độ: Nhận biết, Thông hiểu, Vận dụng, Phân tích.
+- Công thức toán viết theo chuẩn LaTeX đặt trong cặp $...$.
+
+CẤU TRÚC DỮ LIỆU JS
+const questions = [{id,type:"single"|"multiple",level,skill,question,options:[4 phuong an],correctAnswer: so hoac mang so,explanation,reviewHint}];
+
+YÊU CẦU GIAO DIỆN
+Tiêu đề quiz nổi bật, giới thiệu ngắn bài học, thanh tiến trình, khung câu hỏi rõ ràng, nút chọn đáp án dễ bấm, nút Câu trước/Câu tiếp/Nộp bài, khu vực kết quả (tổng số câu, số câu đúng/sai, điểm số trên thang 10, tỷ lệ %, xếp loại theo: 9-10 Xuất sắc, 7-<9 Tốt, 5-<7 Đạt, <5 Cần ôn tập thêm), phân tích điểm mạnh/yếu theo trường skill, nút Làm lại và Xem đáp án chi tiết. Phong cách giao diện theo [PHONG_CÁCH_GIAO_DIỆN] người dùng nhập, responsive điện thoại và máy tính, hiệu ứng nhẹ khi chọn đáp án/chuyển câu/hiện kết quả. Bắt buộc gọi MathJax.typesetPromise() khi render câu hỏi hoặc nộp bài để hiển thị công thức toán.
+
+ĐỊNH DẠNG ĐẦU RA BẮT BUỘC
+Chỉ trả về DUY NHẤT một khối mã nguồn HTML hoàn chỉnh bắt đầu bằng <!DOCTYPE html> và kết thúc bằng </html>, không giải thích gì thêm bên ngoài khối mã, không bao bọc trong markdown fence.`;
+
+const SYS_CLIL = `Bạn là chuyên gia giáo dục song ngữ Toán Tiếng Anh và là tác giả thiết kế bài giảng CLIL (Content and Language Integrated Learning).
+Nhiệm vụ của bạn là dựa trên [CHỦ ĐỀ], [LỚP], [TRÌNH ĐỘ], [SỐ TỪ VỰNG], [DẠNG BÀI] và tài liệu nguồn được cung cấp để tạo bài học / giáo án / infographic song ngữ chuẩn hóa.
+
+CÁC DẠNG BÀI SẢN XUẤT:
+
+DẠNG 1: BÀI HỌC TỪ VỰNG & MẪU CÂU (TEXT / VĂN BẢN)
+Tạo bài học hoàn chỉnh gồm các phần sau:
+1. TIÊU ĐỀ BÀI HỌC SONG NGỮ (English Title - Bản dịch tiếng Việt) & MỤC TIÊU HỌC TẬP KÉP (Năng lực Toán học + Năng lực Tiếng Anh).
+2. BẢNG THUẬT NGỮ TOÁN TIẾNG ANH (Đúng [SỐ TỪ VỰNG] từ/cụm từ):
+   - Cột: STT | Từ/cụm từ Tiếng Anh | Từ loại | Phiên âm IPA (Anh-Mỹ) | Nghĩa Tiếng Việt | Định nghĩa đơn giản bằng Tiếng Anh | Công thức/Ký hiệu LaTeX | Ví dụ mẫu câu Tiếng Anh | Bản dịch mẫu câu.
+   - Bắt buộc dùng IPA chuẩn, mẫu câu tự nhiên.
+3. HƯỚNG DẪN ĐỌC CÔNG THỨC TOÁN BẰNG TIẾNG ANH (Khi [DOC_CONG_THUC]=BẬT):
+   - Cung cấp cách đọc chuẩn bản ngữ cho các công thức xuất hiện trong bài.
+   - Quy tắc đọc: 
+     + Phép tính: plus (+), minus (-), times (*), divided by (/), equals (=).
+     + Phân số: one half, two thirds, numerator over denominator.
+     + Lũy thừa: x squared ($x^2$), x cubed ($x^3$), x to the nth power ($x^n$).
+     + Căn thức: square root of x ($\sqrt{x}$), nth root of a.
+     + Hàm số, Giới hạn, Đạo hàm, Tích phân, Vectơ, Lượng giác... (VD: $f'(x)$ đọc là "f prime of x", $\\frac{dy}{dx}$ đọc là "d y over d x", $\\lim_{x\\to a}$ đọc là "limit of f(x) as x approaches a").
+4. CÁC MẪU CÂU TOÁN HỌC TRỌNG TÂM (Sentence Patterns):
+   - Trình bày 5-8 cấu trúc câu Toán học thường gặp: "Calculate...", "Find the value of...", "Solve the equation/inequality...", "Given that..., find...", "Let ... be ...", "The graph increases/decreases on...", "Prove that...".
+5. MẪU CÂU GIAO TIẾP LỚP HỌC CHO GIÁO VIÊN (Khi [MAU_CAU_LOP]=BẬT):
+   - Cung cấp 8-10 câu tiếng Anh giáo viên dùng trên lớp: Chào lớp, yêu cầu đọc đề ("Read the problem carefully"), hướng dẫn giải ("Let's solve this step by step"), gọi học sinh ("Please come to the board"), khen ngợi ("Excellent! Good job!").
+6. HỘI THOẠI SONG NGỮ THẦY - TRÒ (Mini Dialogue):
+   - Viết đoạn thoại 6-10 lượt thoại giữa Teacher và Student, lồng ghép tự nhiên từ vựng và công thức vừa học.
+7. BÀI TẬP LUYỆN TẬP (Practice):
+   - Matching (Ghép thuật ngữ với nghĩa).
+   - Fill in the blanks (Điền từ vào mẫu câu).
+   - Speaking / Formula Reading (Đọc công thức và trình bày lời giải).
+   - Application Problem (Bài toán thực tế ngắn bằng Tiếng Anh).
+   - Kèm đáp án và hướng dẫn giải chi tiết.
+8. PROMPT AI TẠO ẢNH MINH HỌA BÀI HỌC (Artistic Image Prompt):
+   - Mô tả bối cảnh trực quan nghệ thuật liên quan đến bài học.
+
+DẠNG 2: KẾ HOẠCH BÀI DẠY / GIÁO ÁN CLIL 4C (VĂN BẢN)
+Xây dựng giáo án CLIL theo chuẩn khung 4C của Bộ GD&ĐT & Sở GD&ĐT TP.HCM:
+- 1. GENERAL INFORMATION (Grade, Subject, Topic, Time allocation).
+- 2. DUAL LESSON OBJECTIVES:
+  + Content (Nội dung kiến thức toán).
+  + Communication (Language OF, FOR, THROUGH learning).
+  + Cognition (Mức độ tư duy từ Nhận biết đến Vận dụng).
+  + Culture / Context (Bối cảnh thực tế).
+- 3. LANGUAGE SCAFFOLDING & RESOURCES (Key Vocabulary, Formula Reading Rules, Sentence Starters).
+- 4. TEACHING & LEARNING PROCEDURE (Warm-up, Knowledge Construction, Guided Practice, Group Work, Wrap-up).
+- 5. ASSESSMENT & EVALUATION (Rubric / Checklist).
+
+DẠNG 3: INFOGRAPHIC / FLASHCARD TỪ VỰNG & CÔNG THỨC (JSON PROMPT)
+Trả về duy nhất MỘT KHỐI PROMPT JSON hoàn chỉnh để dùng cho AI tạo ảnh Infographic / Flashcard từ vựng & công thức Toán Tiếng Anh trực quan, sắc nét, đúng chuẩn LaTeX.
+
+QUY TẮC CHUNG:
+- Bám sát tài liệu nguồn nếu có.
+- Viết công thức toán chuẩn LaTeX đặt trong cặp $...$.
+- Đảm bảo tính chính xác sư phạm, ngữ pháp và thuật ngữ toán học Anh-Mỹ.`;
+
+/* ==========================================================================
+   DANH SÁCH 10 CÔNG CỤ (TOOLS)
+   ========================================================================== */
+const TOOLS = [
+  {
+    id:"video-veo3", num:"01", name:"Video khởi động Veo 3",
+    kicker:"Video mở bài", title:"Video khởi động bài học (Veo 3)",
+    desc:"Tạo hồ sơ nhân vật, storyboard, prompt tạo ảnh và prompt Veo 3 cho video mở đầu bài học, dẫn dắt tự nhiên vào kiến thức mới.",
+    system: SYS_VEO3, outputType:"text", filename:"video-veo3.txt",
+    fields:[
+      {key:"bai_hoc", label:"Tên bài học / chủ đề", type:"text", required:true, placeholder:"VD: Giá trị lớn nhất, giá trị nhỏ nhất của hàm số"},
+      {key:"so_canh", label:"Số phân cảnh", type:"number", default:5, row:"r1"},
+      {key:"ty_le", label:"Tỷ lệ khung hình", type:"select", options:["16:9","9:16"], default:"16:9", row:"r1"},
+      {key:"thoi_luong", label:"Thời lượng mỗi cảnh", type:"text", default:"6-8 giây", row:"r1"},
+      {key:"nhan_vat", label:"Nhân vật (tên, vai trò, đặc điểm)", type:"textarea", placeholder:"Để trống nếu muốn AI tự đề xuất 2-3 nhân vật phù hợp"},
+      {key:"tom_tat", label:"Tóm tắt nội dung / tình huống muốn khai thác", type:"textarea", placeholder:"Mô tả bối cảnh tình huống thực tế hoặc mâu thuẫn nhận thức cần gợi mở"},
+      {key:"phong_cach", label:"Phong cách hình ảnh", type:"text", placeholder:"VD: giáo dục hiện đại, hoạt hình 3D Pixar, điện ảnh thực tế...", row:"r2"},
+      {key:"chat_giong", label:"Chất giọng nhân vật", type:"text", placeholder:"Để trống để AI tự chọn giọng chuẩn tự nhiên", row:"r2"},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea", placeholder:"Dán nội dung sách giáo khoa hoặc tài liệu kiến thức cốt lõi vào đây"}
+    ],
+    buildUser(v){
+      let s = `[BAI_HOC]=${v.bai_hoc}\n[SO_CANH]=${v.so_canh||5}\n[TY_LE]=${v.ty_le||"16:9"}\n[THOI_LUONG_CANH]=${v.thoi_luong||"6-8 giây"}\n`;
+      if(v.nhan_vat) s+=`[NHAN_VAT]=${v.nhan_vat}\n`;
+      if(v.tom_tat) s+=`[TOM_TAT]=${v.tom_tat}\n`;
+      if(v.phong_cach) s+=`[PHONG_CACH]=${v.phong_cach}\n`;
+      if(v.chat_giong) s+=`[CHAT_GIONG]=${v.chat_giong}\n`;
+      if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"phieu-hoc-tap", num:"02", name:"Phiếu học tập",
+    kicker:"Infographic", title:"Tạo phiếu học tập",
+    desc:"Sinh prompt JSON để tạo infographic phiếu học tập gồm 5 dạng câu hỏi: điền khuyết, ghép đôi, đúng-sai, trắc nghiệm, tự luận.",
+    system: SYS_PHIEUHOCTAP, outputType:"json", filename:"phieu-hoc-tap.json",
+    fields:[
+      {key:"chude", label:"Tên bài học / chủ đề", type:"text", required:true, placeholder:"VD: Khảo sát sự biến thiên và vẽ đồ thị hàm số"},
+      {key:"phongcach", label:"Phong cách thiết kế", type:"text", default:"hiện đại giáo dục, nhiều hình minh hoạ", row:"r1"},
+      {key:"loigiai", label:"Kèm đáp án / lời giải?", type:"select", options:["TẮT","BẬT"], default:"TẮT", row:"r1"},
+      {key:"tile", label:"Tỉ lệ khung hình", type:"select", options:["9:16","3:4","16:9"], default:"9:16", row:"r1"},
+      {key:"dienkhuyet", label:"Điền khuyết", type:"number", default:2, row:"r2"},
+      {key:"ghepdoi", label:"Ghép đôi", type:"number", default:2, row:"r2"},
+      {key:"dungsai", label:"Đúng sai", type:"number", default:2, row:"r2"},
+      {key:"tracnghiem", label:"Trắc nghiệm", type:"number", default:2, row:"r2"},
+      {key:"tuluan", label:"Tự luận", type:"number", default:2, row:"r2"},
+      {key:"doituong", label:"Lớp học / độ tuổi", type:"text", placeholder:"VD: Học sinh lớp 12 THPT"},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea"}
+    ],
+    buildUser(v){
+      let s = `[CHUDE]=${v.chude}\n[PHONGCACH]=${v.phongcach||"hiện đại giáo dục"}\n[LOI_GIAI]=${v.loigiai||"TẮT"}\n[TI_LE]=${v.tile||"9:16"}\n`+
+        `[DIEN_KHUYET]=${v.dienkhuyet}\n[GHEP_DOI]=${v.ghepdoi}\n[DUNG_SAI]=${v.dungsai}\n[TRAC_NGHIEM]=${v.tracnghiem}\n[TU_LUAN]=${v.tuluan}\n`;
+      if(v.doituong) s+=`[DOI_TUONG]=${v.doituong}\n`;
+      if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"mindmap", num:"03", name:"Sơ đồ tư duy / Infographic",
+    kicker:"Tóm tắt bài học", title:"Sơ đồ tư duy & Infographic",
+    desc:"Tóm tắt toàn bộ bài học thành một infographic kết hợp sơ đồ tư duy (mindmap), khổ A4, phong cách retro.",
+    system: SYS_MINDMAP, outputType:"json", filename:"mindmap.json",
+    fields:[
+      {key:"bai", label:"Số thứ tự và tên bài học", type:"text", required:true, placeholder:"VD: Bài 1. Giá trị lớn nhất, giá trị nhỏ nhất của hàm số"},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea", placeholder:"Dán nội dung lý thuyết bài học cần tóm tắt sơ đồ"}
+    ],
+    buildUser(v){
+      let s = `[BAI]\n${v.bai}`;
+      if(v.nguon) s+=`\n\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"geogebra", num:"04", name:"GeoGebra & NotebookLM",
+    kicker:"Dựng hình", title:"Script GeoGebra",
+    desc:"Chuyển mô tả hình học tự nhiên thành script GeoGebra 2D/3D, sẵn sàng copy dán vào GeoGebra.",
+    system: SYS_GEOGEBRA, outputType:"text", filename:"geogebra-script.txt",
+    fields:[
+      {key:"yeucau", label:"Yêu cầu dựng hình", type:"textarea", required:true, placeholder:"VD: Vẽ hình chóp S.ABCD, đáy ABCD là hình vuông cạnh a, SA vuông góc với đáy (ABCD). SA = a*sqrt(3). Vẽ đường cao AH của tam giác SAB."},
+      {key:"dim", label:"Không gian", type:"select", options:["Tự động","2D","3D"], default:"Tự động", row:"r1"},
+      {key:"phuongphap", label:"Phương pháp dựng", type:"select", options:["Tự động","Ưu tiên tọa độ","Ưu tiên quan hệ hình học"], default:"Tự động", row:"r1"},
+      {key:"label", label:"Hiện nhãn điểm chính", type:"checkbox", default:true, row:"r2"},
+      {key:"anphu", label:"Ẩn đối tượng dựng phụ", type:"checkbox", default:false, row:"r2"},
+      {key:"mau", label:"Phân màu trực quan", type:"checkbox", default:true, row:"r2"},
+      {key:"chiscript", label:"Chỉ xuất code (không giải thích)", type:"checkbox", default:true, row:"r2"}
+    ],
+    buildUser(v){
+      let flags=[];
+      if(v.dim==="2D") flags.push("[2D]"); if(v.dim==="3D") flags.push("[3D]");
+      if(v.phuongphap==="Ưu tiên tọa độ") flags.push("[TOADO]");
+      if(v.phuongphap==="Ưu tiên quan hệ hình học") flags.push("[HINHHOC]");
+      if(v.label) flags.push("[LABEL]");
+      if(v.anphu) flags.push("[ANPHU]");
+      if(v.mau) flags.push("[MAU]");
+      if(v.chiscript) flags.push("[SCRIPT]");
+      return `${flags.join(" ")} ${v.yeucau}`.trim();
+    }
+  },
+  {
+    id:"de-22-cau", num:"05", name:"Đề gồm 22 câu",
+    kicker:"Đề kiểm tra", title:"Đề thi 22 câu (12+4+6)",
+    desc:"Tạo prompt infographic đề kiểm tra theo cấu trúc 3 phần: Trắc nghiệm, Đúng-sai, Trả lời ngắn, dùng LaTeX/TikZ cho công thức và hình vẽ.",
+    system: SYS_DETHI22, outputType:"json", filename:"de-thi.json",
+    fields:[
+      {key:"tieude", label:"Tiêu đề đề thi", type:"text", default:"ĐỀ SỐ 1", row:"r1"},
+      {key:"tile", label:"Tỉ lệ khung hình", type:"select", options:["3:4","9:16","16:9"], default:"3:4", row:"r1"},
+      {key:"p1", label:"Số câu Phần I (Trắc nghiệm)", type:"number", default:12, row:"r2"},
+      {key:"p2", label:"Số câu Phần II (Đúng-sai)", type:"number", default:4, row:"r2"},
+      {key:"p3", label:"Số câu Phần III (Trả lời ngắn)", type:"number", default:6, row:"r2"},
+      {key:"chude", label:"Chủ đề / chương (mỗi dòng một chủ đề)", type:"textarea", required:true, placeholder:"VD:\nChương 1: Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số\nChương 2: Tọa độ trong không gian"},
+      {key:"xuatdocx", label:"Xuất kèm quy trình sang file .docx", type:"checkbox", default:false},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn", type:"textarea"}
+    ],
+    buildUser(v){
+      let s = `[TIEUDE]=${v.tieude||"ĐỀ SỐ 1"}\n[CHUDE]=\n${v.chude}\n[SO_CAU_P1]=${v.p1||12}\n[SO_CAU_P2]=${v.p2||4}\n[SO_CAU_P3]=${v.p3||6}\n[TI_LE]=${v.tile||"3:4"}\n[XUAT_DOCX]=${v.xuatdocx?"CO":"KHONG"}\n`;
+      if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"toan-thuc-te", num:"06", name:"Toán thực tế",
+    kicker:"Vận dụng thực tế", title:"Toán thực tế",
+    desc:"Bước 1: soạn đề bài toán thực tế dạng văn bản. Bước 2: tạo infographic 3 cột (đề bài / hình minh họa / gợi ý lời giải) cho các câu tiêu biểu.",
+    outputType:"auto", filename:"toan-thuc-te.txt",
+    fields:[
+      {key:"mode", label:"Bạn muốn tạo dạng gì?", type:"select", options:["Đề bài toán thực tế (văn bản)","Infographic minh họa 3 cột (JSON)"], default:"Đề bài toán thực tế (văn bản)"},
+      {key:"chude", label:"Chủ đề / chương", type:"text", required:true, placeholder:"VD: Cực trị hàm số ứng dụng tối ưu hóa chi phí sản xuất", row:"r1"},
+      {key:"socau", label:"Số lượng câu hỏi", type:"number", default:10, row:"r1"},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn", type:"textarea", placeholder:"Dán dữ liệu thực tế, bảng số liệu hoặc bài toán gốc cần mở rộng"}
+    ],
+    system(v){ return (v.mode && v.mode.startsWith("Đề bài")) ? sysToanThucTeDeBai(v) : sysToanThucTeInfographic(v); },
+    outputTypeFor(v){ return (v.mode && v.mode.startsWith("Đề bài")) ? "text" : "json"; },
+    filenameFor(v){ return (v.mode && v.mode.startsWith("Đề bài")) ? "toan-thuc-te.txt" : "toan-thuc-te.json"; },
+    buildUser(v){
+      let s = `[CHU_DE]=${v.chude}\n[SO_CAU]=${v.socau||10}\n`;
+      if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"truyen-tranh", num:"07", name:"Truyện tranh tích hợp bài học",
+    kicker:"Truyện tranh", title:"Truyện tranh tích hợp bài học",
+    desc:"Tạo các phân cảnh truyện tranh lồng ghép nội dung bài học theo phong cách nhân vật quen thuộc với học sinh.",
+    system: SYS_TRUYENTRANH, outputType:"text", filename:"truyen-tranh.txt",
+    fields:[
+      {key:"phongcach", label:"Phong cách nhân vật", type:"select", required:true, options:[
+        "Doraemon (Doraemon, Nobita, Xuka, Chaien, Xeko)",
+        "Hãy đợi đấy (Sói, Thỏ, Lợn, Gà trống, Khỉ, Voi)",
+        "Tom and Jerry (Tom, Jerry, Spike, Tyke, Toodles Galore, Butch)",
+        "Truyện tranh Việt Nam",
+        "Bộ đội Việt Nam",
+        "Nàng tiên cá",
+        "Sketchnote văn học"
+      ], row:"r1"},
+      {key:"socanh", label:"Số cảnh truyện", type:"number", default:4, row:"r1"},
+      {key:"noidung", label:"Nội dung bài học cần lồng ghép", type:"textarea", required:true, placeholder:"VD: Quy tắc cộng xác suất và quy tắc nhân xác suất qua câu chuyện Nobita chơi trò chơi xúc xắc cùng Doraemon"}
+    ],
+    buildUser(v){
+      return `[PHONG_CACH]=${v.phongcach}\n[SO_CANH]=${v.socanh||4}\n\nNội dung bài học:\n${v.noidung}`;
+    }
+  },
+  {
+    id:"game-quiz", num:"08", name:"Game tích hợp bài học",
+    kicker:"Quiz tương tác", title:"Game / Quiz tương tác (File HTML)",
+    desc:"Tạo một file HTML quiz trắc nghiệm tương tác hoàn chỉnh, tự động chấm điểm và phân tích năng lực học sinh.",
+    system: SYS_QUIZGAME, outputType:"html", filename:"quiz.html",
+    fields:[
+      {key:"bai", label:"Tên bài học / chủ đề", type:"text", required:true, placeholder:"VD: Phương trình mặt phẳng trong không gian Oxyz"},
+      {key:"socau", label:"Số câu hỏi", type:"number", default:10, row:"r1"},
+      {key:"mucdo", label:"Mức độ", type:"select", options:["Hỗn hợp","Dễ","Trung bình","Khó"], default:"Hỗn hợp", row:"r1"},
+      {key:"loaicauhoi", label:"Loại câu hỏi", type:"select", options:["Hỗn hợp","Một đáp án đúng","Nhiều đáp án đúng","Đúng sai"], default:"Hỗn hợp", row:"r1"},
+      {key:"phongcach", label:"Phong cách giao diện", type:"text", default:"hiện đại, thân thiện, màu xanh dương", row:"r2"},
+      {key:"doituong", label:"Đối tượng học sinh", type:"text", default:"học sinh THPT", row:"r2"},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn", type:"textarea"}
+    ],
+    buildUser(v){
+      let s = `[BÀI]=${v.bai}\n[SỐ CÂU]=${v.socau||10}\n[PHONG CÁCH]=${v.phongcach||"hiện đại"}\n[ĐỐI TƯỢNG]=${v.doituong||"học sinh THPT"}\n[MỨC ĐỘ]=${v.mucdo||"Hỗn hợp"}\n[LOẠI CÂU HỎI]=${v.loaicauhoi||"Hỗn hợp"}\n`;
+      if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"toan-tieng-anh-clil", num:"10", name:"Toán Tiếng Anh (CLIL)",
+    kicker:"Dạy học song ngữ", title:"Toán Tiếng Anh & Giáo án CLIL",
+    desc:"Tạo prompt bài học từ vựng, cách đọc công thức chuẩn bản ngữ, mẫu câu giao tiếp lớp học và giáo án song ngữ CLIL (Tiếng Anh là ngôn ngữ thứ 2).",
+    system: SYS_CLIL,
+    outputType: "auto",
+    outputTypeFor(v){
+      return (v.mode && v.mode.includes("Infographic")) ? "json" : "text";
+    },
+    filenameFor(v){
+      return (v.mode && v.mode.includes("Infographic")) ? "toan-tieng-anh-flashcard.json" :
+             (v.mode && v.mode.includes("Giáo án")) ? "giao-an-clil.txt" : "toan-tieng-anh-bai-hoc.txt";
+    },
+    fields:[
+      {key:"mode", label:"Dạng bài sản xuất", type:"select", options:[
+        "1. Bài học Từ vựng & Mẫu câu (Text/Văn bản)",
+        "2. Kế hoạch bài dạy / Giáo án CLIL 4C (Văn bản)",
+        "3. Infographic / Flashcard Từ vựng & Công thức (JSON)"
+      ], default:"1. Bài học Từ vựng & Mẫu câu (Text/Văn bản)"},
+      {key:"chude", label:"Tên bài học / Chủ đề Toán", type:"text", required:true, placeholder:"VD: Đạo hàm và ứng dụng / Quadratic Functions / Vector in Space"},
+      {key:"lop", label:"Khối lớp / Cấp học", type:"select", options:["Lớp 10","Lớp 11","Lớp 12","THCS"], default:"Lớp 12", row:"r1"},
+      {key:"trinhdo", label:"Trình độ Tiếng Anh học sinh", type:"select", options:["Cơ bản (A1-A2)","Trung bình (B1)","Nâng cao (B2+)"], default:"Trung bình (B1)", row:"r1"},
+      {key:"sotu", label:"Số từ vựng trọng tâm", type:"number", default:8, row:"r1"},
+      {key:"doc_cong_thuc", label:"Kèm hướng dẫn đọc công thức Toán bằng tiếng Anh?", type:"checkbox", default:true, row:"r2"},
+      {key:"mau_cau_lop", label:"Kèm mẫu câu giao tiếp lớp học cho GV?", type:"checkbox", default:true, row:"r2"},
+      {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea", placeholder:"Dán nội dung sách giáo khoa hoặc tài liệu chuyên môn cần biên soạn song ngữ"}
+    ],
+    buildUser(v){
+      let s = `[DẠNG BÀI]=${v.mode||"1. Bài học Từ vựng & Mẫu câu"}\n[CHỦ ĐỀ]=${v.chude}\n[LỚP]=${v.lop||"Lớp 12"}\n[TRÌNH ĐỘ]=${v.trinhdo||"Trung bình (B1)"}\n[SỐ TỪ VỰNG]=${v.sotu||8}\n[DOC_CONG_THUC]=${v.doc_cong_thuc?"BẬT":"TẮT"}\n[MAU_CAU_LOP]=${v.mau_cau_lop?"BẬT":"TẮT"}\n`;
+      if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"mail-ao", num:"09", name:"ChatGPT bằng mail ảo",
+    kicker:"Hướng dẫn", title:"Tạo tài khoản ChatGPT bằng mail ảo",
+    desc:"Đây là bước thiết lập công cụ, không phải một prompt AI — thực hiện trực tiếp theo hướng dẫn bên dưới.",
+    isInfo:true
+  }
+];
+
+/* ==========================================================================
+   STATE MANAGEMENT & CACHE
+   ========================================================================== */
+let currentTool = TOOLS[0];
+let sourceText = "";
+const formValuesCache = {}; // Lưu giữ dữ liệu đã nhập của từng tool khi chuyển tab
+
+// Kiểm tra môi trường chạy: Google Apps Script hay Standalone Browser
+function isGasEnv(){
+  return typeof google !== "undefined" && google.script && typeof google.script.run !== "undefined";
+}
+
+/* ==========================================================================
+   KHỞI TẠO MENU SIDEBAR
+   ========================================================================== */
+const toolList = document.getElementById("toolList");
+TOOLS.forEach(t=>{
+  const li = document.createElement("li");
+  li.className = "tool-item" + (t.id === currentTool.id ? " active" : "");
+  li.dataset.id = t.id;
+  li.innerHTML = `<span class="tool-num">${t.num}</span><span class="tool-name">${t.name}</span>`;
+  li.addEventListener("click", ()=>{
+    selectTool(t.id);
+    if(window.innerWidth <= 860){
+      document.getElementById("sidebar").classList.remove("open");
+    }
+  });
+  toolList.appendChild(li);
+});
+
+// Mobile menu button
+document.getElementById("mobileMenuBtn").addEventListener("click", ()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+});
+
+function selectTool(id){
+  // Lưu lại giá trị form hiện tại trước khi chuyển tool
+  if(currentTool && !currentTool.isInfo){
+    formValuesCache[currentTool.id] = collectValues();
+  }
+  
+  currentTool = TOOLS.find(t=>t.id===id) || TOOLS[0];
+  document.querySelectorAll(".tool-item").forEach(el=>{
+    el.classList.toggle("active", el.dataset.id===id);
+  });
+  document.getElementById("kicker").textContent = currentTool.kicker;
+  document.getElementById("toolTitle").textContent = currentTool.title;
+  document.getElementById("toolDesc").textContent = currentTool.desc;
+  
+  renderSourceArea();
+  renderForm();
+  
+  // Ẩn bảng kết quả khi đổi tool nếu chưa có kết quả mới
+  // document.getElementById("outputWrap").style.display = "none";
+}
+
+/* ==========================================================================
+   RENDER KHU VỰC TÀI LIỆU NGUỒN (SOURCE AREA)
+   ========================================================================== */
+function renderSourceArea(){
+  const area = document.getElementById("sourceArea");
+  if(currentTool.isInfo){ area.innerHTML = ""; return; }
+  
+  area.innerHTML = `
+    <div class="field" style="border:1px dashed var(--line);background:rgba(245,241,228,.03);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+      <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span>📎 Đính kèm tài liệu nguồn (File / Link / Văn bản)</span>
+        <span style="font-size:11px;color:var(--chalk-dim);font-weight:400;">Tuỳ chọn</span>
+      </label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input type="file" id="srcFile" accept=".pdf,.doc,.docx,.txt,.md,.json,image/*" style="flex:1;min-width:180px;background:rgba(245,241,228,.06);border:1px solid var(--line);color:var(--chalk);border-radius:6px;padding:6px 10px;font-size:12.5px;">
+        <button class="btn btn-ghost btn-sm" id="srcFileBtn" type="button">Trích xuất file</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input type="text" id="srcLink" placeholder="Dán liên kết (Google Drive, Docs, web tài liệu...)" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" id="srcLinkBtn" type="button">Lấy từ link</button>
+      </div>
+      <textarea id="srcText" placeholder="Nội dung nguồn trích xuất được sẽ hiện ở đây — bạn có thể sửa trực tiếp." style="margin-top:8px;min-height:64px;"></textarea>
+      <div class="status" id="srcStatus" style="margin-top:4px;"></div>
+    </div>`;
+  
+  const srcTextEl = document.getElementById("srcText");
+  srcTextEl.value = sourceText;
+  srcTextEl.addEventListener("input", e=>{ sourceText = e.target.value; });
+
+  // Xử lý nút Trích xuất file
+  document.getElementById("srcFileBtn").addEventListener("click", ()=>{
+    const fileInput = document.getElementById("srcFile");
+    const f = fileInput.files[0];
+    const st = document.getElementById("srcStatus");
+    if(!f){ st.textContent="Vui lòng chọn một file trước."; st.className="status err"; return; }
+    
+    st.className="status loading"; st.textContent="Đang trích xuất nội dung file...";
+    
+    if(isGasEnv()){
+      const reader = new FileReader();
+      reader.onload = function(){
+        const base64 = reader.result.split(",")[1];
+        google.script.run
+          .withSuccessHandler(text=>{
+            sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
+            srcTextEl.value = sourceText;
+            st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length + " ký tự.";
+          })
+          .withFailureHandler(err=>{
+            st.className="status err"; st.textContent="Lỗi: " + (err.message||err);
+          })
+          .extractFromFile(base64, f.type, f.name);
+      };
+      reader.readAsDataURL(f);
+    } else {
+      // Standalone: Đọc file text, Word (.docx) hoặc qua Gemini Multimodal
+      if(f.type.startsWith("text/") || f.name.endsWith(".txt") || f.name.endsWith(".md") || f.name.endsWith(".json") || f.name.endsWith(".tex")){
+        const tr = new FileReader();
+        tr.onload = function(e){
+          const txt = e.target.result;
+          sourceText = (sourceText ? sourceText + "\n\n" : "") + txt;
+          srcTextEl.value = sourceText;
+          st.className="status ok"; st.textContent = "✓ Đã đọc " + txt.length + " ký tự từ file text.";
+        };
+        tr.readAsText(f);
+      } else if(f.name.endsWith(".docx") || f.name.endsWith(".doc")){
+        if(typeof mammoth !== "undefined"){
+          const reader = new FileReader();
+          reader.onload = function(e){
+            const arrayBuffer = e.target.result;
+            mammoth.extractRawText({arrayBuffer: arrayBuffer})
+              .then(function(result){
+                const text = result.value;
+                sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
+                srcTextEl.value = sourceText;
+                st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length + " ký tự từ file Word (.docx).";
+              })
+              .catch(function(err){
+                st.className="status err"; st.textContent="Lỗi đọc file Word: " + err.message;
+              });
+          };
+          reader.readAsArrayBuffer(f);
+        } else {
+          st.className="status err"; st.textContent="Thư viện Mammoth chưa sẵn sàng. Vui lòng thử lại sau giây lát.";
+        }
+      } else {
+        // PDF hoặc Ảnh -> Gửi trực tiếp qua Gemini Multimodal
+        const key = getLocalApiKey();
+        if(!key){
+          st.className="status err";
+          st.textContent="Vui lòng cài đặt API key Gemini để trích xuất file PDF/Ảnh.";
+          document.getElementById("settingsBtn").click();
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = async function(){
+          const base64 = reader.result.split(",")[1];
+          try {
+            const model = getLocalModel();
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            const res = await fetch(url, {
+              method:"POST",
+              headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({
+                contents:[{
+                  parts:[
+                    {inlineData:{mimeType:getMimeType(f), data:base64}},
+                    {text:"Hãy trích xuất toàn bộ nội dung văn bản, công thức toán và kiến thức học tập trong tài liệu/hình ảnh này một cách đầy đủ và chính xác nhất."}
+                  ]
+                }]
+              })
+            });
+            const data = await res.json();
+            if(data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
+            srcTextEl.value = sourceText;
+            st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length + " ký tự bằng Gemini Vision.";
+          } catch(err){
+            st.className="status err"; st.textContent="Lỗi trích xuất: " + err.message;
+          }
+        };
+        reader.readAsDataURL(f);
+      }
+    }
+  });
+
+  // Xử lý nút Lấy nội dung từ link
+  document.getElementById("srcLinkBtn").addEventListener("click", async ()=>{
+    const url = document.getElementById("srcLink").value.trim();
+    const st = document.getElementById("srcStatus");
+    if(!url){ st.textContent="Vui lòng dán link liên kết trước."; st.className="status err"; return; }
+    
+    st.className="status loading"; st.textContent="Đang tải nội dung từ link...";
+    if(isGasEnv()){
+      google.script.run
+        .withSuccessHandler(text=>{
+          sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
+          srcTextEl.value = sourceText;
+          st.className="status ok"; st.textContent = "✓ Đã lấy " + text.length + " ký tự từ link.";
+        })
+        .withFailureHandler(err=>{
+          st.className="status err"; st.textContent="Lỗi: " + (err.message||err);
+        })
+        .extractFromUrl(url);
+    } else {
+      st.className="status"; st.textContent="Chế độ trực tiếp: Vui lòng copy/paste trực tiếp văn bản từ trang web vào ô dưới.";
+    }
+  });
+}
+
+/* ==========================================================================
+   RENDER BIỂU MẪU NHẬP LIỆU (FORM AREA)
+   ========================================================================== */
+function renderForm(){
+  const area = document.getElementById("formArea");
+  area.innerHTML = "";
+  
+  if(currentTool.isInfo){
+    area.innerHTML = `
+      <div class="info-card">
+        <h3>Hướng dẫn tạo tài khoản ChatGPT bằng Mail Ảo</h3>
+        <ol>
+          <li>Mail ảo giúp bạn tạo nhanh tài khoản dùng thử các dịch vụ AI mà không làm lộ email cá nhân hay bị spam.</li>
+          <li>Truy cập trang email tạm thời: <a href="https://tempmailapi.io.vn/" target="_blank" rel="noopener">tempmailapi.io.vn</a> hoặc <a href="https://temp-mail.org/" target="_blank" rel="noopener">temp-mail.org</a> để lấy một địa chỉ email tạm.</li>
+          <li>Copy địa chỉ email vừa nhận, dùng để đăng ký tại <strong>chatgpt.com</strong> hoặc <strong>aistudio.google.com</strong>.</li>
+          <li>Quay lại tab mail ảo, mở hộp thư đến để nhận mã xác thực (OTP) và hoàn tất đăng ký.</li>
+          <li><em>Lưu ý:</em> Chỉ sử dụng mail ảo cho tài khoản thử nghiệm, không dùng cho các dữ liệu quan trọng lâu dài.</li>
+        </ol>
+      </div>`;
+    return;
+  }
+  
+  const savedValues = formValuesCache[currentTool.id] || {};
+  const rowsMap = {};
+
+  // Nhóm các field có cùng row id (r1, r2...) thành lưới responsive
+  currentTool.fields.forEach(f=>{
+    const val = savedValues[f.key] !== undefined ? savedValues[f.key] : f.default;
+    const reqBadge = f.required ? `<span class="req">*</span>` : "";
+    
+    let fieldHtml = "";
+    if(f.type==="checkbox"){
+      const checked = val ? "checked" : "";
+      fieldHtml = `
+        <div class="field checkline">
+          <input type="checkbox" id="f_${f.key}" ${checked}>
+          <label for="f_${f.key}">${f.label}</label>
+        </div>`;
+    } else if(f.type==="select"){
+      const optionsHtml = f.options.map(o => `<option value="${o}" ${o === val ? "selected" : ""}>${o}</option>`).join("");
+      fieldHtml = `
+        <div class="field">
+          <label for="f_${f.key}">${f.label}${reqBadge}</label>
+          <select id="f_${f.key}">${optionsHtml}</select>
+        </div>`;
+    } else if(f.type==="textarea"){
+      const textVal = val !== undefined ? val : "";
+      fieldHtml = `
+        <div class="field">
+          <label for="f_${f.key}">${f.label}${reqBadge}</label>
+          <textarea id="f_${f.key}" placeholder="${f.placeholder||""}">${textVal}</textarea>
+        </div>`;
+    } else {
+      const inputVal = val !== undefined ? val : "";
+      fieldHtml = `
+        <div class="field">
+          <label for="f_${f.key}">${f.label}${reqBadge}</label>
+          <input type="${f.type}" id="f_${f.key}" value="${inputVal}" placeholder="${f.placeholder||""}">
+        </div>`;
+    }
+
+    if(f.row){
+      if(!rowsMap[f.row]) rowsMap[f.row] = [];
+      rowsMap[f.row].push({f, html: fieldHtml});
+    } else {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = fieldHtml;
+      area.appendChild(wrap.firstElementChild);
+    }
+  });
+
+  // Render các row đã nhóm
+  Object.keys(rowsMap).forEach(rk=>{
+    const items = rowsMap[rk];
+    const rowDiv = document.createElement("div");
+    rowDiv.className = items.length === 2 ? "row2" : (items.length === 3 ? "row3" : "row4");
+    items.forEach(item => {
+      const temp = document.createElement("div");
+      temp.innerHTML = item.html;
+      rowDiv.appendChild(temp.firstElementChild);
+    });
+    // Chèn row vào đúng vị trí phù hợp
+    area.appendChild(rowDiv);
+  });
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  actions.innerHTML = `
+    <button class="btn btn-primary" id="genBtn">✨ Tạo prompt</button>
+    <span class="status" id="genStatus"></span>`;
+  area.appendChild(actions);
+
+  document.getElementById("genBtn").addEventListener("click", onGenerate);
+}
+
+function collectValues(){
+  if(!currentTool || !currentTool.fields) return {};
+  const v = {};
+  currentTool.fields.forEach(f=>{
+    const el = document.getElementById("f_" + f.key);
+    if(!el) return;
+    if(f.type === "checkbox") v[f.key] = el.checked;
+    else if(f.type === "number") v[f.key] = Number(el.value);
+    else v[f.key] = el.value.trim();
+  });
+  return v;
+}
+
+/* ==========================================================================
+   CƠ CHẾ LƯU TRỮ API KEY & MÔ HÌNH (GAS & LOCALSTORAGE)
+   ========================================================================== */
+function escapeHtml(str){
+  if(!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getMimeType(file){
+  if(!file) return "application/pdf";
+  if(file.type) return file.type;
+  const name = (file.name || "").toLowerCase();
+  if(name.endsWith('.pdf')) return 'application/pdf';
+  if(name.endsWith('.png')) return 'image/png';
+  if(name.endsWith('.jpg') || name.endsWith('.jpeg')) return 'image/jpeg';
+  if(name.endsWith('.webp')) return 'image/webp';
+  if(name.endsWith('.gif')) return 'image/gif';
+  return 'application/pdf';
+}
+
+function getLocalApiKey(){ return localStorage.getItem("GEMINI_API_KEY") || ""; }
+function setLocalApiKey(key){ localStorage.setItem("GEMINI_API_KEY", key); }
+function getLocalModel(){ return localStorage.getItem("GEMINI_MODEL") || "gemini-2.0-flash"; }
+function setLocalModel(model){ localStorage.setItem("GEMINI_MODEL", model); }
+
+// Kiểm tra key khi tải trang
+function checkApiKeyOnLoad(){
+  if(isGasEnv()){
+    google.script.run.withSuccessHandler(has=>{
+      if(!has) showApiKeyBanner();
+    }).hasApiKey();
+  } else {
+    if(!getLocalApiKey()){
+      showApiKeyBanner();
+    }
+  }
+}
+
+function showApiKeyBanner(){
+  const b = document.getElementById("topBannerArea");
+  b.innerHTML = `
+    <div class="top-banner">
+      <span>⚠ Bạn chưa lưu API key Gemini. Vui lòng cài đặt key để ứng dụng có thể tự động tạo prompt.</span>
+      <button type="button" id="bannerSetKeyBtn">⚙ Cài đặt ngay</button>
+    </div>`;
+  document.getElementById("bannerSetKeyBtn").addEventListener("click", ()=>{
+    document.getElementById("settingsBtn").click();
+  });
+}
+
+function hideApiKeyBanner(){
+  document.getElementById("topBannerArea").innerHTML = "";
+}
+
+/* ==========================================================================
+   SINH PROMPT & GỌI GEMINI API
+   ========================================================================== */
+async function callGeminiDirectly(systemPrompt, userPrompt, onProgress){
+  const apiKey = getLocalApiKey();
+  if(!apiKey){
+    throw new Error("Chưa có API key Gemini. Vui lòng bấm '⚙ Cài đặt API key' để nhập key.");
+  }
+  
+  const model = getLocalModel();
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  
+  onProgress && onProgress("Đang kết nối với Gemini (" + model + ")...");
+  
+  const payload = {
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: userPrompt }]
+      }
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 8192
+    }
+  };
+
+  if(systemPrompt && systemPrompt.trim()){
+    payload.systemInstruction = {
+      parts: [{ text: systemPrompt }]
+    };
+  }
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch(netErr){
+    throw new Error("Lỗi kết nối mạng: " + netErr.message);
+  }
+
+  if(!res.ok){
+    const errData = await res.json().catch(()=>({}));
+    const errMsg = errData.error?.message || `HTTP ${res.status} ${res.statusText}`;
+    if(res.status === 400 || res.status === 403){
+      throw new Error(`API key không hợp lệ hoặc không có quyền: ${errMsg}`);
+    } else if(res.status === 429){
+      throw new Error(`Đã vượt quá hạn mức gọi API (Quota Exceeded): ${errMsg}`);
+    } else {
+      throw new Error(`Lỗi từ Gemini (${model}): ${errMsg}`);
+    }
+  }
+
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!text){
+    throw new Error("Không nhận được nội dung phản hồi từ AI.");
+  }
+  return text;
+}
+
+// Cầu nối linh hoạt giữa GAS và Direct Fetch
+async function generatePromptContent(systemPrompt, userPrompt, onProgress){
+  if(isGasEnv()){
+    return new Promise((resolve, reject)=>{
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(err=>reject(new Error(err.message||String(err))))
+        .generateContent(systemPrompt, userPrompt);
+    });
+  } else {
+    return await callGeminiDirectly(systemPrompt, userPrompt, onProgress);
+  }
+}
+
+/* ==========================================================================
+   HÀM XỬ LÝ SỰ KIỆN TẠO PROMPT
+   ========================================================================== */
+async function onGenerate(){
+  const v = collectValues();
+  formValuesCache[currentTool.id] = v;
+  
+  for(const f of (currentTool.fields || [])){
+    if(f.required && (!v[f.key] || !String(v[f.key]).trim())){
+      const statusEl = document.getElementById("genStatus");
+      statusEl.textContent = "Vui lòng điền: " + f.label.replace(" *","");
+      statusEl.className = "status err";
+      const targetInput = document.getElementById("f_" + f.key);
+      if(targetInput) targetInput.focus();
+      return;
+    }
+  }
+  
+  const btn = document.getElementById("genBtn");
+  const status = document.getElementById("genStatus");
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> Đang tạo prompt...`;
+  status.className = "status loading";
+  status.textContent = "Đang gửi yêu cầu tới AI...";
+
+  const outputWrap = document.getElementById("outputWrap");
+  const outputText = document.getElementById("outputText");
+  const mathPreview = document.getElementById("mathPreview");
+  const previewFrame = document.getElementById("previewFrame");
+  const viewTabs = document.getElementById("viewTabs");
+  const beautifyBtn = document.getElementById("beautifyBtn");
+  
+  outputWrap.style.display = "block";
+  previewFrame.style.display = "none";
+  mathPreview.style.display = "none";
+  outputText.style.display = "block";
+  outputText.textContent = "Đang sinh nội dung...";
+  
+  // Đặt lại trạng thái tab xem
+  document.getElementById("tabText").classList.add("active");
+  document.getElementById("tabMath").classList.remove("active");
+  document.getElementById("tabPreview").classList.remove("active");
+  document.getElementById("tabCode").classList.remove("active");
+  
+  viewTabs.style.display = "flex";
+  beautifyBtn.style.display = "none";
+
+  try {
+    const system = typeof currentTool.system === "function" ? currentTool.system(v) : currentTool.system;
+    const sysStr = typeof system === "string" ? system : JSON.stringify(system, null, 2);
+    
+    let userMsg = currentTool.buildUser ? currentTool.buildUser(v) : "";
+    
+    // Nối tài liệu nguồn từ sourceArea nếu có và không trùng với v.nguon
+    if(sourceText && sourceText.trim() && (!v.nguon || !v.nguon.includes(sourceText.trim()))){
+      userMsg = "TÀI LIỆU NGUỒN (Bám sát nội dung này, không lấy ngoài nguồn):\n\"\"\"\n" + sourceText.trim() + "\n\"\"\"\n\n" + userMsg;
+    }
+
+    const outType = currentTool.outputTypeFor ? currentTool.outputTypeFor(v) : currentTool.outputType;
+    const targetFilename = currentTool.filenameFor ? currentTool.filenameFor(v) : (currentTool.filename || "prompt.txt");
+
+    const fullResult = await generatePromptContent(sysStr, userMsg, (msg)=>{
+      status.textContent = msg;
+    });
+
+    // Làm sạch định dạng markdown code fences bao ngoài
+    let cleaned = fullResult.trim();
+    if(cleaned.startsWith("```json") && cleaned.endsWith("```")){
+      cleaned = cleaned.replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
+    } else if(cleaned.startsWith("```html") && cleaned.endsWith("```")){
+      cleaned = cleaned.replace(/^```html\s*/i, "").replace(/\s*```$/i, "").trim();
+    } else if(cleaned.startsWith("```") && cleaned.endsWith("```")){
+      cleaned = cleaned.replace(/^```[a-zA-Z]*\s*/i, "").replace(/\s*```$/i, "").trim();
+    }
+
+    window.__lastOutput = cleaned;
+    window.__lastFilename = targetFilename;
+    window.__lastType = outType;
+
+    // Cập nhật số ký tự / độ dài
+    updateTokenCount(cleaned);
+
+    if(outType === "html"){
+      const match = cleaned.match(/<!DOCTYPE html>[\s\S]*<\/html>/i);
+      const htmlCode = match ? match[0] : cleaned;
+      window.__lastHtmlCode = htmlCode;
+      
+      document.getElementById("tabPreview").style.display = "inline-block";
+      document.getElementById("tabCode").style.display = "inline-block";
+      
+      viewTabs.style.display = "flex";
+      document.getElementById("tabText").classList.remove("active");
+      document.getElementById("tabMath").classList.remove("active");
+      document.getElementById("tabPreview").classList.add("active");
+      document.getElementById("tabCode").classList.remove("active");
+      
+      outputText.style.display = "none";
+      previewFrame.style.display = "block";
+      previewFrame.srcdoc = htmlCode;
+      outputText.textContent = htmlCode;
+    } else {
+      document.getElementById("tabPreview").style.display = "none";
+      document.getElementById("tabCode").style.display = "none";
+      if(outType === "json"){
+        beautifyBtn.style.display = "inline-flex";
+        try {
+          const parsed = JSON.parse(cleaned);
+          cleaned = JSON.stringify(parsed, null, 2);
+          window.__lastOutput = cleaned;
+        } catch(e){}
+      }
+      outputText.textContent = cleaned;
+      outputText.style.display = "block";
+      previewFrame.style.display = "none";
+    }
+
+    status.className = "status ok";
+    status.textContent = "✓ Hoàn tất tạo prompt!";
+    
+    // Ghi nhật ký lịch sử
+    saveHistoryLog(currentTool.title, JSON.stringify(v), cleaned.slice(0, 400));
+    
+    // Cuộn mượt đến phần kết quả
+    outputWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch(err){
+    status.className = "status err";
+    status.textContent = "Lỗi: " + err.message;
+    outputText.textContent = "Đã xảy ra lỗi:\n" + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "✨ Tạo prompt";
+  }
+}
+
+/* ==========================================================================
+   TÍNH TOÁN ĐỘ DÀI VÀ SỐ TỪ (#tokenStatus)
+   ========================================================================== */
+function updateTokenCount(str){
+  const el = document.getElementById("tokenStatus");
+  if(!el) return;
+  const len = str.length;
+  const words = str.trim().split(/\s+/).filter(Boolean).length;
+  el.textContent = `Độ dài: ${len.toLocaleString()} ký tự · ~${words.toLocaleString()} từ`;
+}
+
+/* ==========================================================================
+   TAB CHUYỂN ĐỔI GIAO DIỆN / MÃ NGUỒN CHO QUIZ HTML & MATHJAX RENDER
+   ========================================================================== */
+function setActiveTab(activeId){
+  ["tabText", "tabMath", "tabPreview", "tabCode"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle("active", id === activeId);
+  });
+}
+
+document.getElementById("tabText").addEventListener("click", ()=>{
+  setActiveTab("tabText");
+  document.getElementById("outputText").style.display = "block";
+  document.getElementById("mathPreview").style.display = "none";
+  document.getElementById("previewFrame").style.display = "none";
+});
+
+document.getElementById("tabMath").addEventListener("click", ()=>{
+  setActiveTab("tabMath");
+  document.getElementById("outputText").style.display = "none";
+  document.getElementById("previewFrame").style.display = "none";
+  const mathEl = document.getElementById("mathPreview");
+  mathEl.style.display = "block";
+  mathEl.innerHTML = window.__lastOutput ? escapeHtml(window.__lastOutput).replace(/\n/g, "<br>") : "";
+  if(window.MathJax && window.MathJax.typesetPromise){
+    window.MathJax.typesetPromise([mathEl]).catch(err=>console.error("MathJax err:", err));
+  }
+});
+
+document.getElementById("tabPreview").addEventListener("click", ()=>{
+  setActiveTab("tabPreview");
+  document.getElementById("previewFrame").style.display = "block";
+  document.getElementById("outputText").style.display = "none";
+  document.getElementById("mathPreview").style.display = "none";
+});
+
+document.getElementById("tabCode").addEventListener("click", ()=>{
+  setActiveTab("tabCode");
+  document.getElementById("previewFrame").style.display = "none";
+  document.getElementById("outputText").style.display = "block";
+  document.getElementById("mathPreview").style.display = "none";
+});
+
+/* ==========================================================================
+   SAO CHÉP, TẢI FILE & XUẤT WORD AN TOÀN
+   ========================================================================== */
+async function copyToClipboard(text){
+  if(navigator.clipboard && window.isSecureContext){
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch(e){}
+  }
+  // Fallback copy qua textarea
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch(err){
+    document.body.removeChild(ta);
+    return false;
+  }
+}
+
+document.getElementById("copyBtn").addEventListener("click", async ()=>{
+  if(!window.__lastOutput) return;
+  const success = await copyToClipboard(window.__lastOutput);
+  const b = document.getElementById("copyBtn");
+  const orig = b.innerHTML;
+  if(success){
+    b.innerHTML = "✓ Đã sao chép";
+  } else {
+    b.innerHTML = "Lỗi sao chép";
+  }
+  setTimeout(()=> b.innerHTML = orig, 1800);
+});
+
+document.getElementById("downloadBtn").addEventListener("click", ()=>{
+  if(!window.__lastOutput) return;
+  const mimeType = (window.__lastType === "html") ? "text/html;charset=utf-8" :
+                   (window.__lastType === "json") ? "application/json;charset=utf-8" : "text/plain;charset=utf-8";
+  const blob = new Blob([window.__lastOutput], {type: mimeType});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = window.__lastFilename || "prompt.txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("docBtn").addEventListener("click", ()=>{
+  if(!window.__lastOutput) return;
+  const baseName = (window.__lastFilename || "prompt").replace(/\.[^/.]+$/, "");
+  const filename = baseName + ".doc";
+  const formattedBody = window.__lastOutput.replace(/\n/g, "<br>");
+  const content = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>${baseName}</title>
+<style>
+  body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; }
+  pre { font-family: 'Courier New', monospace; font-size: 10.5pt; white-space: pre-wrap; word-wrap: break-word; }
+</style>
+</head>
+<body>
+${formattedBody}
+</body>
+</html>`;
+  const blob = new Blob(['\ufeff' + content], {type: 'application/msword;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("beautifyBtn").addEventListener("click", ()=>{
+  if(!window.__lastOutput) return;
+  try {
+    const parsed = JSON.parse(window.__lastOutput);
+    const pretty = JSON.stringify(parsed, null, 2);
+    window.__lastOutput = pretty;
+    document.getElementById("outputText").textContent = pretty;
+    updateTokenCount(pretty);
+  } catch(err){
+    alert("Nội dung không phải cú pháp JSON hợp lệ.");
+  }
+});
+
+/* ==========================================================================
+   MODAL CÀI ĐẶT API KEY & MODEL
+   ========================================================================== */
+const settingsModal = document.getElementById("settingsModal");
+const apiKeyInput = document.getElementById("apiKeyInput");
+const apiModelSelect = document.getElementById("apiModelSelect");
+const apiKeyStatus = document.getElementById("apiKeyStatus");
+
+document.getElementById("settingsBtn").addEventListener("click", ()=>{
+  settingsModal.style.display = "flex";
+  apiModelSelect.value = getLocalModel();
+  const currentKey = getLocalApiKey();
+  if(currentKey) apiKeyInput.value = currentKey;
+  
+  if(isGasEnv()){
+    apiKeyStatus.textContent = "Đang kiểm tra kết nối máy chủ...";
+    google.script.run.withSuccessHandler(has=>{
+      apiKeyStatus.textContent = has
+        ? "✓ Đã lưu API key trên máy chủ Apps Script. Nhập key mới nếu muốn thay thế."
+        : "Chưa có API key trên máy chủ.";
+    }).hasApiKey();
+  } else {
+    apiKeyStatus.textContent = currentKey 
+      ? "✓ Đã lưu API key trên trình duyệt (" + currentKey.slice(0, 6) + "..." + currentKey.slice(-4) + ")."
+      : "Chưa có API key nào được lưu trên trình duyệt.";
+  }
+});
+
+document.getElementById("apiKeyToggle").addEventListener("click", ()=>{
+  const isPw = apiKeyInput.type === "password";
+  apiKeyInput.type = isPw ? "text" : "password";
+  document.getElementById("apiKeyToggle").textContent = isPw ? "🙈" : "👁";
+});
+
+document.getElementById("settingsCloseBtn").addEventListener("click", ()=>{
+  settingsModal.style.display = "none";
+});
+
+document.getElementById("settingsSaveBtn").addEventListener("click", ()=>{
+  const key = apiKeyInput.value.trim();
+  const chosenModel = apiModelSelect.value;
+  setLocalModel(chosenModel);
+  
+  if(!key){
+    apiKeyStatus.textContent = "✓ Đã cập nhật mô hình: " + chosenModel;
+    setTimeout(()=> settingsModal.style.display = "none", 800);
+    return;
+  }
+
+  setLocalApiKey(key);
+  apiKeyStatus.textContent = "Đang lưu cấu hình...";
+  
+  if(isGasEnv()){
+    google.script.run
+      .withSuccessHandler(()=>{
+        apiKeyStatus.textContent = "✓ Đã lưu API key thành công lên máy chủ.";
+        apiKeyInput.value = "";
+        hideApiKeyBanner();
+        setTimeout(()=> settingsModal.style.display = "none", 1000);
+      })
+      .withFailureHandler(err=>{
+        apiKeyStatus.textContent = "Lỗi lưu key: " + (err.message||err);
+      })
+      .saveApiKey(key);
+  } else {
+    apiKeyStatus.textContent = "✓ Đã lưu key thành công trên trình duyệt.";
+    apiKeyInput.value = "";
+    hideApiKeyBanner();
+    setTimeout(()=> settingsModal.style.display = "none", 1000);
+  }
+});
+
+/* ==========================================================================
+   MODAL LỊCH SỬ TẠO PROMPT
+   ========================================================================== */
+const historyModal = document.getElementById("historyModal");
+const historyList = document.getElementById("historyList");
+
+function saveHistoryLog(toolTitle, inputJson, outputSnippet){
+  const now = new Date().toLocaleString("vi-VN");
+  const item = { tool: toolTitle, time: now, input: inputJson, output: outputSnippet };
+  
+  // Lưu LocalStorage
+  let localHist = [];
+  try {
+    localHist = JSON.parse(localStorage.getItem("GEMINI_PROMPT_HISTORY") || "[]");
+  } catch(e){}
+  localHist.unshift(item);
+  if(localHist.length > 50) localHist.pop();
+  localStorage.setItem("GEMINI_PROMPT_HISTORY", JSON.stringify(localHist));
+
+  // Ghi Sheet nếu trên GAS
+  if(isGasEnv()){
+    google.script.run.logToSheet(toolTitle, inputJson, outputSnippet);
+  }
+}
+
+document.getElementById("historyBtn").addEventListener("click", ()=>{
+  historyModal.style.display = "flex";
+  historyList.innerHTML = "Đang tải lịch sử...";
+
+  if(isGasEnv()){
+    google.script.run
+      .withSuccessHandler(rows=>{
+        renderHistoryRows(rows);
+      })
+      .withFailureHandler(err=>{
+        renderLocalHistory();
+      })
+      .getHistory(25);
+  } else {
+    renderLocalHistory();
+  }
+});
+
+function renderLocalHistory(){
+  let localHist = [];
+  try { localHist = JSON.parse(localStorage.getItem("GEMINI_PROMPT_HISTORY") || "[]"); } catch(e){}
+  renderHistoryRows(localHist);
+}
+
+function renderHistoryRows(rows){
+  if(!rows || !rows.length){
+    historyList.innerHTML = "<p style='color:#5a6350;font-style:italic;margin:10px 0;'>Chưa có lịch sử tạo prompt nào.</p>";
+    return;
+  }
+  historyList.innerHTML = rows.map((r, i)=>`
+    <div style="border-bottom:1px dashed #c9c0a4;padding:10px 0;">
+      <div style="font-weight:600;display:flex;justify-content:space-between;color:#20281f;">
+        <span>${escapeHtml(r.tool || "Công cụ")}</span>
+        <span style="font-weight:400;font-size:11.5px;color:#73806a;">${escapeHtml(r.time || "")}</span>
+      </div>
+      <div style="color:#5a6350;font-size:12px;margin-top:4px;word-break:break-word;">
+        ${escapeHtml((r.output || "").slice(0, 180))}...
+      </div>
+    </div>`).join("");
+}
+
+document.getElementById("clearHistoryBtn").addEventListener("click", ()=>{
+  if(confirm("Bạn có chắc muốn xoá lịch sử đã lưu trên trình duyệt?")){
+    localStorage.removeItem("GEMINI_PROMPT_HISTORY");
+    renderLocalHistory();
+  }
+});
+
+document.getElementById("historyCloseBtn").addEventListener("click", ()=>{
+  historyModal.style.display = "none";
+});
+
+// Đóng modal khi click ra ngoài backdrop hoặc ấn ESC
+window.addEventListener("click", e=>{
+  if(e.target === settingsModal) settingsModal.style.display = "none";
+  if(e.target === historyModal) historyModal.style.display = "none";
+  if(typeof guideModal !== "undefined" && e.target === guideModal) guideModal.style.display = "none";
+  if(typeof archiveModal !== "undefined" && e.target === archiveModal) archiveModal.style.display = "none";
+});
+
+window.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){
+    settingsModal.style.display = "none";
+    historyModal.style.display = "none";
+    if(typeof guideModal !== "undefined") guideModal.style.display = "none";
+    if(typeof archiveModal !== "undefined") archiveModal.style.display = "none";
+  }
+});
+
+/* ==========================================================================
+   HƯỚNG DẪN CHI TIẾT CHO CẢ 9 CÔNG CỤ (GUIDES DATA & MODAL)
+   ========================================================================== */
+const GUIDES = {
+  "video-veo3": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Biên soạn kịch bản video khởi động bài học (5 phân cảnh) ngắn gọn, sinh động, kích thích sự tò mò và mở ra mâu thuẫn nhận thức để giáo viên dẫn dắt vào bài mới.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Nhập tên bài học/chủ đề:</strong> Ghi chính xác tên bài (VD: <em>Giá trị lớn nhất, giá trị nhỏ nhất của hàm số</em>).</li>
+      <li><strong>Chọn tỷ lệ khung hình:</strong> <code>16:9</code> cho màn hình máy tính/TV, <code>9:16</code> cho điện thoại/TikTok.</li>
+      <li><strong>Tóm tắt / Nhân vật (Tùy chọn):</strong> Nhập bối cảnh tình huống thực tế hoặc tên nhân vật muốn xuất hiện. Nếu bỏ trống, AI sẽ tự tạo 2-3 nhân vật phù hợp.</li>
+      <li><strong>Tài liệu nguồn:</strong> Dán nội dung bài học để AI bám sát kiến thức cốt lõi.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">AI sẽ xuất ra: <strong>Hồ sơ nhân vật (Character Lock)</strong>, <strong>Storyboard</strong>, <strong>Prompt ảnh từng cảnh</strong> và <strong>Prompt Veo 3</strong>. Sao chép từng prompt Veo 3 dán vào Google Veo 3 / VideoFX để tạo video.</p>
+  `,
+
+  "phieu-hoc-tap": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Sinh prompt JSON chuẩn thiết kế Infographic Phiếu học tập đa dạng dạng bài (Điền khuyết, Ghép đôi, Đúng/Sai, Trắc nghiệm, Tự luận) giúp học sinh luyện tập.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Tên bài học/chủ đề:</strong> Nhập bài học cần tạo phiếu.</li>
+      <li><strong>Số lượng câu hỏi:</strong> Tùy chỉnh số lượng cho 5 trạm/dạng bài. Nếu dạng nào để số 0, AI sẽ tự động bỏ trạm đó.</li>
+      <li><strong>Kèm đáp án / lời giải:</strong> Chọn <code>BẬT</code> để tạo thêm Phần 2 (Đáp án & Hướng dẫn chấm).</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Dán đoạn mã PROMPT JSON thu được vào ChatGPT/Gemini/Napkin AI hoặc Midjourney để vẽ phiếu học tập trực quan chuyên nghiệp.</p>
+  `,
+
+  "mindmap": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Tổng hợp 95% lý thuyết cốt lõi của bài học thành Infographic Sơ đồ tư duy (Mindmap) khổ A4 phong cách retro, trực quan phục vụ bài giảng.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Tên bài học:</strong> Nhập số thứ tự và tên bài (VD: <em>Bài 1. Khảo sát sự biến thiên hàm số</em>).</li>
+      <li><strong>Nội dung bài học:</strong> Dán văn bản lý thuyết sách giáo khoa vào ô Tài liệu nguồn.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Dùng PROMPT JSON để tạo ảnh Infographic tóm tắt bài học phục vụ chiếu bài giảng hoặc in tài liệu học tập.</p>
+  `,
+
+  "geogebra": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Tự động chuyển đổi yêu cầu dựng hình toán học tự nhiên thành mã lệnh Script GeoGebra 2D/3D sẵn sàng dán chạy ngay.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Yêu cầu dựng hình:</strong> Mô tả chi tiết hình vẽ (VD: <em>Vẽ hình chóp S.ABCD đáy vuông cạnh a, SA vuông góc đáy, SA=a*sqrt(3)...</em>).</li>
+      <li><strong>Không gian:</strong> Chọn 2D hoặc 3D.</li>
+      <li><strong>Tùy chọn hiển thị:</strong> Tích chọn Hiện nhãn, Ẩn đối tượng phụ, Phân màu trực quan.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Mở phần mềm GeoGebra -> Vào ô Nhập lệnh (Input Command) hoặc cửa sổ Lập trình -> Dán đoạn script vào để tự động vẽ hình chuẩn xác 100%.</p>
+  `,
+
+  "de-22-cau": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Biên soạn đề kiểm tra môn Toán chuẩn cấu trúc mới của Bộ GD&ĐT gồm 22 câu (12 Trắc nghiệm + 4 Đúng/Sai + 6 Trả lời ngắn) tích hợp công thức LaTeX và hình vẽ TikZ.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Tiêu đề đề thi & Chương/chủ đề:</strong> Nhập tiêu đề đề thi và các nội dung ôn tập.</li>
+      <li><strong>Điều chỉnh số câu:</strong> Tùy chỉnh số lượng câu cho 3 phần nếu muốn.</li>
+      <li><strong>Tài liệu nguồn:</strong> Dán ma trận đề hoặc nội dung kiến thức bám sát.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Bấm nút <strong>📄 Xuất file Word (.doc)</strong> để tải đề thi về máy chỉnh sửa trên Microsoft Word hoặc dán mã TikZ/LaTeX vào Overleaf/MathType.</p>
+  `,
+
+  "toan-thuc-te": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Biên soạn các bài tập toán ứng dụng đời sống thực tế (tối ưu chi phí, đo đạc khoảng cách, tài chính, mô hình thực tế...).</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Chọn dạng:</strong> Chọn <em>Đề bài toán thực tế (văn bản)</em> hoặc <em>Infographic minh họa 3 cột</em>.</li>
+      <li><strong>Chủ đề & Số câu:</strong> Nhập tên chủ đề toán học và số bài tập cần tạo.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Sử dụng tập bài tập thực tế để làm phong phú đề kiểm tra, hoặc dùng bản Infographic 3 cột (Đề bài - Hình minh họa TikZ - Gợi ý) cho học sinh thảo luận nhóm.</p>
+  `,
+
+  "truyen-tranh": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Lồng ghép kiến thức toán học vào các câu chuyện tranh sinh động với những nhân vật hoạt hình quen thuộc với học sinh.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Phong cách nhân vật:</strong> Chọn nhân vật yêu thích (Doraemon, Tom & Jerry, Hãy đợi đấy, Sketchnote...).</li>
+      <li><strong>Số cảnh truyện & Nội dung:</strong> Nhập số cảnh (VD: 4 cảnh) và bài học cần lồng ghép.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Copy các đoạn prompt mô tả cảnh tranh dán vào các công cụ AI vẽ ảnh (Midjourney, DALL-E 3, Bing Image Creator) để sinh bộ truyện tranh bài học toán học.</p>
+  `,
+
+  "game-quiz": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Tạo một Mini Game / Quiz trắc nghiệm tương tác dạng file HTML đơn file chạy trực tiếp trên máy tính và điện thoại, có tự động chấm điểm và đánh giá năng lực.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Tên bài học / chủ đề:</strong> Nhập nội dung cần kiểm tra.</li>
+      <li><strong>Số câu hỏi & Mức độ:</strong> Chọn số câu và mức độ (Hỗn hợp, Dễ, Trung bình, Khó).</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Bấm tab <strong>👁 Xem trước giao diện</strong> để chơi thử quiz ngay trong ứng dụng! Bấm <strong>💾 Tải file về máy</strong> để lấy file <code>.html</code> cho học sinh làm bài.</p>
+  `,
+
+  "mail-ao": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Hướng dẫn tạo và sử dụng các địa chỉ Email tạm thời (Mail ảo) để đăng ký dùng thử miễn phí các dịch vụ AI (ChatGPT, Gemini, Midjourney...) mà không lộ email cá nhân.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li>Truy cập <a href="https://tempmailapi.io.vn/" target="_blank">tempmailapi.io.vn</a> hoặc <a href="https://temp-mail.org/" target="_blank">temp-mail.org</a>.</li>
+      <li>Sao chép email tạm được tạo tự động.</li>
+      <li>Sử dụng email đó để đăng ký tài khoản ChatGPT / Google AI Studio.</li>
+      <li>Quay lại trang mail ảo mở hộp thư đến (Inbox) để lấy mã kích hoạt OTP.</li>
+    </ol>
+  `,
+
+  "toan-tieng-anh-clil": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Phát triển đồng thời <strong>Năng lực Toán học</strong> và <strong>Năng lực Ngôn ngữ</strong> (Tiếng Anh là ngôn ngữ thứ hai) theo phương pháp CLIL chuẩn chỉ đạo của Bộ GD&ĐT & Sở GD&ĐT TP.HCM.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Chọn Dạng bài sản xuất:</strong>
+        <ul>
+          <li><em>Bài học Từ vựng & Mẫu câu:</em> Trích xuất thuật ngữ IPA, cách đọc công thức toán, mẫu câu giao tiếp và hội thoại thầy-trò.</li>
+          <li><em>Kế hoạch bài dạy CLIL 4C:</em> Thiết kế giáo án song ngữ chuẩn 4C (Content, Communication, Cognition, Culture).</li>
+          <li><em>Infographic / Flashcard:</em> Trả về prompt JSON để AI sinh ảnh học từ vựng và công thức trực quan.</li>
+        </ul>
+      </li>
+      <li><strong>Điền thông tin:</strong> Nhập tên chủ đề toán, chọn khối lớp, trình độ Tiếng Anh học sinh và tích chọn các mục bổ trợ.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Copy prompt thu được dán vào Gemini / ChatGPT để nhận bài giảng song ngữ hoàn chỉnh, dùng mẫu câu đọc công thức & hội thoại giảng dạy trực tiếp trên lớp CLIL.</p>
+  `
+};
+
+const guideModal = document.getElementById("guideModal");
+const guideModalTitle = document.getElementById("guideModalTitle");
+const guideModalBody = document.getElementById("guideModalBody");
+
+document.getElementById("toolGuideBtn").addEventListener("click", ()=>{
+  const guideContent = GUIDES[currentTool.id] || "<p>Chưa có hướng dẫn cho công cụ này.</p>";
+  guideModalTitle.textContent = "📘 Hướng dẫn chi tiết: " + currentTool.name;
+  guideModalBody.innerHTML = guideContent;
+  guideModal.style.display = "flex";
+});
+
+document.getElementById("guideCloseBtn").addEventListener("click", ()=>{
+  guideModal.style.display = "none";
+});
+
+/* ==========================================================================
+   QUẢN LÝ KHO LƯU TRỮ KẾT QUẢ (ARCHIVE STORAGE SYSTEM)
+   ========================================================================== */
+const archiveModal = document.getElementById("archiveModal");
+const archiveList = document.getElementById("archiveList");
+const archiveSearchInput = document.getElementById("archiveSearchInput");
+const archiveFilterType = document.getElementById("archiveFilterType");
+const archiveCountStatus = document.getElementById("archiveCountStatus");
+
+function getArchiveData(){
+  try {
+    return JSON.parse(localStorage.getItem("GEMINI_SAVED_ARCHIVE") || "[]");
+  } catch(e){ return []; }
+}
+
+function saveArchiveData(data){
+  localStorage.setItem("GEMINI_SAVED_ARCHIVE", JSON.stringify(data));
+}
+
+// Thêm kết quả vừa tạo vào kho
+document.getElementById("saveArchiveBtn").addEventListener("click", ()=>{
+  if(!window.__lastOutput) return;
+  const now = new Date().toLocaleString("vi-VN");
+  const toolName = currentTool ? currentTool.name : "Công cụ";
+  const defaultTitle = (currentTool ? currentTool.title : "Tài liệu") + " - " + now;
+  
+  const userTitle = prompt("Nhập tên gợi nhớ để lưu kết quả vào kho:", defaultTitle);
+  if(userTitle === null) return;
+  
+  const title = userTitle.trim() || defaultTitle;
+  const itemType = (window.__lastType === "html") ? "HTML" :
+                   (window.__lastType === "json") ? "JSON" :
+                   (window.__lastFilename && window.__lastFilename.endsWith(".doc")) ? "DOC" : "PROMPT";
+
+  const newItem = {
+    id: Date.now(),
+    title: title,
+    toolId: currentTool ? currentTool.id : "custom",
+    toolName: toolName,
+    time: now,
+    type: itemType,
+    filename: window.__lastFilename || "file.txt",
+    content: window.__lastOutput
+  };
+
+  const archive = getArchiveData();
+  archive.unshift(newItem);
+  saveArchiveData(archive);
+
+  const btn = document.getElementById("saveArchiveBtn");
+  const orig = btn.innerHTML;
+  btn.innerHTML = "✓ Đã lưu vào kho!";
+  setTimeout(()=> btn.innerHTML = orig, 2000);
+});
+
+// Nút mở kho lưu trữ
+document.getElementById("archiveBtn").addEventListener("click", ()=>{
+  archiveModal.style.display = "flex";
+  renderArchiveItems();
+});
+
+document.getElementById("archiveCloseBtn").addEventListener("click", ()=>{
+  archiveModal.style.display = "none";
+});
+
+// Thêm thủ công ghi chú/tài liệu vào kho
+document.getElementById("addNoteArchiveBtn").addEventListener("click", ()=>{
+  const form = document.getElementById("addArchiveForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+});
+
+document.getElementById("cancelAddArchiveBtn").addEventListener("click", ()=>{
+  document.getElementById("addArchiveForm").style.display = "none";
+});
+
+document.getElementById("saveNewArchiveBtn").addEventListener("click", ()=>{
+  const title = document.getElementById("newArchiveTitle").value.trim();
+  const content = document.getElementById("newArchiveContent").value.trim();
+  if(!title || !content){
+    alert("Vui lòng nhập cả tiêu đề và nội dung.");
+    return;
+  }
+  const newItem = {
+    id: Date.now(),
+    title: title,
+    toolId: "custom",
+    toolName: "Ghi chú thủ công",
+    time: new Date().toLocaleString("vi-VN"),
+    type: "NOTE",
+    filename: "note.txt",
+    content: content
+  };
+  const archive = getArchiveData();
+  archive.unshift(newItem);
+  saveArchiveData(archive);
+  
+  document.getElementById("newArchiveTitle").value = "";
+  document.getElementById("newArchiveContent").value = "";
+  document.getElementById("addArchiveForm").style.display = "none";
+  renderArchiveItems();
+});
+
+// Tìm kiếm & lọc
+archiveSearchInput.addEventListener("input", renderArchiveItems);
+archiveFilterType.addEventListener("change", renderArchiveItems);
+
+function renderArchiveItems(){
+  const archive = getArchiveData();
+  const q = archiveSearchInput.value.trim().toLowerCase();
+  const typeFilter = archiveFilterType.value;
+
+  const filtered = archive.filter(item => {
+    const matchSearch = !q || item.title.toLowerCase().includes(q) || item.toolName.toLowerCase().includes(q) || (item.content && item.content.toLowerCase().includes(q));
+    const matchType = (typeFilter === "ALL") || (item.type === typeFilter);
+    return matchSearch && matchType;
+  });
+
+  archiveCountStatus.textContent = `Tổng số: ${filtered.length} / ${archive.length} tài liệu trong kho`;
+
+  if(!filtered.length){
+    archiveList.innerHTML = `<p style="color:#73806a;font-style:italic;text-align:center;padding:20px 0;">Không tìm thấy tài liệu nào trong kho lưu trữ.</p>`;
+    return;
+  }
+
+  archiveList.innerHTML = filtered.map(item => `
+    <div style="border:1px solid #c9c0a4;background:#fff;border-radius:8px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+        <div>
+          <span style="background:#e0eefd;color:#002B49;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:6px;">${escapeHtml(item.type)}</span>
+          <strong style="font-size:13.5px;color:#20281f;">${escapeHtml(item.title)}</strong>
+        </div>
+        <span style="font-size:11px;color:#73806a;white-space:nowrap;">${escapeHtml(item.time)}</span>
+      </div>
+      <div style="font-size:11.5px;color:#5a6350;margin-bottom:8px;">Công cụ: ${escapeHtml(item.toolName)}</div>
+      <pre style="background:#fcfbf7;border:1px solid #ede8d8;border-radius:6px;padding:8px 10px;font-size:12px;max-height:100px;overflow:hidden;margin:0 0 10px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(item.content.slice(0, 300))}${item.content.length > 300 ? "..." : ""}</pre>
+      <div style="display:flex;gap:6px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" onclick="copyArchiveItem(${item.id})" style="font-size:11.5px;padding:3px 8px;">📋 Copy</button>
+        <button class="btn btn-ghost btn-sm" onclick="downloadArchiveItem(${item.id})" style="font-size:11.5px;padding:3px 8px;">💾 Tải về</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteArchiveItem(${item.id})" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;padding:3px 8px;">🗑 Xóa</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+window.copyArchiveItem = async function(id){
+  const archive = getArchiveData();
+  const item = archive.find(i => i.id === id);
+  if(item){
+    await copyToClipboard(item.content);
+    alert("✓ Đã sao chép nội dung tài liệu vào bộ nhớ tạm!");
+  }
+};
+
+window.downloadArchiveItem = function(id){
+  const archive = getArchiveData();
+  const item = archive.find(i => i.id === id);
+  if(!item) return;
+  const blob = new Blob([item.content], {type: "text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = item.filename || `${item.title}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.deleteArchiveItem = function(id){
+  if(confirm("Bạn có chắc muốn xóa tài liệu này khỏi kho lưu trữ?")){
+    let archive = getArchiveData();
+    archive = archive.filter(i => i.id !== id);
+    saveArchiveData(archive);
+    renderArchiveItems();
+  }
+};
+
+document.getElementById("clearArchiveBtn").addEventListener("click", ()=>{
+  if(confirm("Bạn có chắc muốn XÓA TOÀN BỘ KHO LƯU TRỮ? Thao tác này không thể hoàn tác.")){
+    localStorage.removeItem("GEMINI_SAVED_ARCHIVE");
+    renderArchiveItems();
+  }
+});
+
+/* ==========================================================================
+   KHỞI TẠO BAN ĐẦU KHI TRANG SẴN SÀNG
+   ========================================================================== */
+selectTool(currentTool.id);
+checkApiKeyOnLoad();
+</script>
+</body>
+</html>
