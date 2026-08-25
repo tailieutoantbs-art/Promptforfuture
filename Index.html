@@ -21,6 +21,10 @@
   };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- Firebase SDK Web (v10 Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --board:#123832;
@@ -222,9 +226,16 @@
       <h1>TẠO PROMPT<br>TOÁN TBS</h1>
       <p>Chọn công cụ, điền thông tin và bấm Tạo prompt.</p>
       <div class="nav-btns">
+        <button class="btn btn-ghost" id="authBtn" style="width:100%;font-size:12.5px;color:#8CE99A;border-color:rgba(140,233,154,0.45);">👤 Tài khoản (Chưa đăng nhập)</button>
+        <button class="btn btn-ghost" id="socialBtn" style="width:100%;font-size:12.5px;color:#FF9E8A;border-color:rgba(255,158,138,0.45);">❤️ Thả tim & 💬 Giao lưu</button>
+        <button class="btn btn-ghost" id="quickLinksBtn" style="width:100%;font-size:12.5px;color:#70C7BA;border-color:rgba(112,199,186,0.45);">🔗 Link tiện ích thao tác</button>
         <button class="btn btn-ghost" id="settingsBtn" style="width:100%;font-size:12.5px;">⚙ Cài đặt API key</button>
         <button class="btn btn-ghost" id="historyBtn" style="width:100%;font-size:12.5px;">🗂 Lịch sử tạo prompt</button>
         <button class="btn btn-ghost" id="archiveBtn" style="width:100%;font-size:12.5px;color:var(--yellow);border-color:rgba(242,193,78,0.45);">📦 Kho lưu trữ kết quả</button>
+      </div>
+      <div id="sidebarCommunityBadge" style="font-size:11.5px;color:var(--chalk-dim);margin-top:10px;padding:6px 10px;background:rgba(245,241,228,0.06);border:1px dashed var(--line);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span>👥 Lượt dùng: <strong id="sidebarVisitsCount" style="color:var(--yellow)">0</strong></span>
+        <span>❤️ Thả tim: <strong id="sidebarHeartsCount" style="color:#FF9E8A">0</strong></span>
       </div>
     </div>
     <ul class="tool-list" id="toolList"></ul>
@@ -300,10 +311,8 @@
     <select id="apiModelSelect" style="width:100%;padding:9px 10px;border-radius:6px;border:1px solid #c9c0a4;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;margin-bottom:12px;background:#fff;">
       <option value="gemini-2.5-flash">Gemini 2.5 Flash (Mới nhất, khuyên dùng)</option>
       <option value="gemini-2.5-pro">Gemini 2.5 Pro (Tư duy toán & phân tích chuyên sâu)</option>
-      <option value="gemini-2.0-flash">Gemini 2.0 Flash (Tốc độ cao & ổn định)</option>
-      <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite (Tốc độ phản hồi cực nhanh)</option>
+      <option value="gemini-3.6-flash">Gemini 3.6 Flash (Tốc độ cao & thế hệ mới)</option>
       <option value="gemini-1.5-flash">Gemini 1.5 Flash (Ổn định, quota cao)</option>
-      <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B (Tiết kiệm dung lượng)</option>
       <option value="gemini-1.5-pro">Gemini 1.5 Pro (Chi tiết & dung lượng ngữ cảnh lớn)</option>
     </select>
 
@@ -349,6 +358,12 @@
       <button class="btn btn-ghost btn-sm" id="archiveCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
     </div>
     
+    <!-- Thanh chuyển đống kho lưu trữ Local / Cloud -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="view-tab active" id="archiveTabLocal" type="button">💻 Máy cá nhân (Local)</button>
+      <button class="view-tab" id="archiveTabCloud" type="button">☁️ Đám mây (Firebase Cloud)</button>
+    </div>
+
     <!-- Thanh tìm kiếm & lọc -->
     <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
       <input type="text" id="archiveSearchInput" placeholder="🔍 Tìm kiếm theo tên bài, công cụ, từ khóa..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
@@ -379,6 +394,172 @@
     <div class="modal-actions" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
       <span id="archiveCountStatus" style="font-size:12px;color:#73806a;">Đang tải kho lưu trữ...</span>
       <button class="btn btn-ghost btn-sm" id="clearArchiveBtn" type="button" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;">Xóa toàn bộ kho</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Đăng nhập / Tài khoản -->
+<div id="authModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:460px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">👤 Tài khoản & Đăng nhập</h3>
+      <button class="btn btn-ghost btn-sm" id="authCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <!-- Trạng thái chưa đăng nhập -->
+    <div id="authLoggedOutView">
+      <p style="font-size:12.5px;color:#5a6350;margin-bottom:14px;">
+        Đăng nhập tài khoản để thả tim, bình luận giao lưu và đồng bộ lưu trữ các Prompt đã tạo lên Cloud Firebase.
+      </p>
+
+      <button class="btn btn-primary" id="googleSignInBtn" type="button" style="width:100%;margin-bottom:12px;background:#4285F4;color:#fff;border:none;">
+        🌐 Đăng nhập nhanh bằng Google
+      </button>
+
+      <div style="text-align:center;font-size:12px;color:#888;margin:10px 0;position:relative;">
+        <span style="background:#FBF7EC;padding:0 10px;position:relative;z-index:1;">hoặc Đăng nhập / Đăng ký Email</span>
+        <div style="border-bottom:1px dashed #c9c0a4;position:absolute;top:50%;left:0;right:0;"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+        <input type="email" id="authEmailInput" placeholder="Email của bạn..." style="width:100%;padding:9px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;box-sizing:border-box;">
+        <input type="password" id="authPasswordInput" placeholder="Mật khẩu (ít nhất 6 ký tự)..." style="width:100%;padding:9px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;box-sizing:border-box;">
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button class="btn btn-primary btn-sm" id="emailSignInBtn" type="button" style="flex:1;">Đăng nhập</button>
+        <button class="btn btn-ghost btn-sm" id="emailSignUpBtn" type="button" style="flex:1;color:#20281f;border-color:#c9c0a4;">Đăng ký mới</button>
+      </div>
+
+      <button class="btn btn-ghost btn-sm" id="anonymousSignInBtn" type="button" style="width:100%;font-size:11.5px;color:#73806a;">
+        🕶 Dùng tiếp với vai trò Khách (Anonymous)
+      </button>
+    </div>
+
+    <!-- Trạng thái đã đăng nhập -->
+    <div id="authLoggedInView" style="display:none;">
+      <div style="text-align:center;padding:12px 0;">
+        <div id="authUserAvatar" style="width:64px;height:64px;border-radius:50%;background:var(--board);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 10px;">👤</div>
+        <h4 id="authUserName" style="margin:0 0 4px;font-size:16px;">Tên người dùng</h4>
+        <p id="authUserEmail" style="margin:0;font-size:12.5px;color:#5a6350;">user@example.com</p>
+        <span id="authBadge" style="display:inline-block;margin-top:6px;background:#e0eefd;color:#002B49;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600;">Google Account</span>
+      </div>
+
+      <div style="margin-top:16px;border-top:1px dashed #c9c0a4;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
+        <button class="btn btn-ghost btn-sm" id="signOutBtn" type="button" style="color:#a83232;border-color:#e0b2b2;">🚪 Đăng xuất</button>
+      </div>
+    </div>
+
+    <div id="authStatus" style="font-size:12px;margin-top:10px;min-height:16px;color:#a83232;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- Modal Thả tim & Bình luận giao lưu -->
+<div id="socialModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:620px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">❤️ Thả tim & 💬 Giao lưu cộng đồng</h3>
+      <button class="btn btn-ghost btn-sm" id="socialCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <!-- Khối Thả tim & Chỉ số -->
+    <div style="background:#fff;border:1px solid #c9c0a4;border-radius:10px;padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:12px;color:#73806a;">Cộng đồng Giáo viên Toán TBS</div>
+        <div style="font-size:14px;font-weight:700;color:#123832;margin-top:2px;">
+          👥 <span id="modalVisitsCount">0</span> lượt sử dụng · ❤️ <span id="modalHeartsCount">0</span> tim đã thả
+        </div>
+      </div>
+      <button class="btn btn-primary" id="giveHeartBtn" type="button" style="background:#E1523D;color:#fff;border:none;padding:8px 16px;font-size:13px;border-radius:20px;box-shadow:0 3px 8px rgba(225,82,61,0.3);">
+        ❤️ Thả tim ủng hộ (<span id="btnHeartCount">0</span>)
+      </button>
+    </div>
+
+    <!-- Khối gửi Bình luận -->
+    <div style="background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:12px;margin-bottom:14px;">
+      <h4 style="margin:0 0 8px;font-size:13.5px;color:#123832;">✍️ BÌNH LUẬN GIAO LƯU</h4>
+      <input type="text" id="commentAuthorInput" placeholder="Tên / Biệt danh của bạn (VD: Thầy Hùng Toán)..." style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:12.5px;box-sizing:border-box;background:#fff;">
+      <textarea id="commentContentInput" placeholder="Nhập cảm nhận, chia sẻ ý tưởng tạo prompt hoặc giao lưu cùng quý thầy cô..." style="width:100%;height:65px;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:12.5px;box-sizing:border-box;background:#fff;"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="commentStatus" style="font-size:11.5px;color:#73806a;"></span>
+        <button class="btn btn-primary btn-sm" id="sendCommentBtn" type="button">🚀 Gửi bình luận</button>
+      </div>
+    </div>
+
+    <!-- Danh sách Bình luận -->
+    <div style="font-weight:600;font-size:12.5px;color:#123832;margin-bottom:8px;">💬 BÌNH LUẬN MỚI NHẤT FROM CỘNG ĐỒNG:</div>
+    <div id="commentsList" style="font-size:12.5px;line-height:1.6;max-height:40vh;overflow-y:auto;padding-right:4px;"></div>
+  </div>
+</div>
+
+<!-- Modal Link liên kết thao tác trực tiếp -->
+<div id="quickLinksModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:700px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">🔗 Link liên kết các trang tiện ích thao tác</h3>
+      <button class="btn btn-ghost btn-sm" id="quickLinksCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <p style="font-size:12.5px;color:#5a6350;margin-bottom:14px;">
+      Bấm vào đường link bên dưới để mở trực tiếp trang web tiện ích trong tab mới để thực thi Prompt hoặc lấy dữ liệu:
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:4px;">
+      
+      <!-- Nhóm 1: AI & Sinh Nội Dung -->
+      <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">🤖 TRANG AI & TẠO VIDEO / NỘI DUNG</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🔑 Google AI Studio (Lấy Key)
+          </a>
+          <a href="https://aitestkitchen.withgoogle.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🎬 Google Veo 3 / VideoFX
+          </a>
+          <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            💬 ChatGPT Open AI
+          </a>
+          <a href="https://claude.ai/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🧠 Claude AI Anthropic
+          </a>
+          <a href="https://www.napkin.ai/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            📊 Napkin AI (Infographic)
+          </a>
+        </div>
+      </div>
+
+      <!-- Nhóm 2: Toán & Vẽ Hình -->
+      <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">📐 TRANG DỰNG HÌNH & TÍNH TOÁN TOÁN HỌC</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
+          <a href="https://www.geogebra.org/classic" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#20281f;background:#f5f0e1;border-color:#c9c0a4;">
+            📐 GeoGebra Classic (2D/3D)
+          </a>
+          <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#20281f;background:#f5f0e1;border-color:#c9c0a4;">
+            📈 Desmos Graphing Calculator
+          </a>
+          <a href="https://www.overleaf.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#20281f;background:#f5f0e1;border-color:#c9c0a4;">
+            📄 Overleaf (Soạn thảo LaTeX/TikZ)
+          </a>
+        </div>
+      </div>
+
+      <!-- Nhóm 3: Công cụ Hỗ trợ -->
+      <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">📧 CÔNG CỤ HỖ TRỢ KHÁC</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
+          <a href="https://tempmailapi.io.vn/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
+            📧 TempMail API (Mail ảo)
+          </a>
+          <a href="https://temp-mail.org/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
+            ✉️ Temp-Mail Org
+          </a>
+          <a href="https://docs.mathjax.org/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
+            🧮 Hướng dẫn MathJax LaTeX
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -917,6 +1098,12 @@ const TOOLS = [
     }
   },
   {
+    id:"mail-ao", num:"09", name:"ChatGPT bằng mail ảo",
+    kicker:"Hướng dẫn", title:"Tạo tài khoản ChatGPT bằng mail ảo",
+    desc:"Đây là bước thiết lập công cụ, không phải một prompt AI — thực hiện trực tiếp theo hướng dẫn bên dưới.",
+    isInfo:true
+  },
+  {
     id:"toan-tieng-anh-clil", num:"10", name:"Toán Tiếng Anh (CLIL)",
     kicker:"Dạy học song ngữ", title:"Toán Tiếng Anh & Giáo án CLIL",
     desc:"Tạo prompt bài học từ vựng, cách đọc công thức chuẩn bản ngữ, mẫu câu giao tiếp lớp học và giáo án song ngữ CLIL (Tiếng Anh là ngôn ngữ thứ 2).",
@@ -948,12 +1135,6 @@ const TOOLS = [
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
-  },
-  {
-    id:"mail-ao", num:"09", name:"ChatGPT bằng mail ảo",
-    kicker:"Hướng dẫn", title:"Tạo tài khoản ChatGPT bằng mail ảo",
-    desc:"Đây là bước thiết lập công cụ, không phải một prompt AI — thực hiện trực tiếp theo hướng dẫn bên dưới.",
-    isInfo:true
   }
 ];
 
@@ -1299,7 +1480,14 @@ function getMimeType(file){
 
 function getLocalApiKey(){ return localStorage.getItem("GEMINI_API_KEY") || ""; }
 function setLocalApiKey(key){ localStorage.setItem("GEMINI_API_KEY", key); }
-function getLocalModel(){ return localStorage.getItem("GEMINI_MODEL") || "gemini-2.0-flash"; }
+function getLocalModel(){
+  let m = localStorage.getItem("GEMINI_MODEL");
+  if(!m || m === "gemini-2.0-flash" || m === "gemini-2.0-flash-lite"){
+    m = "gemini-2.5-flash";
+    localStorage.setItem("GEMINI_MODEL", m);
+  }
+  return m;
+}
 function setLocalModel(model){ localStorage.setItem("GEMINI_MODEL", model); }
 
 // Kiểm tra key khi tải trang
@@ -2208,10 +2396,514 @@ document.getElementById("clearArchiveBtn").addEventListener("click", ()=>{
 });
 
 /* ==========================================================================
+   TÍCH HỢP FIREBASE AUTH, FIRESTORE STATS, THẢ TIM, BÌNH LUẬN & CLOUD ARCHIVE
+   ========================================================================== */
+
+// Cấu hình mặc định Firebase (Demo / Standalone)
+const defaultFirebaseConfig = {
+  apiKey: "AIzaSyDemoConfigKeyForPromptAppTBS123",
+  authDomain: "prompt-toan-tbs.firebaseapp.com",
+  projectId: "prompt-toan-tbs",
+  storageBucket: "prompt-toan-tbs.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456"
+};
+
+let fbApp = null;
+let fbAuth = null;
+let fbDb = null;
+
+let currentUser = null;
+let currentArchiveTab = "local"; // "local" | "cloud"
+let cloudArchiveItems = [];
+
+function initFirebaseSystem(){
+  if(typeof firebase === "undefined") return;
+  
+  try {
+    let cfg = defaultFirebaseConfig;
+    const userCfgStr = localStorage.getItem("CUSTOM_FIREBASE_CONFIG");
+    if(userCfgStr){
+      try { cfg = JSON.parse(userCfgStr); } catch(e){}
+    }
+    
+    if(!firebase.apps.length){
+      fbApp = firebase.initializeApp(cfg);
+    } else {
+      fbApp = firebase.app();
+    }
+    fbAuth = firebase.auth();
+    fbDb = firebase.firestore();
+
+    // Lắng nghe trạng thái Đăng nhập
+    fbAuth.onAuthStateChanged(user => {
+      currentUser = user;
+      updateAuthUI(user);
+      if(user){
+        loadCloudArchives();
+      }
+    });
+
+    // Lắng nghe lượt dùng, thả tim & bình luận thời gian thực
+    initCommunityStats();
+
+  } catch(err){
+    console.warn("Lỗi khởi tạo Firebase:", err);
+  }
+}
+
+/* --- TÀI KHOẢN & ĐĂNG NHẬP (FIREBASE AUTH) --- */
+const authModal = document.getElementById("authModal");
+const authBtn = document.getElementById("authBtn");
+const authCloseBtn = document.getElementById("authCloseBtn");
+const authLoggedOutView = document.getElementById("authLoggedOutView");
+const authLoggedInView = document.getElementById("authLoggedInView");
+const authStatus = document.getElementById("authStatus");
+
+authBtn.addEventListener("click", ()=>{
+  authModal.style.display = "flex";
+});
+authCloseBtn.addEventListener("click", ()=>{
+  authModal.style.display = "none";
+});
+
+function updateAuthUI(user){
+  if(user){
+    authBtn.innerHTML = `👤 ${escapeHtml(user.displayName || user.email || "Thành viên")}`;
+    authBtn.style.color = "#8CE99A";
+    authLoggedOutView.style.display = "none";
+    authLoggedInView.style.display = "block";
+    
+    document.getElementById("authUserName").textContent = user.displayName || (user.isAnonymous ? "Khách Vô Danh" : "Thành viên");
+    document.getElementById("authUserEmail").textContent = user.email || (user.isAnonymous ? "Chưa liên kết email" : "");
+    document.getElementById("authBadge").textContent = user.isAnonymous ? "Anonymous User" : (user.providerData && user.providerData[0] && user.providerData[0].providerId === "google.com" ? "Google Account" : "Email Account");
+    if(user.photoURL){
+      document.getElementById("authUserAvatar").innerHTML = `<img src="${escapeHtml(user.photoURL)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    } else {
+      document.getElementById("authUserAvatar").textContent = (user.displayName || user.email || "U").charAt(0).toUpperCase();
+    }
+  } else {
+    authBtn.innerHTML = `👤 Tài khoản (Chưa đăng nhập)`;
+    authBtn.style.color = "#8CE99A";
+    authLoggedOutView.style.display = "block";
+    authLoggedInView.style.display = "none";
+  }
+}
+
+// Đăng nhập Google
+document.getElementById("googleSignInBtn").addEventListener("click", async ()=>{
+  if(!fbAuth){ alert("Firebase chưa khởi tạo."); return; }
+  authStatus.textContent = "Đang kết nối tới Google...";
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await fbAuth.signInWithPopup(provider);
+    authStatus.textContent = "";
+    authModal.style.display = "none";
+  } catch(err){
+    authStatus.textContent = "Lỗi đăng nhập Google: " + err.message;
+  }
+});
+
+// Đăng nhập Email
+document.getElementById("emailSignInBtn").addEventListener("click", async ()=>{
+  if(!fbAuth) return;
+  const email = document.getElementById("authEmailInput").value.trim();
+  const pw = document.getElementById("authPasswordInput").value.trim();
+  if(!email || !pw){ authStatus.textContent = "Vui lòng nhập Email và Mật khẩu."; return; }
+  authStatus.textContent = "Đang đăng nhập...";
+  try {
+    await fbAuth.signInWithEmailAndPassword(email, pw);
+    authStatus.textContent = "";
+    authModal.style.display = "none";
+  } catch(err){
+    authStatus.textContent = "Lỗi: " + err.message;
+  }
+});
+
+// Đăng ký Email
+document.getElementById("emailSignUpBtn").addEventListener("click", async ()=>{
+  if(!fbAuth) return;
+  const email = document.getElementById("authEmailInput").value.trim();
+  const pw = document.getElementById("authPasswordInput").value.trim();
+  if(!email || !pw){ authStatus.textContent = "Vui lòng nhập Email và Mật khẩu."; return; }
+  authStatus.textContent = "Đang đăng ký tài khoản...";
+  try {
+    await fbAuth.createUserWithEmailAndPassword(email, pw);
+    authStatus.textContent = "✓ Đã đăng ký thành công!";
+    setTimeout(()=> authModal.style.display = "none", 1000);
+  } catch(err){
+    authStatus.textContent = "Lỗi đăng ký: " + err.message;
+  }
+});
+
+// Đăng nhập Khách (Anonymous)
+document.getElementById("anonymousSignInBtn").addEventListener("click", async ()=>{
+  if(!fbAuth) return;
+  authStatus.textContent = "Đang đăng nhập chế độ Khách...";
+  try {
+    await fbAuth.signInAnonymously();
+    authStatus.textContent = "";
+    authModal.style.display = "none";
+  } catch(err){
+    authStatus.textContent = "Lỗi: " + err.message;
+  }
+});
+
+// Đăng xuất
+document.getElementById("signOutBtn").addEventListener("click", async ()=>{
+  if(!fbAuth) return;
+  await fbAuth.signOut();
+  authModal.style.display = "none";
+});
+
+/* --- THẢ TIM, ĐẾM SỐ LƯỢNG NGƯỜI DÙNG & BÌNH LUẬN GIAO LƯU --- */
+const socialModal = document.getElementById("socialModal");
+const socialBtn = document.getElementById("socialBtn");
+const socialCloseBtn = document.getElementById("socialCloseBtn");
+
+socialBtn.addEventListener("click", ()=>{
+  socialModal.style.display = "flex";
+});
+socialCloseBtn.addEventListener("click", ()=>{
+  socialModal.style.display = "none";
+});
+
+let visitsCount = Number(localStorage.getItem("LOCAL_VISITS_COUNT") || 128);
+let heartsCount = Number(localStorage.getItem("LOCAL_HEARTS_COUNT") || 56);
+
+function updateCommunityUI(visits, hearts){
+  visitsCount = visits;
+  heartsCount = hearts;
+  document.getElementById("sidebarVisitsCount").textContent = visits.toLocaleString();
+  document.getElementById("sidebarHeartsCount").textContent = hearts.toLocaleString();
+  document.getElementById("modalVisitsCount").textContent = visits.toLocaleString();
+  document.getElementById("modalHeartsCount").textContent = hearts.toLocaleString();
+  document.getElementById("btnHeartCount").textContent = hearts.toLocaleString();
+}
+
+function initCommunityStats(){
+  visitsCount++;
+  localStorage.setItem("LOCAL_VISITS_COUNT", visitsCount);
+  updateCommunityUI(visitsCount, heartsCount);
+
+  if(!fbDb) return;
+
+  const statsRef = fbDb.collection("app_stats").doc("general");
+  
+  statsRef.set({
+    visits: firebase.firestore.FieldValue.increment(1),
+    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).catch(err=>console.log("Stats set err:", err));
+
+  statsRef.onSnapshot(doc => {
+    if(doc.exists){
+      const d = doc.data();
+      const v = d.visits || visitsCount;
+      const h = d.hearts || heartsCount;
+      updateCommunityUI(v, h);
+    }
+  });
+
+  fbDb.collection("comments")
+    .orderBy("timestamp", "desc")
+    .limit(30)
+    .onSnapshot(snapshot => {
+      const comments = [];
+      snapshot.forEach(doc => comments.push({ id: doc.id, ...doc.data() }));
+      renderCommentsList(comments);
+    }, err => {
+      renderLocalComments();
+    });
+}
+
+// Nút Thả tim
+document.getElementById("giveHeartBtn").addEventListener("click", async ()=>{
+  heartsCount++;
+  localStorage.setItem("LOCAL_HEARTS_COUNT", heartsCount);
+  updateCommunityUI(visitsCount, heartsCount);
+
+  const btn = document.getElementById("giveHeartBtn");
+  btn.style.transform = "scale(1.15)";
+  setTimeout(()=> btn.style.transform = "scale(1)", 200);
+
+  if(fbDb){
+    fbDb.collection("app_stats").doc("general").set({
+      hearts: firebase.firestore.FieldValue.increment(1)
+    }, { merge: true }).catch(err=>console.log(err));
+  }
+});
+
+// Gửi bình luận
+document.getElementById("sendCommentBtn").addEventListener("click", async ()=>{
+  const authorInput = document.getElementById("commentAuthorInput");
+  const contentInput = document.getElementById("commentContentInput");
+  const statusEl = document.getElementById("commentStatus");
+
+  const author = authorInput.value.trim() || (currentUser ? (currentUser.displayName || currentUser.email) : "Thầy/Cô Giáo Vô Danh");
+  const content = contentInput.value.trim();
+
+  if(!content){
+    statusEl.textContent = "Vui lòng nhập nội dung bình luận.";
+    statusEl.style.color = "#E1523D";
+    return;
+  }
+
+  statusEl.textContent = "Đang gửi...";
+  statusEl.style.color = "var(--yellow)";
+
+  const newComment = {
+    author: author,
+    content: content,
+    time: new Date().toLocaleString("vi-VN"),
+    timestamp: Date.now(),
+    uid: currentUser ? currentUser.uid : "anon"
+  };
+
+  if(fbDb){
+    try {
+      await fbDb.collection("comments").add(newComment);
+      contentInput.value = "";
+      statusEl.textContent = "✓ Đã đăng bình luận thành công!";
+      statusEl.style.color = "#8CE99A";
+      setTimeout(()=> statusEl.textContent = "", 2000);
+    } catch(err){
+      statusEl.textContent = "Lỗi đăng: " + err.message;
+      statusEl.style.color = "#E1523D";
+    }
+  } else {
+    let localComms = [];
+    try { localComms = JSON.parse(localStorage.getItem("LOCAL_COMMENTS") || "[]"); } catch(e){}
+    localComms.unshift(newComment);
+    localStorage.setItem("LOCAL_COMMENTS", JSON.stringify(localComms));
+    contentInput.value = "";
+    statusEl.textContent = "✓ Đã đăng bình luận (Local)!";
+    renderLocalComments();
+  }
+});
+
+function renderLocalComments(){
+  let localComms = [];
+  try { localComms = JSON.parse(localStorage.getItem("LOCAL_COMMENTS") || "[]"); } catch(e){}
+  renderCommentsList(localComms);
+}
+
+function renderCommentsList(comments){
+  const el = document.getElementById("commentsList");
+  if(!comments || !comments.length){
+    el.innerHTML = `<p style="color:#73806a;font-style:italic;text-align:center;padding:12px 0;">Chưa có bình luận nào. Hãy là người đầu tiên để lại ý kiến!</p>`;
+    return;
+  }
+  el.innerHTML = comments.map(c => `
+    <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <strong style="color:#123832;font-size:13px;">👤 ${escapeHtml(c.author)}</strong>
+        <span style="font-size:11px;color:#73806a;">${escapeHtml(c.time || "")}</span>
+      </div>
+      <div style="color:#20281f;font-size:12.5px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(c.content)}</div>
+    </div>
+  `).join("");
+}
+
+/* --- MODAL LINK TIỆN ÍCH THAO TÁC TRỰC TIẾP --- */
+const quickLinksModal = document.getElementById("quickLinksModal");
+const quickLinksBtn = document.getElementById("quickLinksBtn");
+const quickLinksCloseBtn = document.getElementById("quickLinksCloseBtn");
+
+quickLinksBtn.addEventListener("click", ()=>{
+  quickLinksModal.style.display = "flex";
+});
+quickLinksCloseBtn.addEventListener("click", ()=>{
+  quickLinksModal.style.display = "none";
+});
+
+/* --- CHUYỂN TAB KHO LƯU TRỮ (LOCAL VS CLOUD FIREBASE) --- */
+const archiveTabLocal = document.getElementById("archiveTabLocal");
+const archiveTabCloud = document.getElementById("archiveTabCloud");
+
+archiveTabLocal.addEventListener("click", ()=>{
+  currentArchiveTab = "local";
+  archiveTabLocal.classList.add("active");
+  archiveTabCloud.classList.remove("active");
+  renderArchiveItems();
+});
+
+archiveTabCloud.addEventListener("click", ()=>{
+  currentArchiveTab = "cloud";
+  archiveTabCloud.classList.add("active");
+  archiveTabLocal.classList.remove("active");
+  if(currentUser){
+    loadCloudArchives();
+  } else {
+    renderCloudArchivesUI([]);
+  }
+});
+
+async function loadCloudArchives(){
+  if(!fbDb || !currentUser) return;
+  try {
+    const snapshot = await fbDb.collection("users").doc(currentUser.uid).collection("archives").orderBy("id", "desc").get();
+    cloudArchiveItems = [];
+    snapshot.forEach(doc => cloudArchiveItems.push(doc.data()));
+    if(currentArchiveTab === "cloud"){
+      renderArchiveItems();
+    }
+  } catch(err){
+    console.log("Lỗi tải cloud archives:", err);
+  }
+}
+
+const origRenderArchiveItems = renderArchiveItems;
+renderArchiveItems = function(){
+  if(currentArchiveTab === "cloud"){
+    renderCloudArchivesUI(cloudArchiveItems);
+  } else {
+    origRenderArchiveItems();
+  }
+};
+
+function renderCloudArchivesUI(items){
+  const q = archiveSearchInput.value.trim().toLowerCase();
+  const typeFilter = archiveFilterType.value;
+
+  if(!currentUser){
+    archiveCountStatus.textContent = "Chưa đăng nhập Cloud";
+    archiveList.innerHTML = `
+      <div style="text-align:center;padding:24px 10px;">
+        <p style="color:#5a6350;margin-bottom:12px;">Vui lòng Đăng nhập tài khoản để xem và đồng bộ dữ liệu trên Đám mây Firebase.</p>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('authBtn').click()">👤 Đăng nhập ngay</button>
+      </div>`;
+    return;
+  }
+
+  const filtered = items.filter(item => {
+    const matchSearch = !q || item.title.toLowerCase().includes(q) || item.toolName.toLowerCase().includes(q) || (item.content && item.content.toLowerCase().includes(q));
+    const matchType = (typeFilter === "ALL") || (item.type === typeFilter);
+    return matchSearch && matchType;
+  });
+
+  archiveCountStatus.textContent = `☁️ Đám mây Cloud: ${filtered.length} / ${items.length} tài liệu`;
+
+  if(!filtered.length){
+    archiveList.innerHTML = `<p style="color:#73806a;font-style:italic;text-align:center;padding:20px 0;">Không có tài liệu nào lưu trên Đám mây Firebase.</p>`;
+    return;
+  }
+
+  archiveList.innerHTML = filtered.map(item => `
+    <div style="border:1px solid #b3d4fc;background:#f4f8ff;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+        <div>
+          <span style="background:#002B49;color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:6px;">☁️ ${escapeHtml(item.type)}</span>
+          <strong style="font-size:13.5px;color:#002B49;">${escapeHtml(item.title)}</strong>
+        </div>
+        <span style="font-size:11px;color:#73806a;white-space:nowrap;">${escapeHtml(item.time)}</span>
+      </div>
+      <div style="font-size:11.5px;color:#5a6350;margin-bottom:8px;">Công cụ: ${escapeHtml(item.toolName)}</div>
+      <pre style="background:#fff;border:1px solid #d0e1fd;border-radius:6px;padding:8px 10px;font-size:12px;max-height:100px;overflow:hidden;margin:0 0 10px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(item.content.slice(0, 300))}${item.content.length > 300 ? "..." : ""}</pre>
+      <div style="display:flex;gap:6px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" onclick="copyArchiveItemCloud('${item.id}')" style="font-size:11.5px;padding:3px 8px;">📋 Copy</button>
+        <button class="btn btn-ghost btn-sm" onclick="downloadArchiveItemCloud('${item.id}')" style="font-size:11.5px;padding:3px 8px;">💾 Tải về</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteArchiveItemCloud('${item.id}')" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;padding:3px 8px;">🗑 Xóa Cloud</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+window.copyArchiveItemCloud = async function(id){
+  const item = cloudArchiveItems.find(i => String(i.id) === String(id));
+  if(item){ await copyToClipboard(item.content); alert("✓ Đã sao chép nội dung Cloud!"); }
+};
+
+window.downloadArchiveItemCloud = function(id){
+  const item = cloudArchiveItems.find(i => String(i.id) === String(id));
+  if(!item) return;
+  const blob = new Blob([item.content], {type: "text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = item.filename || `${item.title}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.deleteArchiveItemCloud = async function(id){
+  if(!fbDb || !currentUser) return;
+  if(confirm("Bạn có chắc muốn xóa tài liệu này khỏi Đám mây Firebase?")){
+    try {
+      await fbDb.collection("users").doc(currentUser.uid).collection("archives").doc(String(id)).delete();
+      cloudArchiveItems = cloudArchiveItems.filter(i => String(i.id) !== String(id));
+      renderArchiveItems();
+    } catch(err){
+      alert("Lỗi xóa: " + err.message);
+    }
+  }
+};
+
+// Nâng cấp nút Lưu vào kho để cho phép chọn lưu Cloud hay Local
+const origSaveArchiveBtnHandler = document.getElementById("saveArchiveBtn").cloneNode(true);
+document.getElementById("saveArchiveBtn").replaceWith(origSaveArchiveBtnHandler);
+
+document.getElementById("saveArchiveBtn").addEventListener("click", async ()=>{
+  if(!window.__lastOutput) return;
+  const now = new Date().toLocaleString("vi-VN");
+  const toolName = currentTool ? currentTool.name : "Công cụ";
+  const defaultTitle = (currentTool ? currentTool.title : "Tài liệu") + " - " + now;
+
+  const userTitle = prompt("Nhập tên gợi nhớ để lưu kết quả:", defaultTitle);
+  if(userTitle === null) return;
+
+  const title = userTitle.trim() || defaultTitle;
+  const itemType = (window.__lastType === "html") ? "HTML" :
+                   (window.__lastType === "json") ? "JSON" :
+                   (window.__lastFilename && window.__lastFilename.endsWith(".doc")) ? "DOC" : "PROMPT";
+
+  const newItem = {
+    id: Date.now(),
+    title: title,
+    toolId: currentTool ? currentTool.id : "custom",
+    toolName: toolName,
+    time: now,
+    type: itemType,
+    filename: window.__lastFilename || "file.txt",
+    content: window.__lastOutput
+  };
+
+  let saveTarget = "local";
+  if(currentUser && fbDb){
+    const useCloud = confirm("Bạn có muốn lưu đồng bộ tài liệu này lên ĐÁM MÂY FIREBASE CLOUD không?\n\n- Bấm OK để lưu trên Cloud Firebase\n- Bấm Cancel để lưu trên máy cá nhân (Local)");
+    if(useCloud) saveTarget = "cloud";
+  }
+
+  if(saveTarget === "cloud" && currentUser && fbDb){
+    try {
+      await fbDb.collection("users").doc(currentUser.uid).collection("archives").doc(String(newItem.id)).set(newItem);
+      cloudArchiveItems.unshift(newItem);
+      alert("✓ Đã lưu thành công lên Đám mây Firebase Cloud!");
+    } catch(err){
+      alert("Lỗi lưu Cloud: " + err.message + ". Sẽ tự động chuyển sang lưu Local.");
+      const archive = getArchiveData();
+      archive.unshift(newItem);
+      saveArchiveData(archive);
+    }
+  } else {
+    const archive = getArchiveData();
+    archive.unshift(newItem);
+    saveArchiveData(archive);
+  }
+
+  const btn = document.getElementById("saveArchiveBtn");
+  const orig = btn.innerHTML;
+  btn.innerHTML = "✓ Đã lưu vào kho!";
+  setTimeout(()=> btn.innerHTML = orig, 2000);
+});
+
+/* ==========================================================================
    KHỞI TẠO BAN ĐẦU KHI TRANG SẴN SÀNG
    ========================================================================== */
 selectTool(currentTool.id);
 checkApiKeyOnLoad();
+initFirebaseSystem();
 </script>
 </body>
 </html>
