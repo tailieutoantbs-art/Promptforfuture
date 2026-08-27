@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TẠO PROMPT TOÁN TBS</title>
+<title>CHUYỂN ĐỔI SỐ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Charm:wght@700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -215,7 +215,7 @@
 <body>
 
 <div class="mobile-bar">
-  <div class="logo">TẠO PROMPT TOÁN TBS</div>
+  <div class="logo">CHUYỂN ĐỔI SỐ</div>
   <button class="menu-btn" id="mobileMenuBtn">☰ Menu Công cụ</button>
 </div>
 
@@ -223,12 +223,12 @@
   <nav class="sidebar" id="sidebar">
     <div class="brand">
       <div class="eyebrow">Thầy Hùng TBS</div>
-      <h1>TẠO PROMPT<br>TOÁN TBS</h1>
+      <h1>CHUYỂN ĐỔI SỐ</h1>
       <p>Chọn công cụ, điền thông tin và bấm Tạo prompt.</p>
       <div class="nav-btns">
-        <button class="btn btn-ghost" id="authBtn" style="width:100%;font-size:12.5px;color:#8CE99A;border-color:rgba(140,233,154,0.45);">👤 Tài khoản (Chưa đăng nhập)</button>
         <button class="btn btn-ghost" id="socialBtn" style="width:100%;font-size:12.5px;color:#FF9E8A;border-color:rgba(255,158,138,0.45);">❤️ Thả tim & 💬 Giao lưu</button>
         <button class="btn btn-ghost" id="quickLinksBtn" style="width:100%;font-size:12.5px;color:#70C7BA;border-color:rgba(112,199,186,0.45);">🔗 Link tiện ích thao tác</button>
+        <button class="btn btn-ghost" id="sourcesBtn" style="width:100%;font-size:12.5px;color:#8CE99A;border-color:rgba(140,233,154,0.45);">📚 Kho nguồn dữ liệu</button>
         <button class="btn btn-ghost" id="settingsBtn" style="width:100%;font-size:12.5px;">⚙ Cài đặt API key</button>
         <button class="btn btn-ghost" id="historyBtn" style="width:100%;font-size:12.5px;">🗂 Lịch sử tạo prompt</button>
         <button class="btn btn-ghost" id="archiveBtn" style="width:100%;font-size:12.5px;color:var(--yellow);border-color:rgba(242,193,78,0.45);">📦 Kho lưu trữ kết quả</button>
@@ -272,6 +272,7 @@
         <div class="sheet-tear"></div>
         <div class="sheet-body">
           <pre id="outputText"></pre>
+          <textarea id="outputTextEdit" style="display:none;width:100%;min-height:360px;padding:12px;font-family:'JetBrains Mono','Be Vietnam Pro',monospace;font-size:13px;line-height:1.65;border:1px solid var(--paper-edge);border-radius:6px;background:#fff;color:var(--ink);box-sizing:border-box;resize:vertical;"></textarea>
           <div id="mathPreview" style="display:none;background:#ffffff;color:#111827;font-family:'Be Vietnam Pro',sans-serif;font-size:14.5px;line-height:1.7;max-height:540px;overflow:auto;padding:20px;border-radius:6px;white-space:pre-wrap;word-break:break-word;"></div>
           <iframe class="preview-frame" id="previewFrame" style="display:none;" sandbox="allow-scripts allow-same-origin allow-modals"></iframe>
         </div>
@@ -282,9 +283,13 @@
       </div>
       <div class="actions" style="margin-top:12px;">
         <button class="btn btn-primary" id="copyBtn">📋 Sao chép</button>
+        <button class="btn btn-ghost" id="editOutputBtn" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);">✏️ Chỉnh sửa prompt</button>
+        <button class="btn btn-primary" id="saveEditOutputBtn" style="display:none;background:#4EBA74;color:#fff;border:none;">💾 Lưu chỉnh sửa</button>
+        <button class="btn btn-ghost" id="cancelEditOutputBtn" style="display:none;color:#E1523D;border-color:rgba(225,82,61,0.5);">✖ Hủy</button>
         <button class="btn btn-ghost" id="downloadBtn">💾 Tải file về máy</button>
         <button class="btn btn-ghost" id="docBtn">📄 Xuất file Word (.doc)</button>
         <button class="btn btn-ghost" id="saveArchiveBtn" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);">⭐ Lưu vào kho</button>
+        <button class="btn btn-ghost" id="quickAuditBtn" style="color:#70C7BA;border-color:rgba(112,199,186,0.5);">🔍 Kiểm tra & Sửa lỗi prompt này</button>
         <button class="btn btn-ghost" id="beautifyBtn" style="display:none;">✨ Định dạng JSON</button>
       </div>
     </div>
@@ -296,9 +301,9 @@
   <div class="modal-box">
     <h3>⚙ Cài đặt API key Gemini</h3>
     <p>
-      Dán API key Google Gemini của bạn (lấy miễn phí tại
+      Dán API key Google Gemini của bạn (lấy miễn phí chính thức tại
       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>).
-      Key được bảo mật an toàn trên trình duyệt hoặc máy chủ Google Apps Script.
+      <br><strong>Ứng dụng sử dụng API Key trực tiếp — bạn KHÔNG cần đăng nhập tài khoản nào trên ứng dụng này.</strong> Key được bảo mật an toàn trên trình duyệt của bạn.
     </p>
 
     <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Gemini API Key:</label>
@@ -358,12 +363,6 @@
       <button class="btn btn-ghost btn-sm" id="archiveCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
     </div>
     
-    <!-- Thanh chuyển đống kho lưu trữ Local / Cloud -->
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <button class="view-tab active" id="archiveTabLocal" type="button">💻 Máy cá nhân (Local)</button>
-      <button class="view-tab" id="archiveTabCloud" type="button">☁️ Đám mây (Firebase Cloud)</button>
-    </div>
-
     <!-- Thanh tìm kiếm & lọc -->
     <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
       <input type="text" id="archiveSearchInput" placeholder="🔍 Tìm kiếm theo tên bài, công cụ, từ khóa..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
@@ -398,59 +397,47 @@
   </div>
 </div>
 
-<!-- Modal Đăng nhập / Tài khoản -->
-<div id="authModal" class="modal-backdrop" style="display:none;">
-  <div class="modal-box" style="max-width:460px;">
+<!-- Modal Kho Nguồn Dữ Liệu Bài Học & Tài Liệu -->
+<div id="sourcesModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:760px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
-      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">👤 Tài khoản & Đăng nhập</h3>
-      <button class="btn btn-ghost btn-sm" id="authCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">📚 Kho Nguồn Dữ Liệu Bài Học & Tài Liệu</h3>
+      <button class="btn btn-ghost btn-sm" id="sourcesCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
     </div>
 
-    <!-- Trạng thái chưa đăng nhập -->
-    <div id="authLoggedOutView">
-      <p style="font-size:12.5px;color:#5a6350;margin-bottom:14px;">
-        Đăng nhập tài khoản để thả tim, bình luận giao lưu và đồng bộ lưu trữ các Prompt đã tạo lên Cloud Firebase.
-      </p>
-
-      <button class="btn btn-primary" id="googleSignInBtn" type="button" style="width:100%;margin-bottom:12px;background:#4285F4;color:#fff;border:none;">
-        🌐 Đăng nhập nhanh bằng Google
-      </button>
-
-      <div style="text-align:center;font-size:12px;color:#888;margin:10px 0;position:relative;">
-        <span style="background:#FBF7EC;padding:0 10px;position:relative;z-index:1;">hoặc Đăng nhập / Đăng ký Email</span>
-        <div style="border-bottom:1px dashed #c9c0a4;position:absolute;top:50%;left:0;right:0;"></div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-        <input type="email" id="authEmailInput" placeholder="Email của bạn..." style="width:100%;padding:9px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;box-sizing:border-box;">
-        <input type="password" id="authPasswordInput" placeholder="Mật khẩu (ít nhất 6 ký tự)..." style="width:100%;padding:9px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;box-sizing:border-box;">
-      </div>
-
-      <div style="display:flex;gap:8px;margin-bottom:12px;">
-        <button class="btn btn-primary btn-sm" id="emailSignInBtn" type="button" style="flex:1;">Đăng nhập</button>
-        <button class="btn btn-ghost btn-sm" id="emailSignUpBtn" type="button" style="flex:1;color:#20281f;border-color:#c9c0a4;">Đăng ký mới</button>
-      </div>
-
-      <button class="btn btn-ghost btn-sm" id="anonymousSignInBtn" type="button" style="width:100%;font-size:11.5px;color:#73806a;">
-        🕶 Dùng tiếp với vai trò Khách (Anonymous)
-      </button>
+    <!-- Thanh tìm kiếm & thao tác -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input type="text" id="sourcesSearchInput" placeholder="🔍 Tìm kiếm tên nguồn, môn học, tài liệu..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+      <button class="btn btn-primary btn-sm" id="addSourceToggleBtn" type="button">+ Thêm nguồn dữ liệu mới</button>
     </div>
 
-    <!-- Trạng thái đã đăng nhập -->
-    <div id="authLoggedInView" style="display:none;">
-      <div style="text-align:center;padding:12px 0;">
-        <div id="authUserAvatar" style="width:64px;height:64px;border-radius:50%;background:var(--board);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 10px;">👤</div>
-        <h4 id="authUserName" style="margin:0 0 4px;font-size:16px;">Tên người dùng</h4>
-        <p id="authUserEmail" style="margin:0;font-size:12.5px;color:#5a6350;">user@example.com</p>
-        <span id="authBadge" style="display:inline-block;margin-top:6px;background:#e0eefd;color:#002B49;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600;">Google Account</span>
+    <!-- Khung Thêm Nguồn Mới -->
+    <div id="addSourceForm" style="display:none;background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:14px;margin-bottom:14px;">
+      <h4 style="margin:0 0 10px;font-size:14px;color:#123832;">➕ Thêm nguồn dữ liệu mới vào kho</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <input type="text" id="newSourceTitle" placeholder="Tên nguồn (VD: SGK Toán 12 Tập 1 - Bài 1)..." style="padding:8px 10px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+        <select id="newSourceType" style="padding:8px 10px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+          <option value="SGK / Giáo trình">SGK / Giáo trình</option>
+          <option value="Tài liệu tham khảo">Tài liệu tham khảo</option>
+          <option value="Đề thi / Bài tập">Đề thi / Bài tập</option>
+          <option value="Link Google Drive / Web">Link Google Drive / Web</option>
+          <option value="Ghi chú khác">Ghi chú khác</option>
+        </select>
       </div>
-
-      <div style="margin-top:16px;border-top:1px dashed #c9c0a4;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
-        <button class="btn btn-ghost btn-sm" id="signOutBtn" type="button" style="color:#a83232;border-color:#e0b2b2;">🚪 Đăng xuất</button>
+      <textarea id="newSourceContent" placeholder="Nội dung chi tiết tài liệu nguồn, tóm tắt lý thuyết hoặc văn bản trích xuất..." style="width:100%;height:100px;padding:8px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:10px;font-size:13px;box-sizing:border-box;background:#fff;"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" id="cancelAddSourceBtn" type="button">Hủy</button>
+        <button class="btn btn-primary btn-sm" id="saveNewSourceBtn" type="button">💾 Lưu nguồn vào kho</button>
       </div>
     </div>
 
-    <div id="authStatus" style="font-size:12px;margin-top:10px;min-height:16px;color:#a83232;text-align:center;"></div>
+    <!-- Danh sách Nguồn Dữ Liệu -->
+    <div id="sourcesList" style="font-size:12.5px;line-height:1.6;max-height:55vh;overflow-y:auto;"></div>
+
+    <div class="modal-actions" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span id="sourcesCountStatus" style="font-size:12px;color:#73806a;">Đang tải danh sách nguồn...</span>
+      <button class="btn btn-ghost btn-sm" id="clearSourcesBtn" type="button" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;">Xóa toàn bộ kho nguồn</button>
+    </div>
   </div>
 </div>
 
@@ -513,7 +500,7 @@
           <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
             🔑 Google AI Studio (Lấy Key)
           </a>
-          <a href="https://aitestkitchen.withgoogle.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+          <a href="https://labs.google/fx/tools/videofx" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
             🎬 Google Veo 3 / VideoFX
           </a>
           <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
@@ -544,15 +531,15 @@
         </div>
       </div>
 
-      <!-- Nhóm 3: Công cụ Hỗ trợ -->
+      <!-- Nhóm 3: Công cụ Hỗ trợ & Nền tảng AI -->
       <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
-        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">📧 CÔNG CỤ HỖ TRỢ KHÁC</h4>
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">🌐 NỀN TẢNG AI & TÀI LIỆU CHÍNH THỨC</h4>
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
-          <a href="https://tempmailapi.io.vn/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
-            📧 TempMail API (Mail ảo)
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🔑 Lấy Google Gemini API Key
           </a>
-          <a href="https://temp-mail.org/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
-            ✉️ Temp-Mail Org
+          <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            💬 ChatGPT (OpenAI)
           </a>
           <a href="https://docs.mathjax.org/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
             🧮 Hướng dẫn MathJax LaTeX
@@ -773,22 +760,68 @@ Chi tra ve mot khoi JSON hop le duy nhat trong khung plaintext, khong giai thich
 function sysToanThucTeDeBai(v){
   const soCau = (v && v.socau) || 10;
   const chuDe = (v && v.chude) || "Toán 12";
-  return `Đóng vai chuyên gia đề thi môn Toán 12 (sách Kết nối tri thức). Biên soạn tập đề gồm ${soCau} câu hỏi thực tế ở các cấp độ khác nhau, tập trung vào chủ đề "${chuDe}", bám sát tài liệu nguồn được cung cấp, không tự bịa bài toán không thực tế.
+  const cheDo = (v && v.chedo) || "Học sinh";
+  const isHocSinh = cheDo.includes("Học sinh");
 
-Cấu trúc bài viết bắt buộc: Đề bài (gồm ${soCau} câu hỏi thực tế).
-Định dạng: trình bày thành một văn bản dài, có cấu trúc phân cấp rõ ràng và chuyên nghiệp giống trang Word (dùng tiêu đề ##, ###, in đậm). Hoàn thành trọn vẹn nhiệm vụ, không thêm câu hỏi phụ hay menu lựa chọn ở cuối bài.`;
+  return `Đóng vai chuyên gia đề thi môn Toán (sách Kết nối tri thức). Biên soạn tập đề bài toán thực tế gồm ĐÚNG NGUYÊN VẸN ${soCau} CÂU HỎI ĐỘC LẬP ở các cấp độ khác nhau, tập trung vào chủ đề "${chuDe}", bám sát tài liệu nguồn được cung cấp, không tự bịa bài toán thiếu thực tế.
+
+QUY TẮC BẮT BUỘC VỀ SỐ LƯỢNG CÂU HỎI:
+- BẮT BUỘC tạo đủ ĐÚNG NGUYÊN VẸN ${soCau} câu hỏi riêng biệt. Được đánh số rõ ràng: Câu 1, Câu 2, Câu 3... cho tới Câu ${soCau}.
+- TUYỆT ĐỐI KHÔNG DỪNG Ở CÂU 1. Không viết "Ví dụ 1" hay chỉ tạo 1 câu mẫu. Bắt buộc phải viết trọn vẹn tất cả ${soCau} câu hỏi từ đầu đến cuối.
+
+CẤU TRÚC VÀ YÊU CẦU BẮT BUỘC:
+1. SỐ LƯỢNG CÂU HỎI: Biên soạn ĐỦ NGUYÊN VẸN ${soCau} câu hỏi (đánh số từ Câu 1 đến Câu ${soCau}). Tuyệt đối không cắt bớt, không dừng nửa chừng.
+2. CHẾ ĐỘ TRÌNH BÀY (${isHocSinh ? "HỌC SINH - KHÔNG LỜI GIẢI, CHỪA DÒNG KẺ CỘT/MỤC BÀI LÀM" : "GIÁO VIÊN - CÓ LỜI GIẢI CHI TIẾT VÀ ĐÁP SỐ"}):
+${isHocSinh ? `   - CHẾ ĐỘ HỌC SINH: Tuyệt đối KHÔNG ghi lời giải hay đáp án trong bài tập.
+   - Ngay dưới mỗi câu hỏi (từ Câu 1 đến Câu ${soCau}), tạo khoảng trống gồm 6-8 dòng kẻ ngang (chấm chấm ..........................................................................) để học sinh tự trình bày bài làm và viết đáp số.` : `   - CHẾ ĐỘ GIÁO VIÊN: Ngay dưới mỗi câu hỏi (từ Câu 1 đến Câu ${soCau}), trình bày chi tiết mục "ĐÁP ÁN VÀ LỜI GIẢI CHI TIẾT" với các bước giải chặt chẽ, chính xác và ghi rõ đáp số.`}
+3. PHÂN TRANG (TRƯỜNG HỢP NHIỀU CÂU HỎI):
+   - Khi số lượng câu hỏi nhiều (từ ${soCau} câu), BẮT BUỘC thiết kế và phân bổ nội dung thành nhiều trang (Trang 1, Trang 2, Trang 3...).
+   - Đánh số trang và có khung phân trang rõ ràng (ví dụ: --- TRANG 1 ---, --- TRANG 2 ---) để thuận tiện cho giáo viên in ấn hoặc phát bài tập cho học sinh.
+4. ĐỊNH DẠNG:
+   - Trình bày thành một văn bản dài, có cấu trúc phân cấp rõ ràng và chuyên nghiệp giống trang Word (dùng tiêu đề ##, ###, in đậm). Công thức Toán viết dạng LaTeX ($...$).
+   - Hoàn thành trọn vẹn nhiệm vụ, không thêm câu hỏi phụ hay menu lựa chọn ở cuối bài.`;
 }
 function sysToanThucTeInfographic(v){
   const soCau = (v && v.socau) || 10;
   const chuDe = (v && v.chude) || "Toán 12";
-  return `Bạn là chuyên gia thiết kế infographic toán học kết hợp minh họa nghệ thuật bằng gói TikZ.
-Bóc tách ${soCau} câu về chủ đề "${chuDe}" thành các bài toán thực tế áp dụng trong đời sống, bám sát dữ liệu nguồn, không tự chế ra những bài toán không thực tế.
+  const cheDo = (v && v.chedo) || "Học sinh";
+  const isHocSinh = cheDo.includes("Học sinh");
 
-Bố cục: infographic dạng khung, mỗi khung chứa 1 bài, loại bỏ các đường line khung.
-Mỗi khung chia 3 cột: Cột 1 - Đề bài; Cột 2 - hình minh họa cho đề bài (dùng TikZ, chính xác hình học, dùng tính chất hình học bám sát đề); Cột 3 - gợi ý lời giải ngắn gọn và đáp số.
-Tạo chuỗi các bài theo thứ tự, từng bài một, tránh tạo nhiều bài cùng lúc làm hình minh họa không chính xác.
-Phong cách: giáo dục hiện đại. Khung hình 3:4 khổ giấy A4. Ảnh màu, sắc nét.
-Tiêu đề chính: "TOÁN THỰC TẾ TOÁN 12". Chân trang phải: "Thiết kế bởi Math_DTH".
+  return `Bạn là chuyên gia thiết kế infographic toán học kết hợp minh họa nghệ thuật bằng gói TikZ.
+Bóc tách ĐÚNG NGUYÊN VẸN ${soCau} câu hỏi về chủ đề "${chuDe}" thành các bài toán thực tế áp dụng trong đời sống, bám sát dữ liệu nguồn, không tự chế ra những bài toán không thực tế.
+
+QUY TẮC BẮT BUỘC VỀ SỐ LƯỢNG (${soCau} CÂU HỎI):
+- MẢNG DANH SÁCH BÀI HỎI BẮT BUỘC PHẢI CHỨA ĐỦ ${soCau} PHẦN TỬ (từ Câu 1, Câu 2... đến Câu ${soCau}).
+- TUYỆT ĐỐI KHÔNG CHỈ XUẤT 1 CÂU MẪU. Trong mảng "items" hoặc trong danh sách "pages", phải bao gồm đầy đủ ${soCau} bài toán thực tế riêng biệt được thiết kế 3 cột.
+
+CẤU TRÚC VÀ QUY TẮC THIẾT KẾ INFOGRAPHIC 3 CỘT (JSON PROMPT):
+1. SỐ LƯỢNG CÂU HỎI: Biên soạn ĐỦ NGUYÊN VẸN ${soCau} câu hỏi (từ Câu 1 đến Câu ${soCau}). Tuyệt đối không cắt bớt hay dừng giữa chừng.
+2. CẤU TRÚC 3 CỘT VÀ CHẾ ĐỘ TRÌNH BÀY (${isHocSinh ? "CHẾ ĐỘ HỌC SINH - CHỪA DÒNG KẺ CỘT 3 CHO HỌC SINH TỰ LÀM BÀI" : "CHẾ ĐỘ GIÁO VIÊN - CÓ LỜI GIẢI CHI TIẾT VÀ ĐÁP SỐ Ở CỘT 3"}):
+   Bố cục mỗi khung bài toán gồm đúng 3 cột:
+   - Cột 1 (col1_problem): Đề bài toán thực tế (ngắn gọn, chính xác, bám sát bối cảnh đời sống).
+   - Cột 2 (col2_tikz_illustration): Hình minh họa trực quan cho đề bài (dùng gói TikZ, chính xác hình học, thể hiện rõ các đại lượng đề bài).
+   - Cột 3 (col3_${isHocSinh ? "student_blank_lines" : "teacher_solution"}):
+${isHocSinh ? `     + CHẾ ĐỘ HỌC SINH: Tuyệt đối KHÔNG CÓ LỜI GIẢI hay đáp án. Thiết kế khung chừa 5-8 dòng kẻ ngang chấm chấm (ruled lines / blank dotted lines) để học sinh tự trình bày bài làm và điền đáp số.` : `     + CHẾ ĐỘ GIÁO VIÊN: CÓ LỜI GIẢI CHI TIẾT & ĐÁP SỐ. Trình bày các bước giải ngắn gọn, công thức Toán LaTeX và kết quả tính toán chính xác.`}
+3. PHÂN TRANG VÀ MẪU JSON ĐẦU RA:
+   - Phân chia ${soCau} câu hỏi thành các trang (Ví dụ: Trang 1 chứa 2 câu, Trang 2 chứa 2 câu, Trang 3 chứa 1 câu...).
+   - Mẫu JSON đầu ra bắt buộc có dạng mảng chứa đầy đủ ${soCau} câu hỏi:
+   {
+     "title": "TOÁN THỰC TẾ - ${chuDe.toUpperCase()}",
+     "presentation_mode": "${isHocSinh ? "Chế độ Học sinh (Chừa dòng kẻ Cột 3 làm bài, không lời giải)" : "Chế độ Giáo viên (Có lời giải chi tiết Cột 3 & Đáp số)"}",
+     "total_questions": ${soCau},
+     "pages": [
+       {
+         "page_number": 1,
+         "items": [
+           { "question_num": 1, "col1_problem": "...", "col2_tikz_illustration": "...", "col3_${isHocSinh ? "student_blank_lines" : "teacher_solution"}": "..." },
+           { "question_num": 2, "col1_problem": "...", "col2_tikz_illustration": "...", "col3_${isHocSinh ? "student_blank_lines" : "teacher_solution"}": "..." }
+         ]
+       }
+     ]
+   }
+4. PHONG CÁCH NGHỆ THUẬT:
+   - Phong cách: Giáo dục hiện đại, ảnh màu sắc nét, độ tương phản cao.
+   - Tiêu đề chính: "TOÁN THỰC TẾ - ${chuDe.toUpperCase()}". Chân trang phải: "Thiết kế bởi Math_DTH".
 
 Chỉ xuất kết quả theo code JSON trong khung plaintext, không viết gì thêm.`;
 }
@@ -845,8 +878,8 @@ Từ tài liệu hoặc chủ đề/bài học do người dùng nhập, hãy t�
 
 BẮT BUỘC TRONG THẺ <head> CỦA FILE HTML:
 Phải chèn 2 thẻ script sau để hỗ trợ hiển thị công thức Toán LaTeX ($...$ và $$...$$):
-<script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\\\(', '\\\\)']] } };<\/script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+&lt;script&gt;window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\\\(', '\\\\)']] } };&lt;/script&gt;
+&lt;script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"&gt;&lt;/script&gt;
 
 QUY TẮC TẠO CÂU HỎI
 - Bám sát nội dung bài học/tài liệu, không bịa kiến thức ngoài bài.
@@ -917,8 +950,103 @@ QUY TẮC CHUNG:
 - Viết công thức toán chuẩn LaTeX đặt trong cặp $...$.
 - Đảm bảo tính chính xác sư phạm, ngữ pháp và thuật ngữ toán học Anh-Mỹ.`;
 
+const SYS_TAONHANVAT = `Bạn là chuyên gia hàng đầu về thiết kế nhân vật 3D/2D, đạo diễn hình ảnh và chuyên gia viết Prompt tạo nhân vật đồng nhất (Character Lock / Consistency Specialist) cho video và hình ảnh nghệ thuật (Google Veo 3, Midjourney, Flux, Ideogram, DALL-E 3).
+
+NHIỆM VỤ:
+Từ thông tin nhân vật do người dùng cung cấp (Tên, tuổi, giới tính, ngoại hình, trang phục, tính cách, giọng nói, bối cảnh, phong cách nghệ thuật), hãy xây dựng một HỒ SƠ KHÓA NHÂN VẬT THỐNG NHẤT (Character Lock Profile) và BỘ PROMPT THAM CHIẾU DÙNG CHO MỌI PHÂN CẢNH VIDEO/ẢNH.
+
+BẮT BUỘC TRẢ VỀ KẾT QUẢ THEO ĐÚNG 4 PHẦN SAU:
+
+PHẦN 1 - HỒ SƠ KHÓA NHÂN VẬT (CHARACTER LOCK PROFILE)
+- Tên nhân vật & Vai trò
+- Độ tuổi & Giới tính
+- Đặc điểm khuôn mặt & Kiểu tóc cố định
+- Trang phục, Màu sắc & Phụ kiện nhận diện cố định (BẮT BUỘC KHÔNG THAY ĐỔI GIAI ĐOẠN NÀY)
+- Chiều cao & Vóc dáng
+- Tính cách, Biểu cảm đặc trưng & Phong thái
+- Chất giọng & Vùng giọng (Giới tính giọng, cao độ, tốc độ, phong thái nói)
+
+PHẦN 2 - BỘ PROMPT TẠO ẢNH CÁC GÓC CHỤP ĐỒNG NHẤT (IMAGE PROMPTS FOR CHARACTER SHEET)
+Tạo 4 đoạn prompt tiếng Anh chuẩn nghệ thuật để sinh bộ ảnh tham chiếu nhân vật (character sheet):
+1. Front View (Chụp chính diện toàn thân): Mô tả chi tiết khuôn mặt, trang phục, dáng đứng thẳng.
+2. 3/4 View & Side View (Góc nghiêng 3/4 và góc ngang): Mô tả góc nghiêng, mái tóc, trang phục từ bên cạnh.
+3. Expressive Face Close-up (Cận cảnh biểu cảm): Mô tả ánh mắt, nụ cười, thần thái khuôn mặt.
+4. Action & Teaching Pose (Dáng hành động/Giảng dạy): Nhân vật đang tương tác, cầm phấn/chỉ bảng/nói chuyện.
+
+PHẦN 3 - THÔNG SỐ VÀ PROMPT THAM CHIẾU CỐ ĐỊNH (REFERENCE PROMPTS FOR AI TOOLS)
+- Midjourney Character Reference (--cref): Cung cấp prompt mẫu kèm cờ --cref [URL_ANH] --cw 100.
+- Google Veo 3 / VideoFX Reference: Cung cấp đoạn văn bản khóa ngoại hình (Physical Appearance Lock) bắt buộc chèn vào mỗi phân cảnh video.
+- Flux / Ideogram Reference Prompt: Prompt mô tả cực kỳ chi tiết với các từ khóa cố định.
+
+PHẦN 4 - QUY TẮC BẢO TOÀN ĐỒNG NHẤT KHI NỐI CÁC PHÂN CẢNH
+- Đưa ra 5 quy tắc vàng giúp người dùng giữ nhân vật không bị "biến dạng" hoặc "đổi mặt" khi chuyển cảnh.
+
+Trình bày rõ ràng, chuyên nghiệp, dùng định dạng Markdown dễ đọc.`;
+
+const SYS_KIEMSOATPROMPT = `Bạn là Chuyên gia Kiểm định Chất lượng Prompt (Prompt Quality Auditor) và Kỹ sư Tối ưu hóa AI Prompt cho Hình ảnh & Video (Midjourney, Flux, Google Veo 3, DALL-E 3, Ideogram).
+
+NHIỆM VỤ:
+Phân tích prompt gốc do người dùng cung cấp, đối chiếu với mô tả lỗi/điểm thiếu chính xác mà họ gặp phải (như hình ảnh bị biến dạng tay/chân, nét mặt mờ, thiếu ánh sáng, sai công thức toán, bối cảnh mâu thuẫn, sai tỷ lệ khung hình), sau đó ĐÁNH GIÁ, CHẨN ĐOÁN VÀ SINH PROMPT ĐÃ KHẮC PHỤC CHUẨN XÁC 100%.
+
+BẮT BUỘC TRẢ VỀ KẾT QUẢ THEO 5 PHẦN SAU:
+
+🎯 PHẦN 1 - ĐÁNH GIÁ ĐIỂM CHÍNH XÁC (PROMPT ACCURACY SCORE)
+- Chấm điểm Prompt gốc trên thang điểm 0 - 100%.
+- Nhận xét tổng quan về cấu trúc, độ chi tiết và mức độ rõ ràng của prompt gốc.
+
+🔍 PHẦN 2 - PHÂN TÍCH NGUYÊN NHÂN LỖI & ĐIỂM THIẾU CHÍNH XÁC
+- Chỉ ra cụ thể các từ khóa bị xung đột, từ khóa mơ hồ hoặc thiếu sót trong prompt gốc dẫn đến sản phẩm bị lỗi.
+- Đánh giá lỗi thuộc về: Bố cục, Ánh sáng, Chi tiết nhân vật, Góc máy camera, Tỷ lệ khung hình hay thiếu Negative Constraints.
+
+✨ PHẦN 3 - PROMPT ĐÃ SỬA LỖI & TỐI ƯU HOÀN CHỈNH (CORRECTED & ENHANCED PROMPT)
+- Đưa ra Prompt tiếng Anh chuẩn hóa 100% (bổ sung đầy đủ subject, medium, environment, lighting, color, composition, camera parameters, quality boosters).
+- Đưa ra Prompt tiếng Việt giải thích tương ứng.
+- Đặt prompt đã sửa trong khối code block để người dùng dễ dàng copy.
+
+🚫 PHẦN 4 - BỘ TỪ KHÓA ĐỊNH HƯỚNG LOẠI BỎ LỖI (NEGATIVE PROMPTS & CONSTRAINTS)
+- Danh sách negative prompt cần thiết (VD: --no blurry, bad anatomy, deformed limbs, extra fingers, low quality, distorted text, floating artifacts...).
+
+💡 PHẦN 5 - LỜI KHUYÊN KHI TẠO LẠI TRÊN CÔNG CỤ AI
+- Hướng dẫn cụ thể thao tác trên công cụ người dùng chọn (Midjourney, Veo 3, Flux...) để đạt kết quả hoàn hảo nhất.`;
+
+const SYS_GIAIDE = `Bạn là Chuyên gia Thẩm định Đề thi, Đạo diễn Sư phạm và Kỹ sư Giải đề Toán học hàng đầu (bám sát chương trình GDPT mới Kết nối tri thức, Chân trời sáng tạo, Cánh diều).
+
+NHIỆM VỤ CHÍNH:
+Từ nội dung đề thi được cung cấp (văn bản dán trực tiếp, đề bài tạo từ prompt trước, hoặc trích xuất từ file .docx, .pdf, ảnh với dung lượng <= 4 trang A4), hãy phân tích, thẩm định tính chính xác và LẬP BỘ ĐÁP ÁN & LỜI GIẢI CHI TIẾT CHUẨN MỰC SƯ PHẠM.
+
+CẤU TRÚC ĐẦU RA BẮT BUỘC (Gồm 5 Phần):
+
+📌 PHẦN 1 - BẢNG ĐÁP ÁN NHANH (QUICK ANSWER KEY)
+- Tạo bảng tổng hợp đáp án gọn gàng cho từng phần (Trắc nghiệm, Đúng/Sai, Trả lời ngắn, Tự luận...).
+- Ví dụ Trắc nghiệm: Câu 1: A | Câu 2: C | Câu 3: B...
+- Ví dụ Đúng/Sai: Câu 1: a) Đ - b) S - c) Đ - d) S...
+- Ví dụ Trả lời ngắn: Câu 1: 12,5 | Câu 2: -3...
+
+📐 PHẦN 2 - LỜI GIẢI CHI TIẾT & ĐÁP SỐ CHÍNH XÁC (DETAILED SOLUTIONS)
+- Giải lần lượt từng câu từ đầu đến cuối, tuyệt đối không bỏ sót câu nào.
+- Trình bày lập luận chặt chẽ, các bước biến đổi rõ ràng, chuẩn phương pháp sư phạm.
+- 100% công thức Toán viết theo định dạng LaTeX: đặt trong cặp $...$ cho inline và $$...$$ cho display.
+- Ghi rõ ĐÁP SỐ / KẾT QUẢ ở cuối mỗi câu.
+
+🎯 PHẦN 3 - THANG ĐIỂM & MA TRẬN PHÂN BỔ ĐIỂM (SCORING RUBRIC)
+- Phân bổ điểm số chi tiết cho từng câu/từng ý (Thang điểm 10).
+- Hướng dẫn chấm điểm từng bước (chấm ý nhỏ cho câu tự luận/toán thực tế).
+
+⚠️ PHẦN 4 - PHÂN TÍCH CẠM BẪY & LỖI SAI HỌC SINH DỄ MẮC PHẢI (STUDENT PITFALLS)
+- Chỉ ra các sai lầm phổ biến: tính toán nhầm dấu, quên điều kiện xác định, nhầm đơn vị, chọn nhầm phương án nhiễu, ngộ nhận hình học...
+- Đưa ra lời khuyên giúp học sinh khắc phục.
+
+💡 PHẦN 5 - ĐÁNH GIÁ MỨC ĐỘ & GHI CHÚ SƯ PHẠM DÀNH CHO GIÁO VIÊN
+- Thống kê tỷ lệ câu theo mức độ: Nhận biết, Thông hiểu, Vận dụng, Vận dụng cao.
+- Đánh giá tổng quan chất lượng đề thi và lưu ý khi giảng dạy/chấm bài.
+
+QUY TẮC BẮT BUỘC:
+- Bám sát 100% đề bài được cung cấp, không tự bịa đề bài khác.
+- Công thức Toán viết chuẩn LaTeX.
+- Trình bày đẹp mắt, phân cấp rõ ràng (dùng Markdown, ##, ###, in đậm).`;
+
 /* ==========================================================================
-   DANH SÁCH 10 CÔNG CỤ (TOOLS)
+   DANH SÁCH 13 CÔNG CỤ (TOOLS)
    ========================================================================== */
 const TOOLS = [
   {
@@ -935,6 +1063,7 @@ const TOOLS = [
       {key:"tom_tat", label:"Tóm tắt nội dung / tình huống muốn khai thác", type:"textarea", placeholder:"Mô tả bối cảnh tình huống thực tế hoặc mâu thuẫn nhận thức cần gợi mở"},
       {key:"phong_cach", label:"Phong cách hình ảnh", type:"text", placeholder:"VD: giáo dục hiện đại, hoạt hình 3D Pixar, điện ảnh thực tế...", row:"r2"},
       {key:"chat_giong", label:"Chất giọng nhân vật", type:"text", placeholder:"Để trống để AI tự chọn giọng chuẩn tự nhiên", row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Không dùng bối cảnh quá phức tạp, giữ nguyên 2 nhân vật xuyên suốt, giọng thoại tự nhiên..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea", placeholder:"Dán nội dung sách giáo khoa hoặc tài liệu kiến thức cốt lõi vào đây"}
     ],
     buildUser(v){
@@ -943,6 +1072,7 @@ const TOOLS = [
       if(v.tom_tat) s+=`[TOM_TAT]=${v.tom_tat}\n`;
       if(v.phong_cach) s+=`[PHONG_CACH]=${v.phong_cach}\n`;
       if(v.chat_giong) s+=`[CHAT_GIONG]=${v.chat_giong}\n`;
+      if(v.rang_buoc) s+=`[RANG_BUOC]=${v.rang_buoc}\n`;
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
@@ -963,12 +1093,14 @@ const TOOLS = [
       {key:"tracnghiem", label:"Trắc nghiệm", type:"number", default:2, row:"r2"},
       {key:"tuluan", label:"Tự luận", type:"number", default:2, row:"r2"},
       {key:"doituong", label:"Lớp học / độ tuổi", type:"text", placeholder:"VD: Học sinh lớp 12 THPT"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Trắc nghiệm bắt buộc 4 lựa chọn A,B,C,D, không bịa đáp án ngoài bài học, công thức toán chuẩn LaTeX..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea"}
     ],
     buildUser(v){
       let s = `[CHUDE]=${v.chude}\n[PHONGCACH]=${v.phongcach||"hiện đại giáo dục"}\n[LOI_GIAI]=${v.loigiai||"TẮT"}\n[TI_LE]=${v.tile||"9:16"}\n`+
         `[DIEN_KHUYET]=${v.dienkhuyet}\n[GHEP_DOI]=${v.ghepdoi}\n[DUNG_SAI]=${v.dungsai}\n[TRAC_NGHIEM]=${v.tracnghiem}\n[TU_LUAN]=${v.tuluan}\n`;
       if(v.doituong) s+=`[DOI_TUONG]=${v.doituong}\n`;
+      if(v.rang_buoc) s+=`[RANG_BUOC]=${v.rang_buoc}\n`;
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
@@ -980,10 +1112,12 @@ const TOOLS = [
     system: SYS_MINDMAP, outputType:"json", filename:"mindmap.json",
     fields:[
       {key:"bai", label:"Số thứ tự và tên bài học", type:"text", required:true, placeholder:"VD: Bài 1. Giá trị lớn nhất, giá trị nhỏ nhất của hàm số"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Giới hạn tối đa 4 nhánh chính, màu sắc retro nhã nhặn, công thức Toán dạng LaTeX..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea", placeholder:"Dán nội dung lý thuyết bài học cần tóm tắt sơ đồ"}
     ],
     buildUser(v){
       let s = `[BAI]\n${v.bai}`;
+      if(v.rang_buoc) s+=`\n[RANG_BUOC]=${v.rang_buoc}`;
       if(v.nguon) s+=`\n\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
@@ -1000,7 +1134,8 @@ const TOOLS = [
       {key:"label", label:"Hiện nhãn điểm chính", type:"checkbox", default:true, row:"r2"},
       {key:"anphu", label:"Ẩn đối tượng dựng phụ", type:"checkbox", default:false, row:"r2"},
       {key:"mau", label:"Phân màu trực quan", type:"checkbox", default:true, row:"r2"},
-      {key:"chiscript", label:"Chỉ xuất code (không giải thích)", type:"checkbox", default:true, row:"r2"}
+      {key:"chiscript", label:"Chỉ xuất code (không giải thích)", type:"checkbox", default:true, row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Bắt buộc dùng cú pháp lệnh GeoGebra chuẩn, không dùng tọa độ suy biến, tô màu mặt phẳng đáy..."}
     ],
     buildUser(v){
       let flags=[];
@@ -1011,7 +1146,9 @@ const TOOLS = [
       if(v.anphu) flags.push("[ANPHU]");
       if(v.mau) flags.push("[MAU]");
       if(v.chiscript) flags.push("[SCRIPT]");
-      return `${flags.join(" ")} ${v.yeucau}`.trim();
+      let s = `${flags.join(" ")} ${v.yeucau}`.trim();
+      if(v.rang_buoc) s+=`\n[RANG_BUOC]=${v.rang_buoc}`;
+      return s;
     }
   },
   {
@@ -1027,10 +1164,12 @@ const TOOLS = [
       {key:"p3", label:"Số câu Phần III (Trả lời ngắn)", type:"number", default:6, row:"r2"},
       {key:"chude", label:"Chủ đề / chương (mỗi dòng một chủ đề)", type:"textarea", required:true, placeholder:"VD:\nChương 1: Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số\nChương 2: Tọa độ trong không gian"},
       {key:"xuatdocx", label:"Xuất kèm quy trình sang file .docx", type:"checkbox", default:false},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Đánh số lại từ Câu 1 sau mỗi phần, công thức Toán đặt trong $...$, hình học có code TikZ..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn", type:"textarea"}
     ],
     buildUser(v){
       let s = `[TIEUDE]=${v.tieude||"ĐỀ SỐ 1"}\n[CHUDE]=\n${v.chude}\n[SO_CAU_P1]=${v.p1||12}\n[SO_CAU_P2]=${v.p2||4}\n[SO_CAU_P3]=${v.p3||6}\n[TI_LE]=${v.tile||"3:4"}\n[XUAT_DOCX]=${v.xuatdocx?"CO":"KHONG"}\n`;
+      if(v.rang_buoc) s+=`[RANG_BUOC]=${v.rang_buoc}\n`;
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
@@ -1038,19 +1177,25 @@ const TOOLS = [
   {
     id:"toan-thuc-te", num:"06", name:"Toán thực tế",
     kicker:"Vận dụng thực tế", title:"Toán thực tế",
-    desc:"Bước 1: soạn đề bài toán thực tế dạng văn bản. Bước 2: tạo infographic 3 cột (đề bài / hình minh họa / gợi ý lời giải) cho các câu tiêu biểu.",
+    desc:"Biên soạn tập đề bài toán thực tế hoặc Infographic 3 cột (Đề bài - Hình TikZ - Bài làm/Lời giải), hỗ trợ chế độ Học sinh (Cột 3 chừa dòng kẻ làm bài) và Giáo viên (Cột 3 có lời giải chi tiết), tự động phân trang khi số lượng câu lớn.",
     outputType:"auto", filename:"toan-thuc-te.txt",
     fields:[
       {key:"mode", label:"Bạn muốn tạo dạng gì?", type:"select", options:["Đề bài toán thực tế (văn bản)","Infographic minh họa 3 cột (JSON)"], default:"Đề bài toán thực tế (văn bản)"},
       {key:"chude", label:"Chủ đề / chương", type:"text", required:true, placeholder:"VD: Cực trị hàm số ứng dụng tối ưu hóa chi phí sản xuất", row:"r1"},
       {key:"socau", label:"Số lượng câu hỏi", type:"number", default:10, row:"r1"},
+      {key:"chedo", label:"Chế độ trình bày Cột thứ 3 (Bật/Tắt lời giải)", type:"select", options:[
+        "Học sinh (Cột 3 chừa dòng kẻ làm bài, không lời giải)",
+        "Giáo viên (Cột 3 có lời giải chi tiết & đáp số)"
+      ], default:"Học sinh (Cột 3 chừa dòng kẻ làm bài, không lời giải)", row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Chỉ lấy bối cảnh đời thực gần gũi, công thức Toán dạng LaTeX, bắt buộc có hình TikZ 2D minh họa..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn", type:"textarea", placeholder:"Dán dữ liệu thực tế, bảng số liệu hoặc bài toán gốc cần mở rộng"}
     ],
     system(v){ return (v.mode && v.mode.startsWith("Đề bài")) ? sysToanThucTeDeBai(v) : sysToanThucTeInfographic(v); },
     outputTypeFor(v){ return (v.mode && v.mode.startsWith("Đề bài")) ? "text" : "json"; },
     filenameFor(v){ return (v.mode && v.mode.startsWith("Đề bài")) ? "toan-thuc-te.txt" : "toan-thuc-te.json"; },
     buildUser(v){
-      let s = `[CHU_DE]=${v.chude}\n[SO_CAU]=${v.socau||10}\n`;
+      let s = `[CHU_DE]=${v.chude}\n[SO_CAU]=${v.socau||10}\n[CHE_DO]=${v.chedo||"Học sinh (Cột 3 chừa dòng kẻ làm bài, không lời giải)"}\n`;
+      if(v.rang_buoc) s+=`[RANG_BUOC]=${v.rang_buoc}\n`;
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
@@ -1071,10 +1216,14 @@ const TOOLS = [
         "Sketchnote văn học"
       ], row:"r1"},
       {key:"socanh", label:"Số cảnh truyện", type:"number", default:4, row:"r1"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Nhân vật không nói triết lý dài dòng, tình huống hài hước ngắn gọn, màu sắc tươi sáng..."},
       {key:"noidung", label:"Nội dung bài học cần lồng ghép", type:"textarea", required:true, placeholder:"VD: Quy tắc cộng xác suất và quy tắc nhân xác suất qua câu chuyện Nobita chơi trò chơi xúc xắc cùng Doraemon"}
     ],
     buildUser(v){
-      return `[PHONG_CACH]=${v.phongcach}\n[SO_CANH]=${v.socanh||4}\n\nNội dung bài học:\n${v.noidung}`;
+      let s = `[PHONG_CACH]=${v.phongcach}\n[SO_CANH]=${v.socanh||4}\n`;
+      if(v.rang_buoc) s+=`[RANG_BUOC]=${v.rang_buoc}\n`;
+      s+=`\nNội dung bài học:\n${v.noidung}`;
+      return s;
     }
   },
   {
@@ -1089,18 +1238,20 @@ const TOOLS = [
       {key:"loaicauhoi", label:"Loại câu hỏi", type:"select", options:["Hỗn hợp","Một đáp án đúng","Nhiều đáp án đúng","Đúng sai"], default:"Hỗn hợp", row:"r1"},
       {key:"phongcach", label:"Phong cách giao diện", type:"text", default:"hiện đại, thân thiện, màu xanh dương", row:"r2"},
       {key:"doituong", label:"Đối tượng học sinh", type:"text", default:"học sinh THPT", row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Bắt buộc chèn thẻ script MathJax v3, 100% tiếng Việt, có thanh tiến trình và hiệu ứng chuyển câu..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn", type:"textarea"}
     ],
     buildUser(v){
       let s = `[BÀI]=${v.bai}\n[SỐ CÂU]=${v.socau||10}\n[PHONG CÁCH]=${v.phongcach||"hiện đại"}\n[ĐỐI TƯỢNG]=${v.doituong||"học sinh THPT"}\n[MỨC ĐỘ]=${v.mucdo||"Hỗn hợp"}\n[LOẠI CÂU HỎI]=${v.loaicauhoi||"Hỗn hợp"}\n`;
+      if(v.rang_buoc) s+=`[RÀNG_BUỘC]=${v.rang_buoc}\n`;
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
       return s;
     }
   },
   {
-    id:"mail-ao", num:"09", name:"ChatGPT bằng mail ảo",
-    kicker:"Hướng dẫn", title:"Tạo tài khoản ChatGPT bằng mail ảo",
-    desc:"Đây là bước thiết lập công cụ, không phải một prompt AI — thực hiện trực tiếp theo hướng dẫn bên dưới.",
+    id:"mail-ao", num:"09", name:"Tạo tài khoản AI an toàn",
+    kicker:"Hướng dẫn an toàn", title:"Hướng dẫn tạo nhiều tài khoản AI (ChatGPT / Gemini) an toàn & miễn phí",
+    desc:"Phương pháp tạo nhiều tài khoản thử nghiệm sử dụng Gmail Alias an toàn 100%, không bị dính link quảng cáo độc hại và không lo lộ thông tin cá nhân.",
     isInfo:true
   },
   {
@@ -1128,11 +1279,110 @@ const TOOLS = [
       {key:"sotu", label:"Số từ vựng trọng tâm", type:"number", default:8, row:"r1"},
       {key:"doc_cong_thuc", label:"Kèm hướng dẫn đọc công thức Toán bằng tiếng Anh?", type:"checkbox", default:true, row:"r2"},
       {key:"mau_cau_lop", label:"Kèm mẫu câu giao tiếp lớp học cho GV?", type:"checkbox", default:true, row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Dùng thuật ngữ Anh-Mỹ chuẩn xác, IPA chuẩn, câu ví dụ dễ hiểu..."},
       {key:"nguon", label:"Nội dung / tài liệu nguồn của bài học", type:"textarea", placeholder:"Dán nội dung sách giáo khoa hoặc tài liệu chuyên môn cần biên soạn song ngữ"}
     ],
     buildUser(v){
       let s = `[DẠNG BÀI]=${v.mode||"1. Bài học Từ vựng & Mẫu câu"}\n[CHỦ ĐỀ]=${v.chude}\n[LỚP]=${v.lop||"Lớp 12"}\n[TRÌNH ĐỘ]=${v.trinhdo||"Trung bình (B1)"}\n[SỐ TỪ VỰNG]=${v.sotu||8}\n[DOC_CONG_THUC]=${v.doc_cong_thuc?"BẬT":"TẮT"}\n[MAU_CAU_LOP]=${v.mau_cau_lop?"BẬT":"TẮT"}\n`;
+      if(v.rang_buoc) s+=`[RÀNG_BUỘC]=${v.rang_buoc}\n`;
       if(v.nguon) s+=`\nTài liệu nguồn:\n${v.nguon}`;
+      return s;
+    }
+  },
+  {
+    id:"tao-nhan-vat", num:"11", name:"Tạo & Khóa nhân vật đồng nhất",
+    kicker:"Đồng nhất nhân vật", title:"Tạo & Khóa nhân vật đồng nhất (Video/Ảnh)",
+    desc:"Thiết lập Hồ sơ khóa nhân vật (Character Lock Profile) và bộ prompt tham chiếu cố định để tạo video/ảnh với nhân vật đồng nhất 100% qua mọi phân cảnh.",
+    system: SYS_TAONHANVAT, outputType:"text", filename:"ho-so-nhan-vat.txt",
+    fields:[
+      {key:"ten_nv", label:"Tên nhân vật / Vai trò", type:"text", required:true, placeholder:"VD: Thầy Hùng Toán, Nobita, Cô Lan Anh, Bé Minh..."},
+      {key:"tuoi_gt", label:"Độ tuổi & Giới tính", type:"text", placeholder:"VD: Nam, khoảng 35 tuổi", row:"r1"},
+      {key:"phong_cach", label:"Phong cách nghệ thuật", type:"select", options:[
+        "Hoạt hình 3D Pixar / Disney",
+        "Điện ảnh chân thực (Cinematic Realistic)",
+        "Anime Nhật Bản",
+        "Truyện tranh 2D Việt Nam",
+        "Sketchnote giáo dục"
+      ], default:"Hoạt hình 3D Pixar / Disney", row:"r1"},
+      {key:"ngoai_hinh", label:"Ngoại hình & Khuôn mặt cố định", type:"textarea", placeholder:"VD: Mặt tròn phúc hậu, đeo kính gọng đen tròn, tóc ngắn rẽ ngôi 7/3 màu đen, nụ cười thân thiện"},
+      {key:"trang_phuc", label:"Trang phục & Phụ kiện cố định", type:"textarea", placeholder:"VD: Áo sơ mi xanh dương nhạt xắn tay áo, quần tây đen, đồng hồ đeo tay dây da nâu"},
+      {key:"tinh_cach", label:"Tính cách, Biểu cảm & Giọng nói", type:"text", placeholder:"VD: Hào hứng, kiên nhẫn, giọng nam miền Bắc ấm áp, truyền cảm", row:"r2"},
+      {key:"boi_canh", label:"Bối cảnh / Môi trường hay xuất hiện", type:"text", placeholder:"VD: Phòng học toán hiện đại, bảng xanh, phòng lab khoa học", row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Không thay đổi màu sắc trang phục nhận diện, giọng thoại chuẩn miền Bắc, kính gọng đen tròn..."},
+      {key:"ghi_chu", label:"Yêu cầu bổ sung", type:"textarea", placeholder:"VD: Nhân vật cần có cầm phấn hoặc laptop, ánh sáng tự nhiên tươi sáng"}
+    ],
+    buildUser(v){
+      let s = `[TEN_NHAN_VAT]=${v.ten_nv}\n[TUOI_GIOI_TINH]=${v.tuoi_gt||"Tự đề xuất"}\n[PHONG_CACH]=${v.phong_cach||"Hoạt hình 3D Pixar"}\n`;
+      if(v.ngoai_hinh) s+=`[NGOAI_HINH]=${v.ngoai_hinh}\n`;
+      if(v.trang_phuc) s+=`[TRANG_PHUC]=${v.trang_phuc}\n`;
+      if(v.tinh_cach) s+=`[TINH_CACH_GIONG_NOI]=${v.tinh_cach}\n`;
+      if(v.boi_canh) s+=`[BOI_CANH]=${v.boi_canh}\n`;
+      if(v.rang_buoc) s+=`[RANG_BUOC]=${v.rang_buoc}\n`;
+      if(v.ghi_chu) s+=`[YEU_CAU_BO_SUNG]=${v.ghi_chu}\n`;
+      return s;
+    }
+  },
+  {
+    id:"kiem-soat-prompt", num:"12", name:"Kiểm soát & Sửa lỗi Prompt",
+    kicker:"Kiểm định & Tối ưu", title:"Kiểm soát tính chính xác & Sửa lỗi Prompt (Ảnh/Video)",
+    desc:"Phân tích điểm chính xác của prompt, phát hiện nguyên nhân gây lỗi (đặc biệt là hình ảnh thiếu chính xác, biến dạng) và tự động xuất prompt đã khắc phục tối ưu.",
+    system: SYS_KIEMSOATPROMPT, outputType:"text", filename:"prompt-da-sua.txt",
+    fields:[
+      {key:"prompt_goc", label:"Prompt cần kiểm tra / sửa lỗi", type:"textarea", required:true, placeholder:"Dán prompt hình ảnh hoặc video bạn đã tạo vào đây..."},
+      {key:"loai_prompt", label:"Loại Prompt", type:"select", options:[
+        "Prompt tạo hình ảnh (Midjourney/Flux/Ideogram/DALL-E)",
+        "Prompt tạo video (Google Veo 3/Sora/Kling/Runway)",
+        "Prompt JSON Infographic / Phiếu học tập",
+        "Prompt Game / Quiz HTML"
+      ], default:"Prompt tạo hình ảnh (Midjourney/Flux/Ideogram/DALL-E)", row:"r1"},
+      {key:"cong_cu_ai", label:"Công cụ AI sử dụng", type:"select", options:[
+        "Google Veo 3 / VideoFX",
+        "Midjourney v6",
+        "Flux.1 / Ideogram",
+        "DALL-E 3 / ChatGPT",
+        "Khác"
+      ], default:"Midjourney v6", row:"r1"},
+      {key:"mo_ta_loi", label:"Mô tả lỗi hoặc điểm chưa chính xác gặp phải", type:"textarea", required:true, placeholder:"VD: Ảnh sinh ra tay bị thừa ngón, nét mặt bị mờ, sai tỷ lệ, nhân vật không giống mô tả, công thức toán bị méo..."},
+      {key:"mong_muon", label:"Yêu cầu kết quả mong muốn sau khi sửa", type:"textarea", placeholder:"VD: Nhân vật rõ nét mặt, đúng góc camera toàn cảnh, phông nền lớp học sạch sẽ, không có chữ lung tung"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn (để Prompt khởi tạo chính xác)", type:"textarea", placeholder:"VD: Bắt buộc có cờ negative prompts loại bỏ méo tay/mờ mặt, giữ nguyên góc camera toàn cảnh..."}
+    ],
+    buildUser(v){
+      let s = `[LOAI_PROMPT]=${v.loai_prompt||"Tạo hình ảnh"}\n[CONG_CU_AI]=${v.cong_cu_ai||"Midjourney v6"}\n\n[PROMPT_GOC]:\n${v.prompt_goc}\n\n[MO_TA_LOI]:\n${v.mo_ta_loi}\n`;
+      if(v.mong_muon) s+=`\n[YEU_CAU_MONG_MUON]:\n${v.mong_muon}`;
+      if(v.rang_buoc) s+=`\n[RANG_BUOC]=${v.rang_buoc}`;
+      return s;
+    }
+  },
+  {
+    id:"giai-de-dap-an", num:"13", name:"Giải đề & Làm đáp án chi tiết",
+    kicker:"Giải đề & Đáp án", title:"Giải đề & Lập đáp án chi tiết (Text / File / Ảnh <= 4 trang A4)",
+    desc:"Đóng vai chuyên gia ra đề & giải đề, tự động phân tích và lập lời giải chi tiết, bảng đáp án nhanh, thang điểm và phân tích cạm bẫy lỗi sai từ file đề (.docx, .pdf, ảnh) hoặc đề bài đã tạo.",
+    system: SYS_GIAIDE, outputType:"text", filename:"dap-an-loi-giai.txt",
+    fields:[
+      {key:"tieu_de_de", label:"Tên đề thi / Tiêu đề bài kiểm tra", type:"text", required:true, placeholder:"VD: Đề kiểm tra Giữa học kỳ 1 Môn Toán Lớp 12 - Mã đề 101", row:"r1"},
+      {key:"loai_de", label:"Dạng đề / Cấu trúc đề", type:"select", options:[
+        "Đề hỗn hợp 22 câu (12 TN + 4 Đ/S + 6 TLN)",
+        "Đề trắc nghiệm 40-50 câu",
+        "Đề thi tự luận",
+        "Đề Toán thực tế / Infographic",
+        "Đề tổng hợp / Khác"
+      ], default:"Đề hỗn hợp 22 câu (12 TN + 4 Đ/S + 6 TLN)", row:"r1"},
+      {key:"khoi_lop", label:"Khối lớp / Cấp học", type:"select", options:["Lớp 10","Lớp 11","Lớp 12","THCS"], default:"Lớp 12", row:"r1"},
+      {key:"kem_dap_an_nhanh", label:"Kèm Bảng đáp án nhanh?", type:"checkbox", default:true, row:"r2"},
+      {key:"kem_loi_giai_ct", label:"Kèm Lời giải chi tiết từng bước?", type:"checkbox", default:true, row:"r2"},
+      {key:"kem_thang_diem", label:"Kèm Thang điểm & Ma trận?", type:"checkbox", default:true, row:"r2"},
+      {key:"kem_cam_bay", label:"Phân tích cạm bẫy & lỗi sai?", type:"checkbox", default:true, row:"r2"},
+      {key:"rang_buoc", label:"Yêu cầu ràng buộc / Điều kiện giới hạn khi giải đề", type:"textarea", placeholder:"VD: Giải theo phương pháp tự luận ngắn gọn, viết công thức Toán dạng LaTeX, chỉ ra 2 cách giải nếu có..."},
+      {key:"nguon", label:"Nội dung đề bài (Dán văn bản đề hoặc trích xuất từ File/Ảnh đính kèm ở trên)", type:"textarea", placeholder:"Dán toàn bộ nội dung câu hỏi/đề thi cần làm đáp án vào đây (hoặc dùng khung Đính kèm tài liệu nguồn ở trên để trích xuất từ file .docx, .pdf, ảnh <= 4 trang A4)"}
+    ],
+    buildUser(v){
+      let s = `[TÊN_ĐỀ]=${v.tieu_de_de}\n[DẠNG_ĐỀ]=${v.loai_de}\n[KHỐI_LỚP]=${v.khoi_lop||"Lớp 12"}\n`;
+      s+= `[BẢNG_ĐÁP_ÁN_NHANH]=${v.kem_dap_an_nhanh?"CÓ":"KHÔNG"}\n`;
+      s+= `[LỜI_GIẢI_CHI_TIẾT]=${v.kem_loi_giai_ct?"CÓ":"KHÔNG"}\n`;
+      s+= `[THANG_ĐIỂM]=${v.kem_thang_diem?"CÓ":"KHÔNG"}\n`;
+      s+= `[PHÂN_TÍCH_CẠM_BẪY]=${v.kem_cam_bay?"CÓ":"KHÔNG"}\n`;
+      if(v.rang_buoc) s+= `[RÀNG_BUỘC]=${v.rang_buoc}\n`;
+      if(v.nguon) s+= `\nNỘI DUNG ĐỀ BÀI CẦN LÀM ĐÁP ÁN:\n\"\"\"\n${v.nguon}\n\"\"\"\n`;
       return s;
     }
   }
@@ -1205,7 +1455,7 @@ function renderSourceArea(){
     <div class="field" style="border:1px dashed var(--line);background:rgba(245,241,228,.03);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
       <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <span>📎 Đính kèm tài liệu nguồn (File / Link / Văn bản)</span>
-        <span style="font-size:11px;color:var(--chalk-dim);font-weight:400;">Tuỳ chọn</span>
+        <button class="btn btn-ghost btn-sm" id="srcSelectFromRepoBtn" type="button" style="color:var(--yellow);border-color:rgba(242,193,78,0.45);font-size:11.5px;">📚 Chọn từ Kho nguồn</button>
       </label>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <input type="file" id="srcFile" accept=".pdf,.doc,.docx,.txt,.md,.json,image/*" style="flex:1;min-width:180px;background:rgba(245,241,228,.06);border:1px solid var(--line);color:var(--chalk);border-radius:6px;padding:6px 10px;font-size:12.5px;">
@@ -1216,12 +1466,53 @@ function renderSourceArea(){
         <button class="btn btn-ghost btn-sm" id="srcLinkBtn" type="button">Lấy từ link</button>
       </div>
       <textarea id="srcText" placeholder="Nội dung nguồn trích xuất được sẽ hiện ở đây — bạn có thể sửa trực tiếp." style="margin-top:8px;min-height:64px;"></textarea>
-      <div class="status" id="srcStatus" style="margin-top:4px;"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:6px;">
+        <button class="btn btn-ghost btn-sm" id="srcSaveToRepoBtn" type="button" style="color:#8CE99A;border-color:rgba(140,233,154,0.45);font-size:11.5px;">⭐ Lưu nội dung này vào Kho nguồn dữ liệu</button>
+        <div class="status" id="srcStatus"></div>
+      </div>
     </div>`;
   
   const srcTextEl = document.getElementById("srcText");
   srcTextEl.value = sourceText;
   srcTextEl.addEventListener("input", e=>{ sourceText = e.target.value; });
+
+  // Mở Kho nguồn để chọn
+  document.getElementById("srcSelectFromRepoBtn").addEventListener("click", ()=>{
+    document.getElementById("sourcesBtn").click();
+  });
+
+  // Lưu nội dung nguồn hiện tại vào Kho nguồn
+  document.getElementById("srcSaveToRepoBtn").addEventListener("click", ()=>{
+    const content = srcTextEl.value.trim();
+    if(!content){
+      alert("Chưa có nội dung nguồn để lưu.");
+      return;
+    }
+    const defaultTitle = "Nguồn bài học - " + new Date().toLocaleString("vi-VN");
+    const title = prompt("Nhập tên nguồn để lưu vào Kho nguồn dữ liệu:", defaultTitle);
+    if(title === null) return;
+    
+    const newSource = {
+      id: Date.now(),
+      title: title.trim() || defaultTitle,
+      type: "Tài liệu tham khảo",
+      time: new Date().toLocaleString("vi-VN"),
+      content: content
+    };
+
+    const sources = getSourcesData();
+    sources.unshift(newSource);
+    saveSourcesData(sources);
+
+    if(fbDb){
+      fbDb.collection("shared_sources").doc(String(newSource.id)).set(newSource).catch(err=>console.log(err));
+    }
+
+    const st = document.getElementById("srcStatus");
+    st.className = "status ok";
+    st.textContent = "✓ Đã lưu nguồn vào Kho dữ liệu!";
+    setTimeout(()=> st.textContent = "", 2500);
+  });
 
   // Xử lý nút Trích xuất file
   document.getElementById("srcFileBtn").addEventListener("click", ()=>{
@@ -1355,14 +1646,20 @@ function renderForm(){
   if(currentTool.isInfo){
     area.innerHTML = `
       <div class="info-card">
-        <h3>Hướng dẫn tạo tài khoản ChatGPT bằng Mail Ảo</h3>
+        <h3>🛡️ Hướng dẫn tạo nhiều tài khoản thử nghiệm AI An Toàn (Không dùng trang web rác)</h3>
+        <p style="font-size:13px;color:var(--chalk-dim);line-height:1.6;margin-bottom:12px;">
+          Cảnh báo: Các trang mail ảo trôi nổi trên mạng thường chứa nhiều quảng cáo không lành mạnh, chuyển hướng độc hại và đa số đã bị ChatGPT/Google chặn. Dưới đây là phương pháp <strong>Gmail Alias (Email phụ chính chủ)</strong> an toàn 100%, hoàn toàn miễn phí và nhận thư ngay trong hòm thư gốc của bạn:
+        </p>
         <ol>
-          <li>Mail ảo giúp bạn tạo nhanh tài khoản dùng thử các dịch vụ AI mà không làm lộ email cá nhân hay bị spam.</li>
-          <li>Truy cập trang email tạm thời: <a href="https://tempmailapi.io.vn/" target="_blank" rel="noopener">tempmailapi.io.vn</a> hoặc <a href="https://temp-mail.org/" target="_blank" rel="noopener">temp-mail.org</a> để lấy một địa chỉ email tạm.</li>
-          <li>Copy địa chỉ email vừa nhận, dùng để đăng ký tại <strong>chatgpt.com</strong> hoặc <strong>aistudio.google.com</strong>.</li>
-          <li>Quay lại tab mail ảo, mở hộp thư đến để nhận mã xác thực (OTP) và hoàn tất đăng ký.</li>
-          <li><em>Lưu ý:</em> Chỉ sử dụng mail ảo cho tài khoản thử nghiệm, không dùng cho các dữ liệu quan trọng lâu dài.</li>
+          <li><strong>Quy tắc Gmail Alias:</strong> Nếu email của bạn là <code>tengiaovien@gmail.com</code>, bạn chỉ cần thêm dấu <code>+</code> và từ bất kỳ đằng sau. Ví dụ: <code>tengiaovien+chatgpt1@gmail.com</code>, <code>tengiaovien+gemini2@gmail.com</code>.</li>
+          <li><strong>Đăng ký tài khoản AI:</strong> Sử dụng địa chỉ email phụ dạng <code>tengiaovien+ai1@gmail.com</code> để đăng ký tại <a href="https://chatgpt.com/" target="_blank" rel="noopener">chatgpt.com</a> hoặc <a href="https://aistudio.google.com/" target="_blank" rel="noopener">aistudio.google.com</a>.</li>
+          <li><strong>Nhận mã xác thực (OTP):</strong> Tất cả thư xác thực sẽ gửi trực tiếp về hộp thư chính <code>tengiaovien@gmail.com</code> của bạn ngay lập tức mà không cần qua bất kỳ trang web trung gian nào.</li>
+          <li><strong>Quản lý dễ dàng:</strong> Bạn có thể tạo vô số tài khoản thử nghiệm khác nhau (<code>+ai1</code>, <code>+ai2</code>, <code>+test3</code>...) mà vẫn hoàn toàn bảo mật và an toàn.</li>
         </ol>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn btn-primary btn-sm">🔑 Đăng ký lấy API Key Gemini (Miễn phí)</a>
+          <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);">💬 Đăng ký ChatGPT OpenAI</a>
+        </div>
       </div>`;
     return;
   }
@@ -1827,6 +2124,66 @@ document.getElementById("copyBtn").addEventListener("click", async ()=>{
   setTimeout(()=> b.innerHTML = orig, 1800);
 });
 
+/* Chỉnh sửa & Lưu Prompt trực tiếp tại giao diện kết quả */
+const editOutputBtn = document.getElementById("editOutputBtn");
+const saveEditOutputBtn = document.getElementById("saveEditOutputBtn");
+const cancelEditOutputBtn = document.getElementById("cancelEditOutputBtn");
+const outputTextEl = document.getElementById("outputText");
+const outputTextEditEl = document.getElementById("outputTextEdit");
+
+editOutputBtn.addEventListener("click", ()=>{
+  if(!window.__lastOutput && !outputTextEl.textContent) return;
+  outputTextEditEl.value = window.__lastOutput || outputTextEl.textContent;
+  outputTextEl.style.display = "none";
+  outputTextEditEl.style.display = "block";
+  editOutputBtn.style.display = "none";
+  saveEditOutputBtn.style.display = "inline-flex";
+  cancelEditOutputBtn.style.display = "inline-flex";
+  outputTextEditEl.focus();
+});
+
+cancelEditOutputBtn.addEventListener("click", ()=>{
+  outputTextEditEl.style.display = "none";
+  outputTextEl.style.display = "block";
+  editOutputBtn.style.display = "inline-flex";
+  saveEditOutputBtn.style.display = "none";
+  cancelEditOutputBtn.style.display = "none";
+});
+
+saveEditOutputBtn.addEventListener("click", ()=>{
+  const updated = outputTextEditEl.value;
+  window.__lastOutput = updated;
+  if(window.__lastType === "html"){
+    const match = updated.match(/<!DOCTYPE html>[\s\S]*<\/html>/i);
+    window.__lastHtmlCode = match ? match[0] : updated;
+    const previewFrame = document.getElementById("previewFrame");
+    if(previewFrame) previewFrame.srcdoc = window.__lastHtmlCode;
+  }
+  outputTextEl.textContent = updated;
+  updateTokenCount(updated);
+
+  const mathEl = document.getElementById("mathPreview");
+  if(mathEl && mathEl.style.display !== "none"){
+    mathEl.innerHTML = escapeHtml(updated).replace(/\n/g, "<br>");
+    if(window.MathJax && window.MathJax.typesetPromise){
+      window.MathJax.typesetPromise([mathEl]).catch(err=>console.error(err));
+    }
+  }
+
+  outputTextEditEl.style.display = "none";
+  outputTextEl.style.display = "block";
+  editOutputBtn.style.display = "inline-flex";
+  saveEditOutputBtn.style.display = "none";
+  cancelEditOutputBtn.style.display = "none";
+
+  const status = document.getElementById("genStatus");
+  if(status){
+    status.className = "status ok";
+    status.textContent = "✓ Đã lưu nội dung prompt vừa sửa!";
+    setTimeout(()=> { if(status.textContent.includes("vừa sửa")) status.textContent = ""; }, 2500);
+  }
+});
+
 document.getElementById("downloadBtn").addEventListener("click", ()=>{
   if(!window.__lastOutput) return;
   const mimeType = (window.__lastType === "html") ? "text/html;charset=utf-8" :
@@ -2040,6 +2397,7 @@ window.addEventListener("click", e=>{
   if(e.target === historyModal) historyModal.style.display = "none";
   if(typeof guideModal !== "undefined" && e.target === guideModal) guideModal.style.display = "none";
   if(typeof archiveModal !== "undefined" && e.target === archiveModal) archiveModal.style.display = "none";
+  if(typeof sourcesModal !== "undefined" && e.target === sourcesModal) sourcesModal.style.display = "none";
 });
 
 window.addEventListener("keydown", e=>{
@@ -2048,6 +2406,7 @@ window.addEventListener("keydown", e=>{
     historyModal.style.display = "none";
     if(typeof guideModal !== "undefined") guideModal.style.display = "none";
     if(typeof archiveModal !== "undefined") archiveModal.style.display = "none";
+    if(typeof sourcesModal !== "undefined") sourcesModal.style.display = "none";
   }
 });
 
@@ -2127,15 +2486,16 @@ const GUIDES = {
 
   "toan-thuc-te": `
     <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
-    <p style="margin:0 0 10px;">Biên soạn các bài tập toán ứng dụng đời sống thực tế (tối ưu chi phí, đo đạc khoảng cách, tài chính, mô hình thực tế...).</p>
+    <p style="margin:0 0 10px;">Biên soạn các bài tập toán ứng dụng đời sống thực tế (tối ưu chi phí, đo đạc khoảng cách, tài chính, mô hình thực tế...) tạo đủ số lượng câu hỏi yêu cầu, hỗ trợ bật/tắt chế độ Học sinh (có dòng kẻ làm bài) và Giáo viên (có lời giải), tự động phân thành nhiều trang khi số lượng câu hỏi lớn.</p>
     <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
     <ol style="margin:0 0 10px;padding-left:20px;">
-      <li><strong>Chọn dạng:</strong> Chọn <em>Đề bài toán thực tế (văn bản)</em> hoặc <em>Infographic minh họa 3 cột</em>.</li>
-      <li><strong>Chủ đề & Số câu:</strong> Nhập tên chủ đề toán học và số bài tập cần tạo.</li>
+      <li><strong>Chọn dạng:</strong> Chọn <em>Đề bài toán thực tế (văn bản)</em> hoặc <em>Infographic minh họa 3 cột (JSON)</em>.</li>
+      <li><strong>Chủ đề & Số câu:</strong> Nhập tên chủ đề toán học và số câu hỏi cần tạo (tạo đủ số lượng yêu cầu).</li>
+      <li><strong>Chế độ trình bày:</strong> Chọn chế độ <em>Học sinh (Không lời giải, cho những dòng kẻ để học sinh làm)</em> hoặc <em>Giáo viên (Có lời giải chi tiết ở cột 3 / Đáp án)</em>.</li>
       <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
     </ol>
     <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
-    <p style="margin:0;">Sử dụng tập bài tập thực tế để làm phong phú đề kiểm tra, hoặc dùng bản Infographic 3 cột (Đề bài - Hình minh họa TikZ - Gợi ý) cho học sinh thảo luận nhóm.</p>
+    <p style="margin:0;">In phát phiếu bài tập cho học sinh tự làm (chế độ Học sinh có dòng kẻ), hoặc dùng bản Giáo viên (có lời giải ở cột 3) để giảng dạy và chấm chữa bài. Với danh sách nhiều câu, ứng dụng tự động thiết kế chia thành nhiều trang cân đối.</p>
   `,
 
   "truyen-tranh": `
@@ -2166,13 +2526,13 @@ const GUIDES = {
 
   "mail-ao": `
     <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
-    <p style="margin:0 0 10px;">Hướng dẫn tạo và sử dụng các địa chỉ Email tạm thời (Mail ảo) để đăng ký dùng thử miễn phí các dịch vụ AI (ChatGPT, Gemini, Midjourney...) mà không lộ email cá nhân.</p>
+    <p style="margin:0 0 10px;">Hướng dẫn phương pháp Gmail Alias an toàn để tạo nhiều tài khoản thử nghiệm các dịch vụ AI (ChatGPT, Gemini, Claude...) mà không sợ bị dính virus, quảng cáo rác hay rò rỉ thông tin.</p>
     <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
     <ol style="margin:0 0 10px;padding-left:20px;">
-      <li>Truy cập <a href="https://tempmailapi.io.vn/" target="_blank">tempmailapi.io.vn</a> hoặc <a href="https://temp-mail.org/" target="_blank">temp-mail.org</a>.</li>
-      <li>Sao chép email tạm được tạo tự động.</li>
-      <li>Sử dụng email đó để đăng ký tài khoản ChatGPT / Google AI Studio.</li>
-      <li>Quay lại trang mail ảo mở hộp thư đến (Inbox) để lấy mã kích hoạt OTP.</li>
+      <li><strong>Tạo Email Alias:</strong> Lấy email Gmail chính của bạn và thêm dấu <code>+</code> đằng sau tên (VD: <code>tengiaovien+test1@gmail.com</code>).</li>
+      <li><strong>Đăng ký tài khoản AI:</strong> Dùng email này để tạo tài khoản mới tại Google AI Studio hoặc ChatGPT.</li>
+      <li><strong>Nhận mã OTP:</strong> Mở hộp thư Gmail chính của bạn để nhận mã xác thực OTP ngay lập tức.</li>
+      <li>Tránh tuyệt đối việc nhấp vào các trang mail ảo lạ trên internet chứa quảng cáo độc hại.</li>
     </ol>
   `,
 
@@ -2184,7 +2544,6 @@ const GUIDES = {
       <li><strong>Chọn Dạng bài sản xuất:</strong>
         <ul>
           <li><em>Bài học Từ vựng & Mẫu câu:</em> Trích xuất thuật ngữ IPA, cách đọc công thức toán, mẫu câu giao tiếp và hội thoại thầy-trò.</li>
-          <li><em>Kế hoạch bài dạy CLIL 4C:</em> Thiết kế giáo án song ngữ chuẩn 4C (Content, Communication, Cognition, Culture).</li>
           <li><em>Infographic / Flashcard:</em> Trả về prompt JSON để AI sinh ảnh học từ vựng và công thức trực quan.</li>
         </ul>
       </li>
@@ -2193,6 +2552,50 @@ const GUIDES = {
     </ol>
     <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
     <p style="margin:0;">Copy prompt thu được dán vào Gemini / ChatGPT để nhận bài giảng song ngữ hoàn chỉnh, dùng mẫu câu đọc công thức & hội thoại giảng dạy trực tiếp trên lớp CLIL.</p>
+  `,
+
+  "tao-nhan-vat": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Tạo Hồ sơ khóa nhân vật (Character Lock Profile) và bộ prompt tham chiếu tiêu chuẩn giúp sinh nhân vật trong ảnh/video hoàn toàn đồng nhất qua nhiều phân cảnh khác nhau.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Điền tên & phong cách:</strong> Nhập tên nhân vật (VD: <em>Thầy Hùng Toán</em>) và chọn phong cách nghệ thuật (Pixar 3D, Anime, Điện ảnh...).</li>
+      <li><strong>Mô tả chi tiết ngoại hình & trang phục cố định:</strong> Nhập đặc điểm khuôn mặt (mắt, kiểu tóc, kính) và quần áo cố định. Mẹo: giữ nguyên màu sắc trang phục nhận diện!</li>
+      <li><strong>Điền tính cách & giọng nói:</strong> Giúp AI tạo hồ sơ thoại và bối cảnh chuẩn.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Hướng dẫn tạo video/ảnh đồng nhất từng bước:</h4>
+    <p style="margin:0 0 6px;"><strong>1. Tạo bộ ảnh gốc (Character Sheet):</strong> Copy Prompt ở PHẦN 2 dán vào Midjourney / Flux / Ideogram để sinh ra 4 ảnh gốc (Front, 3/4, Close-up, Action).</p>
+    <p style="margin:0 0 6px;"><strong>2. Dùng cờ '--cref' (Midjourney):</strong> Copy URL ảnh vừa tạo, dán vào prompt phân cảnh sau với cú pháp: <code>[Prompt cảnh mới] --cref [URL_ANH_GOC] --cw 100</code>.</p>
+    <p style="margin:0;"><strong>3. Dùng Google Veo 3 / VideoFX:</strong> Chèn đoạn text "Character Physical Appearance Lock" ở PHẦN 3 vào từng phân cảnh kịch bản Veo 3 để giữ gương mặt & trang phục không thay đổi.</p>
+  `,
+
+  "kiem-soat-prompt": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Đánh giá chất lượng prompt, phát hiện lỗi mâu thuẫn từ khóa, và tự động nâng cấp/sửa lỗi cho prompt ảnh/video (đặc biệt xử lý lỗi thiếu chính xác, biến dạng hình ảnh, mờ mặt, thừa ngón).</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Dán prompt gốc:</strong> Nhập đoạn prompt bạn vừa tạo hoặc prompt gặp sự cố. Mẹo: Nếu vừa tạo prompt ở các công cụ khác, hãy bấm nút <strong>🔍 Kiểm tra & Sửa lỗi prompt này</strong> ở dưới bảng kết quả.</li>
+      <li><strong>Chọn công cụ AI:</strong> Chọn Midjourney, Flux, Google Veo 3...</li>
+      <li><strong>Mô tả lỗi:</strong> Ghi rõ hình ảnh/video bị lỗi gì (VD: <em>bị biến dạng tay, nét mặt không rõ, sai góc máy, bị mờ phông nền...</em>).</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Kết quả thu được:</h4>
+    <p style="margin:0;">AI sẽ phân tích điểm chính xác (Prompt Accuracy Score), nêu nguyên nhân lỗi và cấp cho bạn đoạn <strong>Prompt đã sửa chuẩn hóa 100%</strong> kèm danh sách <strong>Negative Prompts</strong> loại bỏ hoàn toàn các biến dạng.</p>
+  `,
+
+  "giai-de-dap-an": `
+    <h4 style="margin:8px 0 4px;color:#123832;">🎯 Mục tiêu:</h4>
+    <p style="margin:0 0 10px;">Phân tích đề bài và lập bộ Lời giải chi tiết, Bảng đáp án nhanh, Thang điểm và Phân tích cạm bẫy lỗi sai từ đề bài dán trực tiếp hoặc trích xuất từ file (.docx, .pdf, ảnh) với dung lượng không quá 4 trang A4.</p>
+    <h4 style="margin:8px 0 4px;color:#123832;">📋 Các bước thực hiện:</h4>
+    <ol style="margin:0 0 10px;padding-left:20px;">
+      <li><strong>Đính kèm file đề bài (Nếu có):</strong> Dùng khung <em>📎 Đính kèm tài liệu nguồn</em> ở trên để trích xuất file đề thi (.docx, .pdf hoặc ảnh chụp trang đề). Nội dung sẽ tự động điền vào ô Đề bài.</li>
+      <li><strong>Điền tiêu đề & dạng đề:</strong> Nhập tên bài kiểm tra và chọn dạng đề (22 câu, Trắc nghiệm, Tự luận...).</li>
+      <li><strong>Tùy chọn hiển thị:</strong> Tích chọn Kèm Bảng đáp án nhanh, Lời giải chi tiết, Thang điểm, Phân tích lỗi sai.</li>
+      <li>Bấm <strong>✨ Tạo prompt</strong>.</li>
+    </ol>
+    <h4 style="margin:8px 0 4px;color:#123832;">💡 Cách sử dụng kết quả:</h4>
+    <p style="margin:0;">Bấm <strong>📄 Xuất file Word (.doc)</strong> hoặc <strong>📋 Sao chép</strong> để lấy toàn bộ Lời giải chi tiết & Đáp án chuẩn LaTeX phục vụ giảng dạy, chấm bài hoặc phát tài liệu cho học sinh.</p>
   `
 };
 
@@ -2260,15 +2663,26 @@ document.getElementById("saveArchiveBtn").addEventListener("click", ()=>{
   archive.unshift(newItem);
   saveArchiveData(archive);
 
+  // Tự động đồng bộ ngầm lên Firebase Cloud
+  if(fbDb){
+    fbDb.collection("shared_archives").doc(String(newItem.id)).set(newItem).then(()=>{
+      if(!cloudArchiveItems.some(i => String(i.id) === String(newItem.id))){
+        cloudArchiveItems.unshift(newItem);
+      }
+      renderArchiveItems();
+    }).catch(err => console.log("Lỗi đồng bộ Cloud:", err));
+  }
+
   const btn = document.getElementById("saveArchiveBtn");
   const orig = btn.innerHTML;
-  btn.innerHTML = "✓ Đã lưu vào kho!";
+  btn.innerHTML = "✓ Đã lưu Cloud & Máy!";
   setTimeout(()=> btn.innerHTML = orig, 2000);
 });
 
 // Nút mở kho lưu trữ
 document.getElementById("archiveBtn").addEventListener("click", ()=>{
   archiveModal.style.display = "flex";
+  loadCloudArchives();
   renderArchiveItems();
 });
 
@@ -2307,6 +2721,15 @@ document.getElementById("saveNewArchiveBtn").addEventListener("click", ()=>{
   archive.unshift(newItem);
   saveArchiveData(archive);
   
+  if(fbDb){
+    fbDb.collection("shared_archives").doc(String(newItem.id)).set(newItem).then(()=>{
+      if(!cloudArchiveItems.some(i => String(i.id) === String(newItem.id))){
+        cloudArchiveItems.unshift(newItem);
+      }
+      renderArchiveItems();
+    }).catch(err => console.log("Lỗi đồng bộ Cloud:", err));
+  }
+
   document.getElementById("newArchiveTitle").value = "";
   document.getElementById("newArchiveContent").value = "";
   document.getElementById("addArchiveForm").style.display = "none";
@@ -2317,47 +2740,139 @@ document.getElementById("saveNewArchiveBtn").addEventListener("click", ()=>{
 archiveSearchInput.addEventListener("input", renderArchiveItems);
 archiveFilterType.addEventListener("change", renderArchiveItems);
 
+const editingArchiveIds = {};
+
 function renderArchiveItems(){
-  const archive = getArchiveData();
+  const localArchive = getArchiveData();
+  const map = new Map();
+  localArchive.forEach(item => map.set(String(item.id), {...item, isCloud: false}));
+  cloudArchiveItems.forEach(item => {
+    map.set(String(item.id), {...item, isCloud: true});
+  });
+  const merged = Array.from(map.values()).sort((a, b) => b.id - a.id);
+
   const q = archiveSearchInput.value.trim().toLowerCase();
   const typeFilter = archiveFilterType.value;
 
-  const filtered = archive.filter(item => {
+  const filtered = merged.filter(item => {
     const matchSearch = !q || item.title.toLowerCase().includes(q) || item.toolName.toLowerCase().includes(q) || (item.content && item.content.toLowerCase().includes(q));
     const matchType = (typeFilter === "ALL") || (item.type === typeFilter);
     return matchSearch && matchType;
   });
 
-  archiveCountStatus.textContent = `Tổng số: ${filtered.length} / ${archive.length} tài liệu trong kho`;
+  const cloudCount = cloudArchiveItems.length;
+  archiveCountStatus.innerHTML = `☁️ Đám mây Cloud: <strong>${cloudCount}</strong> · 💻 Máy cá nhân: <strong>${localArchive.length}</strong> (Tổng: ${filtered.length})`;
 
   if(!filtered.length){
     archiveList.innerHTML = `<p style="color:#73806a;font-style:italic;text-align:center;padding:20px 0;">Không tìm thấy tài liệu nào trong kho lưu trữ.</p>`;
     return;
   }
 
-  archiveList.innerHTML = filtered.map(item => `
-    <div style="border:1px solid #c9c0a4;background:#fff;border-radius:8px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
-        <div>
-          <span style="background:#e0eefd;color:#002B49;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:6px;">${escapeHtml(item.type)}</span>
-          <strong style="font-size:13.5px;color:#20281f;">${escapeHtml(item.title)}</strong>
+  archiveList.innerHTML = filtered.map(item => {
+    if(editingArchiveIds[item.id]){
+      return `
+        <div style="border:1px dashed #f2c14e;background:#fffef5;border-radius:8px;padding:12px 14px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+          <h4 style="margin:0 0 8px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">✏️ CHỈNH SỬA TÀI LIỆU LƯU TRỮ</h4>
+          <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Tiêu đề tài liệu / Prompt:</label>
+          <input type="text" id="editArchTitle_${item.id}" value="${escapeHtml(item.title)}" style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:13px;box-sizing:border-box;background:#fff;">
+          <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Loại tài liệu:</label>
+          <select id="editArchType_${item.id}" style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:13px;box-sizing:border-box;background:#fff;">
+            <option value="PROMPT" ${item.type==="PROMPT"?"selected":""}>Prompt / Kịch bản</option>
+            <option value="HTML" ${item.type==="HTML"?"selected":""}>Game Quiz HTML</option>
+            <option value="DOC" ${item.type==="DOC"?"selected":""}>Tài liệu / Đề thi</option>
+            <option value="NOTE" ${item.type==="NOTE"?"selected":""}>Ghi chú / Khác</option>
+          </select>
+          <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Nội dung chi tiết:</label>
+          <textarea id="editArchContent_${item.id}" style="width:100%;height:140px;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:10px;font-size:12.5px;box-sizing:border-box;font-family:'JetBrains Mono',monospace;background:#fff;">${escapeHtml(item.content)}</textarea>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <button class="btn btn-ghost btn-sm" onclick="cancelEditArchiveItem('${item.id}')">✖ Hủy</button>
+            <button class="btn btn-primary btn-sm" onclick="saveEditArchiveItem('${item.id}')" style="background:#4EBA74;border:none;">💾 Lưu thay đổi</button>
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div style="border:1px solid ${item.isCloud ? '#b3d4fc' : '#c9c0a4'};background:${item.isCloud ? '#f4f8ff' : '#fff'};border-radius:8px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+          <div>
+            <span style="background:${item.isCloud ? '#002B49' : '#e0eefd'};color:${item.isCloud ? '#fff' : '#002B49'};font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:6px;">${item.isCloud ? '☁️ Firebase Cloud' : '💻 Máy cá nhân'} · ${escapeHtml(item.type)}</span>
+            <strong style="font-size:13.5px;color:#20281f;">${escapeHtml(item.title)}</strong>
+          </div>
+          <span style="font-size:11px;color:#73806a;white-space:nowrap;">${escapeHtml(item.time)}</span>
         </div>
-        <span style="font-size:11px;color:#73806a;white-space:nowrap;">${escapeHtml(item.time)}</span>
-      </div>
-      <div style="font-size:11.5px;color:#5a6350;margin-bottom:8px;">Công cụ: ${escapeHtml(item.toolName)}</div>
-      <pre style="background:#fcfbf7;border:1px solid #ede8d8;border-radius:6px;padding:8px 10px;font-size:12px;max-height:100px;overflow:hidden;margin:0 0 10px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(item.content.slice(0, 300))}${item.content.length > 300 ? "..." : ""}</pre>
-      <div style="display:flex;gap:6px;justify-content:flex-end;">
-        <button class="btn btn-ghost btn-sm" onclick="copyArchiveItem(${item.id})" style="font-size:11.5px;padding:3px 8px;">📋 Copy</button>
-        <button class="btn btn-ghost btn-sm" onclick="downloadArchiveItem(${item.id})" style="font-size:11.5px;padding:3px 8px;">💾 Tải về</button>
-        <button class="btn btn-ghost btn-sm" onclick="deleteArchiveItem(${item.id})" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;padding:3px 8px;">🗑 Xóa</button>
-      </div>
-    </div>
-  `).join("");
+        <div style="font-size:11.5px;color:#5a6350;margin-bottom:8px;">Công cụ: ${escapeHtml(item.toolName)}</div>
+        <pre style="background:#fcfbf7;border:1px solid #ede8d8;border-radius:6px;padding:8px 10px;font-size:12px;max-height:100px;overflow:hidden;margin:0 0 10px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(item.content.slice(0, 300))}${item.content.length > 300 ? "..." : ""}</pre>
+        <div style="display:flex;gap:6px;justify-content:flex-end;">
+          <button class="btn btn-ghost btn-sm" onclick="editArchiveItem('${item.id}')" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);font-size:11.5px;padding:3px 8px;">✏️ Sửa</button>
+          <button class="btn btn-ghost btn-sm" onclick="copyArchiveItem('${item.id}')" style="font-size:11.5px;padding:3px 8px;">📋 Copy</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadArchiveItem('${item.id}')" style="font-size:11.5px;padding:3px 8px;">💾 Tải về</button>
+          <button class="btn btn-ghost btn-sm" onclick="deleteArchiveItem('${item.id}')" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;padding:3px 8px;">🗑 Xóa</button>
+        </div>
+      </div>`;
+  }).join("");
 }
 
+window.editArchiveItem = function(id){
+  editingArchiveIds[id] = true;
+  renderArchiveItems();
+};
+
+window.cancelEditArchiveItem = function(id){
+  delete editingArchiveIds[id];
+  renderArchiveItems();
+};
+
+window.saveEditArchiveItem = function(id){
+  const titleEl = document.getElementById("editArchTitle_" + id);
+  const typeEl = document.getElementById("editArchType_" + id);
+  const contentEl = document.getElementById("editArchContent_" + id);
+
+  if(!titleEl || !contentEl) return;
+  const newTitle = titleEl.value.trim();
+  const newType = typeEl.value;
+  const newContent = contentEl.value;
+
+  if(!newTitle || !newContent){
+    alert("Vui lòng nhập cả tiêu đề và nội dung.");
+    return;
+  }
+
+  const nowStr = new Date().toLocaleString("vi-VN");
+
+  let localArchive = getArchiveData();
+  let foundLocal = false;
+  localArchive = localArchive.map(i => {
+    if(String(i.id) === String(id)){
+      foundLocal = true;
+      return { ...i, title: newTitle, type: newType, content: newContent, time: nowStr };
+    }
+    return i;
+  });
+
+  if(foundLocal){
+    saveArchiveData(localArchive);
+  }
+
+  cloudArchiveItems = cloudArchiveItems.map(i => {
+    if(String(i.id) === String(id)){
+      return { ...i, title: newTitle, type: newType, content: newContent, time: nowStr };
+    }
+    return i;
+  });
+
+  const updatedItem = localArchive.find(i => String(i.id) === String(id)) || cloudArchiveItems.find(i => String(i.id) === String(id));
+
+  if(fbDb && updatedItem){
+    fbDb.collection("shared_archives").doc(String(id)).set(updatedItem, { merge: true }).catch(err=>console.log("Lỗi lưu Cloud:", err));
+  }
+
+  delete editingArchiveIds[id];
+  renderArchiveItems();
+};
+
 window.copyArchiveItem = async function(id){
-  const archive = getArchiveData();
-  const item = archive.find(i => i.id === id);
+  const localArchive = getArchiveData();
+  const item = localArchive.find(i => String(i.id) === String(id)) || cloudArchiveItems.find(i => String(i.id) === String(id));
   if(item){
     await copyToClipboard(item.content);
     alert("✓ Đã sao chép nội dung tài liệu vào bộ nhớ tạm!");
@@ -2365,8 +2880,8 @@ window.copyArchiveItem = async function(id){
 };
 
 window.downloadArchiveItem = function(id){
-  const archive = getArchiveData();
-  const item = archive.find(i => i.id === id);
+  const localArchive = getArchiveData();
+  const item = localArchive.find(i => String(i.id) === String(id)) || cloudArchiveItems.find(i => String(i.id) === String(id));
   if(!item) return;
   const blob = new Blob([item.content], {type: "text/plain;charset=utf-8"});
   const url = URL.createObjectURL(blob);
@@ -2382,8 +2897,13 @@ window.downloadArchiveItem = function(id){
 window.deleteArchiveItem = function(id){
   if(confirm("Bạn có chắc muốn xóa tài liệu này khỏi kho lưu trữ?")){
     let archive = getArchiveData();
-    archive = archive.filter(i => i.id !== id);
+    archive = archive.filter(i => String(i.id) !== String(id));
     saveArchiveData(archive);
+    cloudArchiveItems = cloudArchiveItems.filter(i => String(i.id) !== String(id));
+
+    if(fbDb){
+      fbDb.collection("shared_archives").doc(String(id)).delete().catch(err => console.log("Lỗi xóa Cloud:", err));
+    }
     renderArchiveItems();
   }
 };
@@ -2391,22 +2911,237 @@ window.deleteArchiveItem = function(id){
 document.getElementById("clearArchiveBtn").addEventListener("click", ()=>{
   if(confirm("Bạn có chắc muốn XÓA TOÀN BỘ KHO LƯU TRỮ? Thao tác này không thể hoàn tác.")){
     localStorage.removeItem("GEMINI_SAVED_ARCHIVE");
+    cloudArchiveItems = [];
     renderArchiveItems();
   }
+});
+
+/* ==========================================================================
+   QUẢN LÝ KHO NGUỒN DỮ LIỆU BÀI HỌC (DATA SOURCES REPOSITORY SYSTEM)
+   ========================================================================== */
+const sourcesModal = document.getElementById("sourcesModal");
+const sourcesList = document.getElementById("sourcesList");
+const sourcesSearchInput = document.getElementById("sourcesSearchInput");
+const sourcesCountStatus = document.getElementById("sourcesCountStatus");
+let cloudSourceItems = [];
+
+function getSourcesData(){
+  try {
+    return JSON.parse(localStorage.getItem("GEMINI_SAVED_SOURCES") || "[]");
+  } catch(e){ return []; }
+}
+
+function saveSourcesData(data){
+  localStorage.setItem("GEMINI_SAVED_SOURCES", JSON.stringify(data));
+}
+
+async function loadCloudSources(){
+  if(!fbDb) return;
+  try {
+    const snapshot = await fbDb.collection("shared_sources").orderBy("id", "desc").limit(100).get();
+    cloudSourceItems = [];
+    snapshot.forEach(doc => cloudSourceItems.push(doc.data()));
+    renderSourceItems();
+  } catch(err){
+    console.log("Lỗi tải Cloud sources:", err);
+  }
+}
+
+// Nút mở Kho nguồn dữ liệu từ Sidebar
+document.getElementById("sourcesBtn").addEventListener("click", ()=>{
+  sourcesModal.style.display = "flex";
+  loadCloudSources();
+  renderSourceItems();
+});
+
+document.getElementById("sourcesCloseBtn").addEventListener("click", ()=>{
+  sourcesModal.style.display = "none";
+});
+
+// Thêm nguồn thủ công
+document.getElementById("addSourceToggleBtn").addEventListener("click", ()=>{
+  const form = document.getElementById("addSourceForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+});
+
+document.getElementById("cancelAddSourceBtn").addEventListener("click", ()=>{
+  document.getElementById("addSourceForm").style.display = "none";
+});
+
+document.getElementById("saveNewSourceBtn").addEventListener("click", ()=>{
+  const title = document.getElementById("newSourceTitle").value.trim();
+  const type = document.getElementById("newSourceType").value;
+  const content = document.getElementById("newSourceContent").value.trim();
+  
+  if(!title || !content){
+    alert("Vui lòng nhập cả tên nguồn và nội dung dữ liệu.");
+    return;
+  }
+  
+  const newSource = {
+    id: Date.now(),
+    title: title,
+    type: type,
+    time: new Date().toLocaleString("vi-VN"),
+    content: content
+  };
+
+  const sources = getSourcesData();
+  sources.unshift(newSource);
+  saveSourcesData(sources);
+
+  if(fbDb){
+    fbDb.collection("shared_sources").doc(String(newSource.id)).set(newSource).then(()=>{
+      if(!cloudSourceItems.some(s => String(s.id) === String(newSource.id))){
+        cloudSourceItems.unshift(newSource);
+      }
+      renderSourceItems();
+    }).catch(err=>console.log(err));
+  }
+
+  document.getElementById("newSourceTitle").value = "";
+  document.getElementById("newSourceContent").value = "";
+  document.getElementById("addSourceForm").style.display = "none";
+  renderSourceItems();
+});
+
+sourcesSearchInput.addEventListener("input", renderSourceItems);
+
+function renderSourceItems(){
+  const localSources = getSourcesData();
+  const map = new Map();
+  localSources.forEach(item => map.set(String(item.id), {...item, isCloud: false}));
+  cloudSourceItems.forEach(item => {
+    map.set(String(item.id), {...item, isCloud: true});
+  });
+  const merged = Array.from(map.values()).sort((a, b) => b.id - a.id);
+
+  const q = sourcesSearchInput.value.trim().toLowerCase();
+  const filtered = merged.filter(item => {
+    return !q || item.title.toLowerCase().includes(q) || item.type.toLowerCase().includes(q) || (item.content && item.content.toLowerCase().includes(q));
+  });
+
+  sourcesCountStatus.innerHTML = `☁️ Cloud: <strong>${cloudSourceItems.length}</strong> · 💻 Máy cá nhân: <strong>${localSources.length}</strong> (Tổng: ${filtered.length} nguồn)`;
+
+  if(!filtered.length){
+    sourcesList.innerHTML = `<p style="color:#73806a;font-style:italic;text-align:center;padding:20px 0;">Chưa có dữ liệu nguồn nào trong kho. Bấm nút <strong>+ Thêm nguồn dữ liệu mới</strong> để bắt đầu!</p>`;
+    return;
+  }
+
+  sourcesList.innerHTML = filtered.map(item => `
+    <div style="border:1px solid ${item.isCloud ? '#b3d4fc' : '#c9c0a4'};background:${item.isCloud ? '#f4f8ff' : '#fff'};border-radius:8px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+        <div>
+          <span style="background:${item.isCloud ? '#002B49' : '#e0eefd'};color:${item.isCloud ? '#fff' : '#002B49'};font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:6px;">${item.isCloud ? '☁️ Cloud' : '💻 Local'} · ${escapeHtml(item.type)}</span>
+          <strong style="font-size:13.5px;color:#20281f;">${escapeHtml(item.title)}</strong>
+        </div>
+        <span style="font-size:11px;color:#73806a;white-space:nowrap;">${escapeHtml(item.time)}</span>
+      </div>
+      <pre style="background:#fcfbf7;border:1px solid #ede8d8;border-radius:6px;padding:8px 10px;font-size:12px;max-height:110px;overflow:hidden;margin:0 0 10px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(item.content.slice(0, 350))}${item.content.length > 350 ? "..." : ""}</pre>
+      <div style="display:flex;gap:6px;justify-content:flex-end;">
+        <button class="btn btn-primary btn-sm" onclick="useSourceItem('${item.id}')" style="font-size:11.5px;padding:3px 10px;background:#4EBA74;border:none;">🎯 Dùng nguồn này</button>
+        <button class="btn btn-ghost btn-sm" onclick="copySourceItem('${item.id}')" style="font-size:11.5px;padding:3px 8px;">📋 Copy</button>
+        <button class="btn btn-ghost btn-sm" onclick="downloadSourceItem('${item.id}')" style="font-size:11.5px;padding:3px 8px;">💾 Tải về</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteSourceItem('${item.id}')" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;padding:3px 8px;">🗑 Xóa</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+window.useSourceItem = function(id){
+  const localSources = getSourcesData();
+  const item = localSources.find(i => String(i.id) === String(id)) || cloudSourceItems.find(i => String(i.id) === String(id));
+  if(item){
+    sourceText = item.content;
+    const srcTextEl = document.getElementById("srcText");
+    if(srcTextEl) srcTextEl.value = sourceText;
+    
+    // Điền tự động vào ô tài liệu nguồn của công cụ hiện tại (nếu có)
+    const activeNguonEl = document.getElementById("f_nguon");
+    if(activeNguonEl){
+      activeNguonEl.value = sourceText;
+    }
+
+    sourcesModal.style.display = "none";
+    alert(`✓ Đã trích xuất & áp dụng nguồn "${item.title}" vào công cụ!`);
+  }
+};
+
+window.copySourceItem = async function(id){
+  const localSources = getSourcesData();
+  const item = localSources.find(i => String(i.id) === String(id)) || cloudSourceItems.find(i => String(i.id) === String(id));
+  if(item){
+    await copyToClipboard(item.content);
+    alert("✓ Đã sao chép nội dung nguồn dữ liệu!");
+  }
+};
+
+window.downloadSourceItem = function(id){
+  const localSources = getSourcesData();
+  const item = localSources.find(i => String(i.id) === String(id)) || cloudSourceItems.find(i => String(i.id) === String(id));
+  if(!item) return;
+  const blob = new Blob([item.content], {type: "text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${item.title}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.deleteSourceItem = function(id){
+  if(confirm("Bạn có chắc muốn xóa nguồn dữ liệu này khỏi kho?")){
+    let sources = getSourcesData();
+    sources = sources.filter(i => String(i.id) !== String(id));
+    saveSourcesData(sources);
+    cloudSourceItems = cloudSourceItems.filter(i => String(i.id) !== String(id));
+
+    if(fbDb){
+      fbDb.collection("shared_sources").doc(String(id)).delete().catch(err => console.log("Lỗi xóa Cloud:", err));
+    }
+    renderSourceItems();
+  }
+};
+
+document.getElementById("clearSourcesBtn").addEventListener("click", ()=>{
+  if(confirm("Bạn có chắc muốn XÓA TOÀN BỘ KHO NGUỒN DỮ LIỆU? Thao tác này không thể hoàn tác.")){
+    localStorage.removeItem("GEMINI_SAVED_SOURCES");
+    cloudSourceItems = [];
+    renderSourceItems();
+  }
+});
+
+// Nút Sửa lỗi Nhanh 1-Click (chuyển kết quả sang Tool #12)
+document.getElementById("quickAuditBtn").addEventListener("click", ()=>{
+  if(!window.__lastOutput) return;
+  selectTool("kiem-soat-prompt");
+  const promptInput = document.getElementById("f_prompt_goc");
+  if(promptInput){
+    promptInput.value = window.__lastOutput;
+  }
+  const errInput = document.getElementById("f_mo_ta_loi");
+  if(errInput){
+    errInput.focus();
+  }
+  document.getElementById("formArea").scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 /* ==========================================================================
    TÍCH HỢP FIREBASE AUTH, FIRESTORE STATS, THẢ TIM, BÌNH LUẬN & CLOUD ARCHIVE
    ========================================================================== */
 
-// Cấu hình mặc định Firebase (Demo / Standalone)
+// Cấu hình mặc định Firebase
 const defaultFirebaseConfig = {
-  apiKey: "AIzaSyDemoConfigKeyForPromptAppTBS123",
-  authDomain: "prompt-toan-tbs.firebaseapp.com",
-  projectId: "prompt-toan-tbs",
-  storageBucket: "prompt-toan-tbs.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
+  apiKey: "AIzaSyBX4_WGe0BZCG0ZSG_c09GcleJ-hq4aeEY",
+  authDomain: "tpn123-f7971.firebaseapp.com",
+  databaseURL: "https://tpn123-f7971-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tpn123-f7971",
+  storageBucket: "tpn123-f7971.firebasestorage.app",
+  messagingSenderId: "443986355362",
+  appId: "1:443986355362:web:1d62c3378d8b439ec6e3fb",
+  measurementId: "G-JFQDG5X5CN"
 };
 
 let fbApp = null;
@@ -2414,8 +3149,19 @@ let fbAuth = null;
 let fbDb = null;
 
 let currentUser = null;
-let currentArchiveTab = "local"; // "local" | "cloud"
 let cloudArchiveItems = [];
+
+async function loadCloudArchives(){
+  if(!fbDb) return;
+  try {
+    const snapshot = await fbDb.collection("shared_archives").orderBy("id", "desc").limit(100).get();
+    cloudArchiveItems = [];
+    snapshot.forEach(doc => cloudArchiveItems.push(doc.data()));
+    renderArchiveItems();
+  } catch(err){
+    console.log("Lỗi tải Cloud archives:", err);
+  }
+}
 
 function initFirebaseSystem(){
   if(typeof firebase === "undefined") return;
@@ -2432,17 +3178,24 @@ function initFirebaseSystem(){
     } else {
       fbApp = firebase.app();
     }
-    fbAuth = firebase.auth();
-    fbDb = firebase.firestore();
+    try {
+      fbAuth = firebase.auth();
+      fbDb = firebase.firestore();
 
-    // Lắng nghe trạng thái Đăng nhập
-    fbAuth.onAuthStateChanged(user => {
-      currentUser = user;
-      updateAuthUI(user);
-      if(user){
-        loadCloudArchives();
+      fbAuth.onAuthStateChanged(user => {
+        currentUser = user;
+        if(user){
+          loadCloudArchives();
+          loadCloudSources();
+        }
+      });
+
+      if(!fbAuth.currentUser){
+        fbAuth.signInAnonymously().catch(err => console.log("Bg auth bypass, local mode active:", err.message));
       }
-    });
+    } catch(authErr) {
+      console.log("Firebase auth bypass, running in local mode:", authErr.message);
+    }
 
     // Lắng nghe lượt dùng, thả tim & bình luận thời gian thực
     initCommunityStats();
@@ -2451,110 +3204,6 @@ function initFirebaseSystem(){
     console.warn("Lỗi khởi tạo Firebase:", err);
   }
 }
-
-/* --- TÀI KHOẢN & ĐĂNG NHẬP (FIREBASE AUTH) --- */
-const authModal = document.getElementById("authModal");
-const authBtn = document.getElementById("authBtn");
-const authCloseBtn = document.getElementById("authCloseBtn");
-const authLoggedOutView = document.getElementById("authLoggedOutView");
-const authLoggedInView = document.getElementById("authLoggedInView");
-const authStatus = document.getElementById("authStatus");
-
-authBtn.addEventListener("click", ()=>{
-  authModal.style.display = "flex";
-});
-authCloseBtn.addEventListener("click", ()=>{
-  authModal.style.display = "none";
-});
-
-function updateAuthUI(user){
-  if(user){
-    authBtn.innerHTML = `👤 ${escapeHtml(user.displayName || user.email || "Thành viên")}`;
-    authBtn.style.color = "#8CE99A";
-    authLoggedOutView.style.display = "none";
-    authLoggedInView.style.display = "block";
-    
-    document.getElementById("authUserName").textContent = user.displayName || (user.isAnonymous ? "Khách Vô Danh" : "Thành viên");
-    document.getElementById("authUserEmail").textContent = user.email || (user.isAnonymous ? "Chưa liên kết email" : "");
-    document.getElementById("authBadge").textContent = user.isAnonymous ? "Anonymous User" : (user.providerData && user.providerData[0] && user.providerData[0].providerId === "google.com" ? "Google Account" : "Email Account");
-    if(user.photoURL){
-      document.getElementById("authUserAvatar").innerHTML = `<img src="${escapeHtml(user.photoURL)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-    } else {
-      document.getElementById("authUserAvatar").textContent = (user.displayName || user.email || "U").charAt(0).toUpperCase();
-    }
-  } else {
-    authBtn.innerHTML = `👤 Tài khoản (Chưa đăng nhập)`;
-    authBtn.style.color = "#8CE99A";
-    authLoggedOutView.style.display = "block";
-    authLoggedInView.style.display = "none";
-  }
-}
-
-// Đăng nhập Google
-document.getElementById("googleSignInBtn").addEventListener("click", async ()=>{
-  if(!fbAuth){ alert("Firebase chưa khởi tạo."); return; }
-  authStatus.textContent = "Đang kết nối tới Google...";
-  try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await fbAuth.signInWithPopup(provider);
-    authStatus.textContent = "";
-    authModal.style.display = "none";
-  } catch(err){
-    authStatus.textContent = "Lỗi đăng nhập Google: " + err.message;
-  }
-});
-
-// Đăng nhập Email
-document.getElementById("emailSignInBtn").addEventListener("click", async ()=>{
-  if(!fbAuth) return;
-  const email = document.getElementById("authEmailInput").value.trim();
-  const pw = document.getElementById("authPasswordInput").value.trim();
-  if(!email || !pw){ authStatus.textContent = "Vui lòng nhập Email và Mật khẩu."; return; }
-  authStatus.textContent = "Đang đăng nhập...";
-  try {
-    await fbAuth.signInWithEmailAndPassword(email, pw);
-    authStatus.textContent = "";
-    authModal.style.display = "none";
-  } catch(err){
-    authStatus.textContent = "Lỗi: " + err.message;
-  }
-});
-
-// Đăng ký Email
-document.getElementById("emailSignUpBtn").addEventListener("click", async ()=>{
-  if(!fbAuth) return;
-  const email = document.getElementById("authEmailInput").value.trim();
-  const pw = document.getElementById("authPasswordInput").value.trim();
-  if(!email || !pw){ authStatus.textContent = "Vui lòng nhập Email và Mật khẩu."; return; }
-  authStatus.textContent = "Đang đăng ký tài khoản...";
-  try {
-    await fbAuth.createUserWithEmailAndPassword(email, pw);
-    authStatus.textContent = "✓ Đã đăng ký thành công!";
-    setTimeout(()=> authModal.style.display = "none", 1000);
-  } catch(err){
-    authStatus.textContent = "Lỗi đăng ký: " + err.message;
-  }
-});
-
-// Đăng nhập Khách (Anonymous)
-document.getElementById("anonymousSignInBtn").addEventListener("click", async ()=>{
-  if(!fbAuth) return;
-  authStatus.textContent = "Đang đăng nhập chế độ Khách...";
-  try {
-    await fbAuth.signInAnonymously();
-    authStatus.textContent = "";
-    authModal.style.display = "none";
-  } catch(err){
-    authStatus.textContent = "Lỗi: " + err.message;
-  }
-});
-
-// Đăng xuất
-document.getElementById("signOutBtn").addEventListener("click", async ()=>{
-  if(!fbAuth) return;
-  await fbAuth.signOut();
-  authModal.style.display = "none";
-});
 
 /* --- THẢ TIM, ĐẾM SỐ LƯỢNG NGƯỜI DÙNG & BÌNH LUẬN GIAO LƯU --- */
 const socialModal = document.getElementById("socialModal");
@@ -2714,188 +3363,6 @@ quickLinksBtn.addEventListener("click", ()=>{
 });
 quickLinksCloseBtn.addEventListener("click", ()=>{
   quickLinksModal.style.display = "none";
-});
-
-/* --- CHUYỂN TAB KHO LƯU TRỮ (LOCAL VS CLOUD FIREBASE) --- */
-const archiveTabLocal = document.getElementById("archiveTabLocal");
-const archiveTabCloud = document.getElementById("archiveTabCloud");
-
-archiveTabLocal.addEventListener("click", ()=>{
-  currentArchiveTab = "local";
-  archiveTabLocal.classList.add("active");
-  archiveTabCloud.classList.remove("active");
-  renderArchiveItems();
-});
-
-archiveTabCloud.addEventListener("click", ()=>{
-  currentArchiveTab = "cloud";
-  archiveTabCloud.classList.add("active");
-  archiveTabLocal.classList.remove("active");
-  if(currentUser){
-    loadCloudArchives();
-  } else {
-    renderCloudArchivesUI([]);
-  }
-});
-
-async function loadCloudArchives(){
-  if(!fbDb || !currentUser) return;
-  try {
-    const snapshot = await fbDb.collection("users").doc(currentUser.uid).collection("archives").orderBy("id", "desc").get();
-    cloudArchiveItems = [];
-    snapshot.forEach(doc => cloudArchiveItems.push(doc.data()));
-    if(currentArchiveTab === "cloud"){
-      renderArchiveItems();
-    }
-  } catch(err){
-    console.log("Lỗi tải cloud archives:", err);
-  }
-}
-
-const origRenderArchiveItems = renderArchiveItems;
-renderArchiveItems = function(){
-  if(currentArchiveTab === "cloud"){
-    renderCloudArchivesUI(cloudArchiveItems);
-  } else {
-    origRenderArchiveItems();
-  }
-};
-
-function renderCloudArchivesUI(items){
-  const q = archiveSearchInput.value.trim().toLowerCase();
-  const typeFilter = archiveFilterType.value;
-
-  if(!currentUser){
-    archiveCountStatus.textContent = "Chưa đăng nhập Cloud";
-    archiveList.innerHTML = `
-      <div style="text-align:center;padding:24px 10px;">
-        <p style="color:#5a6350;margin-bottom:12px;">Vui lòng Đăng nhập tài khoản để xem và đồng bộ dữ liệu trên Đám mây Firebase.</p>
-        <button class="btn btn-primary btn-sm" onclick="document.getElementById('authBtn').click()">👤 Đăng nhập ngay</button>
-      </div>`;
-    return;
-  }
-
-  const filtered = items.filter(item => {
-    const matchSearch = !q || item.title.toLowerCase().includes(q) || item.toolName.toLowerCase().includes(q) || (item.content && item.content.toLowerCase().includes(q));
-    const matchType = (typeFilter === "ALL") || (item.type === typeFilter);
-    return matchSearch && matchType;
-  });
-
-  archiveCountStatus.textContent = `☁️ Đám mây Cloud: ${filtered.length} / ${items.length} tài liệu`;
-
-  if(!filtered.length){
-    archiveList.innerHTML = `<p style="color:#73806a;font-style:italic;text-align:center;padding:20px 0;">Không có tài liệu nào lưu trên Đám mây Firebase.</p>`;
-    return;
-  }
-
-  archiveList.innerHTML = filtered.map(item => `
-    <div style="border:1px solid #b3d4fc;background:#f4f8ff;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
-        <div>
-          <span style="background:#002B49;color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:6px;">☁️ ${escapeHtml(item.type)}</span>
-          <strong style="font-size:13.5px;color:#002B49;">${escapeHtml(item.title)}</strong>
-        </div>
-        <span style="font-size:11px;color:#73806a;white-space:nowrap;">${escapeHtml(item.time)}</span>
-      </div>
-      <div style="font-size:11.5px;color:#5a6350;margin-bottom:8px;">Công cụ: ${escapeHtml(item.toolName)}</div>
-      <pre style="background:#fff;border:1px solid #d0e1fd;border-radius:6px;padding:8px 10px;font-size:12px;max-height:100px;overflow:hidden;margin:0 0 10px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(item.content.slice(0, 300))}${item.content.length > 300 ? "..." : ""}</pre>
-      <div style="display:flex;gap:6px;justify-content:flex-end;">
-        <button class="btn btn-ghost btn-sm" onclick="copyArchiveItemCloud('${item.id}')" style="font-size:11.5px;padding:3px 8px;">📋 Copy</button>
-        <button class="btn btn-ghost btn-sm" onclick="downloadArchiveItemCloud('${item.id}')" style="font-size:11.5px;padding:3px 8px;">💾 Tải về</button>
-        <button class="btn btn-ghost btn-sm" onclick="deleteArchiveItemCloud('${item.id}')" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;padding:3px 8px;">🗑 Xóa Cloud</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-window.copyArchiveItemCloud = async function(id){
-  const item = cloudArchiveItems.find(i => String(i.id) === String(id));
-  if(item){ await copyToClipboard(item.content); alert("✓ Đã sao chép nội dung Cloud!"); }
-};
-
-window.downloadArchiveItemCloud = function(id){
-  const item = cloudArchiveItems.find(i => String(i.id) === String(id));
-  if(!item) return;
-  const blob = new Blob([item.content], {type: "text/plain;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = item.filename || `${item.title}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
-
-window.deleteArchiveItemCloud = async function(id){
-  if(!fbDb || !currentUser) return;
-  if(confirm("Bạn có chắc muốn xóa tài liệu này khỏi Đám mây Firebase?")){
-    try {
-      await fbDb.collection("users").doc(currentUser.uid).collection("archives").doc(String(id)).delete();
-      cloudArchiveItems = cloudArchiveItems.filter(i => String(i.id) !== String(id));
-      renderArchiveItems();
-    } catch(err){
-      alert("Lỗi xóa: " + err.message);
-    }
-  }
-};
-
-// Nâng cấp nút Lưu vào kho để cho phép chọn lưu Cloud hay Local
-const origSaveArchiveBtnHandler = document.getElementById("saveArchiveBtn").cloneNode(true);
-document.getElementById("saveArchiveBtn").replaceWith(origSaveArchiveBtnHandler);
-
-document.getElementById("saveArchiveBtn").addEventListener("click", async ()=>{
-  if(!window.__lastOutput) return;
-  const now = new Date().toLocaleString("vi-VN");
-  const toolName = currentTool ? currentTool.name : "Công cụ";
-  const defaultTitle = (currentTool ? currentTool.title : "Tài liệu") + " - " + now;
-
-  const userTitle = prompt("Nhập tên gợi nhớ để lưu kết quả:", defaultTitle);
-  if(userTitle === null) return;
-
-  const title = userTitle.trim() || defaultTitle;
-  const itemType = (window.__lastType === "html") ? "HTML" :
-                   (window.__lastType === "json") ? "JSON" :
-                   (window.__lastFilename && window.__lastFilename.endsWith(".doc")) ? "DOC" : "PROMPT";
-
-  const newItem = {
-    id: Date.now(),
-    title: title,
-    toolId: currentTool ? currentTool.id : "custom",
-    toolName: toolName,
-    time: now,
-    type: itemType,
-    filename: window.__lastFilename || "file.txt",
-    content: window.__lastOutput
-  };
-
-  let saveTarget = "local";
-  if(currentUser && fbDb){
-    const useCloud = confirm("Bạn có muốn lưu đồng bộ tài liệu này lên ĐÁM MÂY FIREBASE CLOUD không?\n\n- Bấm OK để lưu trên Cloud Firebase\n- Bấm Cancel để lưu trên máy cá nhân (Local)");
-    if(useCloud) saveTarget = "cloud";
-  }
-
-  if(saveTarget === "cloud" && currentUser && fbDb){
-    try {
-      await fbDb.collection("users").doc(currentUser.uid).collection("archives").doc(String(newItem.id)).set(newItem);
-      cloudArchiveItems.unshift(newItem);
-      alert("✓ Đã lưu thành công lên Đám mây Firebase Cloud!");
-    } catch(err){
-      alert("Lỗi lưu Cloud: " + err.message + ". Sẽ tự động chuyển sang lưu Local.");
-      const archive = getArchiveData();
-      archive.unshift(newItem);
-      saveArchiveData(archive);
-    }
-  } else {
-    const archive = getArchiveData();
-    archive.unshift(newItem);
-    saveArchiveData(archive);
-  }
-
-  const btn = document.getElementById("saveArchiveBtn");
-  const orig = btn.innerHTML;
-  btn.innerHTML = "✓ Đã lưu vào kho!";
-  setTimeout(()=> btn.innerHTML = orig, 2000);
 });
 
 /* ==========================================================================
