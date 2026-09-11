@@ -294,7 +294,7 @@ function renderSourceArea(){
     setTimeout(()=> st.textContent = "", 2500);
   });
 
-  document.getElementById("srcFileBtn").addEventListener("click", ()=>{
+  document.getElementById("srcFileBtn").addEventListener("click", async ()=>{
     const fileInput = document.getElementById("srcFile");
     const f = fileInput ? fileInput.files[0] : null;
     const st = document.getElementById("srcStatus");
@@ -414,7 +414,7 @@ function renderSourceArea(){
         return false;
       };
 
-      tryPdfJs().then(success => {
+      tryPdfJs().then(async success => {
         if(success) return;
         
         // Fallback sang Gemini Vision OCR nếu PDF là dạng ảnh quét (scanned PDF)
@@ -434,78 +434,27 @@ function renderSourceArea(){
           }
           return;
         }
-        const reader = new FileReader();
-        reader.onload = async function(){
-          const base64 = reader.result.split(",")[1];
-          try {
-            const model = getLocalModel();
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-            const res = await fetch(url, {
-              method:"POST",
-              headers:{"Content-Type":"application/json"},
-              body:JSON.stringify({
-                contents:[{
-                  parts:[
-                    {inlineData:{mimeType:getMimeType(f), data:base64}},
-                    {text:"Hãy trích xuất toàn bộ nội dung văn bản, công thức toán và kiến thức học tập trong tài liệu này một cách đầy đủ và chính xác nhất."}
-                  ]
-                }]
-              })
-            });
-            const data = await res.json();
-            if(data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-            sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
-            if(srcTextEl) srcTextEl.value = sourceText;
-            autoFillTitle(f.name);
-            if(st){ st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length.toLocaleString() + " ký tự bằng Gemini Vision OCR."; }
-          } catch(err){
-            if(st){ st.className="status err"; st.textContent="Lỗi trích xuất: " + err.message; }
-          }
-        };
-        reader.readAsDataURL(f);
-      });
-    } else {
-      // Image or other binary file OCR via Gemini Vision API
-      const key = getLocalApiKey();
-      if(!key){
-        if(st){
-          st.className="status err";
-          st.textContent="Vui lòng cài đặt API key Gemini để trích xuất hình ảnh.";
-        }
-        if(document.getElementById("settingsBtn")) document.getElementById("settingsBtn").click();
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = async function(){
-        const base64 = reader.result.split(",")[1];
         try {
-          const model = getLocalModel();
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-          const res = await fetch(url, {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-              contents:[{
-                parts:[
-                  {inlineData:{mimeType:getMimeType(f), data:base64}},
-                  {text:"Hãy trích xuất toàn bộ nội dung văn bản, công thức toán và kiến thức học tập trong hình ảnh này một cách đầy đủ và chính xác nhất."}
-                ]
-              }]
-            })
-          });
-          const data = await res.json();
-          if(data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          const text = await callGeminiVisionOCR(f, "Hãy trích xuất toàn bộ nội dung văn bản, công thức toán và kiến thức học tập trong tài liệu này một cách đầy đủ và chính xác nhất.");
           sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
           if(srcTextEl) srcTextEl.value = sourceText;
           autoFillTitle(f.name);
-          if(st){ st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length.toLocaleString() + " ký tự bằng Gemini Vision."; }
+          if(st){ st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length.toLocaleString() + " ký tự bằng Gemini Vision OCR."; }
         } catch(err){
           if(st){ st.className="status err"; st.textContent="Lỗi trích xuất: " + err.message; }
         }
-      };
-      reader.readAsDataURL(f);
+      });
+    } else {
+      // Image or other binary file OCR via Gemini Vision API
+      try {
+        const text = await callGeminiVisionOCR(f, "Hãy trích xuất toàn bộ nội dung văn bản, công thức toán và kiến thức học tập trong hình ảnh này một cách đầy đủ và chính xác nhất.");
+        sourceText = (sourceText ? sourceText + "\n\n" : "") + text;
+        if(srcTextEl) srcTextEl.value = sourceText;
+        autoFillTitle(f.name);
+        if(st){ st.className="status ok"; st.textContent = "✓ Đã trích xuất " + text.length.toLocaleString() + " ký tự bằng Gemini Vision OCR."; }
+      } catch(err){
+        if(st){ st.className="status err"; st.textContent="Lỗi trích xuất: " + err.message; }
+      }
     }
   });
 
@@ -3992,7 +3941,7 @@ if(newSourcePdfFileBtn && newSourcePdfFile){
     newSourcePdfFile.click();
   });
 
-  newSourcePdfFile.addEventListener("change", (e)=>{
+  newSourcePdfFile.addEventListener("change", async (e)=>{
     const f = e.target.files[0];
     if(!f) return;
 
@@ -4081,85 +4030,14 @@ if(newSourcePdfFileBtn && newSourcePdfFile){
         return false;
       };
 
-      tryPdfJsModal().then(success => {
+      tryPdfJsModal().then(async success => {
         if(success) return;
-        const key = getLocalApiKey();
-        if(!key){
-          if(newSourceExtractStatus){
-            newSourceExtractStatus.className = "status err";
-            newSourceExtractStatus.textContent = "File PDF dạng ảnh quét. Vui lòng cài đặt API Key Gemini trước để trích xuất.";
-          }
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = async function(){
-          const base64 = reader.result.split(",")[1];
-          try {
-            const model = getLocalModel();
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-            const res = await fetch(url, {
-              method:"POST",
-              headers:{"Content-Type":"application/json"},
-              body:JSON.stringify({
-                contents:[{
-                  parts:[
-                    {inlineData:{mimeType:getMimeType(f), data:base64}},
-                    {text:"Hãy trích xuất toàn bộ nội dung văn bản, lý thuyết, công thức toán và kiến thức học tập trong tài liệu PDF này một cách đầy đủ và chính xác nhất."}
-                  ]
-                }]
-              })
-            });
-            const data = await res.json();
-            if(data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
-            const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-            if(contentTextarea) contentTextarea.value = txt;
-            if(newSourceExtractStatus){
-              newSourceExtractStatus.className = "status ok";
-              newSourceExtractStatus.textContent = "✓ Đã tự động nạp " + txt.length.toLocaleString() + " ký tự từ PDF bằng Gemini Vision!";
-            }
-          } catch(err){
-            if(newSourceExtractStatus){
-              newSourceExtractStatus.className = "status err";
-              newSourceExtractStatus.textContent = "Lỗi trích xuất: " + err.message;
-            }
-          }
-        };
-        reader.readAsDataURL(f);
-      });
-    } else {
-      const key = getLocalApiKey();
-      if(!key){
-        if(newSourceExtractStatus){
-          newSourceExtractStatus.className = "status err";
-          newSourceExtractStatus.textContent = "Vui lòng cài đặt API Key Gemini trước để trích xuất hình ảnh.";
-        }
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = async function(){
-        const base64 = reader.result.split(",")[1];
         try {
-          const model = getLocalModel();
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-          const res = await fetch(url, {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-              contents:[{
-                parts:[
-                  {inlineData:{mimeType:getMimeType(f), data:base64}},
-                  {text:"Hãy trích xuất toàn bộ nội dung văn bản, lý thuyết, công thức toán và kiến thức học tập trong tài liệu/hình ảnh này một cách đầy đủ và chính xác nhất."}
-                ]
-              }]
-            })
-          });
-          const data = await res.json();
-          if(data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
-          const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          const txt = await callGeminiVisionOCR(f, "Hãy trích xuất toàn bộ nội dung văn bản, lý thuyết, công thức toán và kiến thức học tập trong tài liệu PDF này một cách đầy đủ và chính xác nhất.");
           if(contentTextarea) contentTextarea.value = txt;
           if(newSourceExtractStatus){
             newSourceExtractStatus.className = "status ok";
-            newSourceExtractStatus.textContent = "✓ Đã tự động nạp " + txt.length.toLocaleString() + " ký tự từ hình ảnh vào mẫu bên dưới!";
+            newSourceExtractStatus.textContent = "✓ Đã tự động nạp " + txt.length.toLocaleString() + " ký tự từ PDF bằng Gemini Vision!";
           }
         } catch(err){
           if(newSourceExtractStatus){
@@ -4167,8 +4045,21 @@ if(newSourcePdfFileBtn && newSourcePdfFile){
             newSourceExtractStatus.textContent = "Lỗi trích xuất: " + err.message;
           }
         }
-      };
-      reader.readAsDataURL(f);
+      });
+    } else {
+      try {
+        const txt = await callGeminiVisionOCR(f, "Hãy trích xuất toàn bộ nội dung văn bản, lý thuyết, công thức toán và kiến thức học tập trong tài liệu/hình ảnh này một cách đầy đủ và chính xác nhất.");
+        if(contentTextarea) contentTextarea.value = txt;
+        if(newSourceExtractStatus){
+          newSourceExtractStatus.className = "status ok";
+          newSourceExtractStatus.textContent = "✓ Đã tự động nạp " + txt.length.toLocaleString() + " ký tự từ hình ảnh vào mẫu bên dưới!";
+        }
+      } catch(err){
+        if(newSourceExtractStatus){
+          newSourceExtractStatus.className = "status err";
+          newSourceExtractStatus.textContent = "Lỗi trích xuất: " + err.message;
+        }
+      }
     }
   });
 }

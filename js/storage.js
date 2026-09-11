@@ -23,8 +23,9 @@ function getLocalApiKey(){ return localStorage.getItem("GEMINI_API_KEY") || ""; 
 function setLocalApiKey(key){ localStorage.setItem("GEMINI_API_KEY", key); }
 function getLocalModel(){
   let m = localStorage.getItem("GEMINI_MODEL");
-  if(!m || m.includes("3.6")){
-    m = "gemini-2.5-flash";
+  const validModels = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-lite"];
+  if(!m || !validModels.includes(m)){
+    m = "gemini-2.0-flash";
     localStorage.setItem("GEMINI_MODEL", m);
   }
   return m;
