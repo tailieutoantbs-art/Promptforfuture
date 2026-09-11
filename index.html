@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHUYỂN ĐỔI SỐ - THẦY HÙNG TBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Charm:wght@700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!-- Thư viện trích xuất file PDF (pdf.js) & Word (.docx) & MathJax render công thức Toán -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- Firebase SDK Web (v10 Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<!-- CSS Stylesheet -->
+<link rel="stylesheet" href="css/styles.css?v=10.0">
+</head>
+<body>
+
+<div class="mobile-bar">
+  <div class="logo">CHUYỂN ĐỔI SỐ</div>
+  <button class="menu-btn" id="mobileMenuBtn">☰ Menu Công cụ</button>
+</div>
+
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div class="eyebrow" style="margin-bottom:0;">Thầy Hùng TBS</div>
+        <span style="font-size:10.5px;background:#10B981;color:#ffffff;padding:2px 8px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;letter-spacing:0.5px;">v5.0 MỚI</span>
+      </div>
+      <h1>CHUYỂN ĐỔI SỐ</h1>
+      <p>Chọn công cụ, điền thông tin và bấm Tạo prompt.</p>
+      <div class="nav-btns">
+        <button class="btn btn-ghost" id="socialBtn" style="width:100%;font-size:12.5px;color:#FF9E8A;border-color:rgba(255,158,138,0.45);">❤️ Thả tim & 💬 Giao lưu</button>
+        <button class="btn btn-ghost" id="quickLinksBtn" style="width:100%;font-size:12.5px;color:#70C7BA;border-color:rgba(112,199,186,0.45);">🔗 Link tiện ích thao tác</button>
+        <button class="btn btn-ghost" id="sourcesBtn" style="width:100%;font-size:12.5px;color:#8CE99A;border-color:rgba(140,233,154,0.45);">📚 Kho nguồn dữ liệu</button>
+        <button class="btn btn-ghost" id="settingsBtn" style="width:100%;font-size:12.5px;">⚙ Cài đặt API key</button>
+        <button class="btn btn-ghost" id="historyBtn" style="width:100%;font-size:12.5px;">🗂 Lịch sử tạo prompt</button>
+        <button class="btn btn-ghost" id="archiveBtn" style="width:100%;font-size:12.5px;color:var(--yellow);border-color:rgba(242,193,78,0.45);">📦 Kho lưu trữ kết quả</button>
+      </div>
+
+      <div style="margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.06);border:1px dashed var(--sidebar-line);border-radius:8px;">
+        <label style="font-size:11.5px;color:var(--sidebar-chalk-dim);display:block;margin-bottom:4px;font-weight:600;">🎨 Gam màu giao diện (Theme):</label>
+        <select id="sidebarThemeSelect" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--sidebar-line);font-size:12px;background:var(--sidebar-bg);color:var(--sidebar-chalk);cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;">
+          <option value="ocean-blue">🌊 Xanh Nước Biển Nhạt (Mặc định)</option>
+          <option value="classic-green">🌲 Bảng Phấn Xanh Cổ Điển</option>
+          <option value="dark-midnight">🌙 Hiện Đại Đêm (Dark Mode)</option>
+          <option value="soft-pastel">🌸 Hồng Đào / Soft Pastel</option>
+        </select>
+      </div>
+
+      <div id="sidebarCommunityBadge" style="font-size:11.5px;color:var(--chalk-dim);margin-top:10px;padding:6px 10px;background:rgba(245,241,228,0.06);border:1px dashed var(--line);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span>👥 Lượt dùng: <strong id="sidebarVisitsCount" style="color:var(--yellow)">0</strong></span>
+        <span>❤️ Thả tim: <strong id="sidebarHeartsCount" style="color:#FF9E8A">0</strong></span>
+      </div>
+    </div>
+
+    <!-- Dropdown Chọn Nhanh Công Cụ Dạng Xổ Xuống -->
+    <div style="padding:0 12px 10px 4px;">
+      <label style="font-size:11.5px;color:var(--sidebar-chalk-dim);display:block;margin-bottom:4px;font-weight:600;">⚡ Danh sách công cụ (Dạng xổ xuống):</label>
+      <select id="sidebarToolDropdown" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--sidebar-line);font-size:12.5px;background:var(--sidebar-bg);color:var(--sidebar-chalk);cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;font-weight:600;">
+        <optgroup label="🎬 Video, Hình Ảnh & AI Art">
+          <option value="video-veo3">01 Video khởi động Veo 3</option>
+          <option value="tao-poster-quoc-khanh">16 Poster Sự Kiện & AI Art</option>
+          <option value="mindmap">03 Sơ đồ tư duy / Infographic</option>
+          <option value="truyen-tranh">07 Truyện tranh tích hợp bài học</option>
+          <option value="tao-nhan-vat">11 Tạo & Khóa nhân vật đồng nhất</option>
+        </optgroup>
+        <optgroup label="📝 Soạn Đề Thi, Bài Tập & OCR">
+          <option value="phieu-hoc-tap">02 Tạo phiếu học tập</option>
+          <option value="de-22-cau">05 Đề kiểm tra chuẩn CV 7991 (22 câu / Linh hoạt)</option>
+          <option value="toan-thuc-te">06 Bài tập thực tế / Vận dụng</option>
+          <option value="pdf-ocr-latex">15 AI PDF/Image OCR & Biên soạn đề</option>
+        </optgroup>
+        <optgroup label="📐 Toán Học, Game & Dựng Hình">
+          <option value="geogebra">04 Script GeoGebra 2D/3D</option>
+          <option value="game-quiz">08 Game / Quiz tương tác HTML</option>
+          <option value="tikz-expert">14 AI TikZ Code Expert</option>
+        </optgroup>
+        <optgroup label="💡 Trợ Lý, Sửa Lỗi & Hướng Dẫn">
+          <option value="mail-ao">09 Tạo tài khoản AI an toàn</option>
+          <option value="toan-tieng-anh-clil">10 Dạy học Song ngữ (CLIL)</option>
+          <option value="kiem-soat-prompt">12 Kiểm soát & Sửa lỗi Prompt</option>
+          <option value="giai-de-dap-an">13 Giải đề & Lập đáp án chi tiết</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="tool-list" id="toolList">
+      <div class="tool-group-box" data-group="g1">
+        <div class="tool-group-header"><span>🎬 Video, Hình Ảnh & AI Art</span><span class="grp-toggle">▲</span></div>
+        <ul class="tool-group-list">
+          <li class="tool-item active" data-id="video-veo3"><span class="tool-num">01</span><span class="tool-name">Video khởi động Veo 3</span></li>
+          <li class="tool-item" data-id="tao-poster-quoc-khanh"><span class="tool-num">16</span><span class="tool-name">Poster Sự Kiện & AI Art</span></li>
+          <li class="tool-item" data-id="mindmap"><span class="tool-num">03</span><span class="tool-name">Sơ đồ tư duy / Infographic</span></li>
+          <li class="tool-item" data-id="truyen-tranh"><span class="tool-num">07</span><span class="tool-name">Truyện tranh tích hợp bài học</span></li>
+          <li class="tool-item" data-id="tao-nhan-vat"><span class="tool-num">11</span><span class="tool-name">Tạo & Khóa nhân vật đồng nhất</span></li>
+        </ul>
+      </div>
+      <div class="tool-group-box" data-group="g2">
+        <div class="tool-group-header"><span>📝 Soạn Đề Thi, Bài Tập & OCR</span><span class="grp-toggle">▲</span></div>
+        <ul class="tool-group-list">
+          <li class="tool-item" data-id="phieu-hoc-tap"><span class="tool-num">02</span><span class="tool-name">Phiếu học tập</span></li>
+          <li class="tool-item" data-id="de-22-cau"><span class="tool-num">05</span><span class="tool-name">Đề kiểm tra chuẩn CV 7991</span></li>
+          <li class="tool-item" data-id="toan-thuc-te"><span class="tool-num">06</span><span class="tool-name">Bài tập thực tế / Vận dụng</span></li>
+          <li class="tool-item" data-id="pdf-ocr-latex"><span class="tool-num">15</span><span class="tool-name">AI PDF/Image OCR & Biên soạn đề</span></li>
+        </ul>
+      </div>
+      <div class="tool-group-box" data-group="g3">
+        <div class="tool-group-header"><span>📐 Toán Học, Game & Dựng Hình</span><span class="grp-toggle">▲</span></div>
+        <ul class="tool-group-list">
+          <li class="tool-item" data-id="geogebra"><span class="tool-num">04</span><span class="tool-name">GeoGebra & NotebookLM</span></li>
+          <li class="tool-item" data-id="game-quiz"><span class="tool-num">08</span><span class="tool-name">Game tích hợp bài học</span></li>
+          <li class="tool-item" data-id="tikz-expert"><span class="tool-num">14</span><span class="tool-name">Chuyên gia vẽ hình TikZ</span></li>
+        </ul>
+      </div>
+      <div class="tool-group-box" data-group="g4">
+        <div class="tool-group-header"><span>💡 Trợ Lý, Sửa Lỗi & Hướng Dẫn</span><span class="grp-toggle">▲</span></div>
+        <ul class="tool-group-list">
+          <li class="tool-item" data-id="mail-ao"><span class="tool-num">09</span><span class="tool-name">Tạo tài khoản AI an toàn</span></li>
+          <li class="tool-item" data-id="toan-tieng-anh-clil"><span class="tool-num">10</span><span class="tool-name">Dạy học song ngữ (CLIL)</span></li>
+          <li class="tool-item" data-id="kiem-soat-prompt"><span class="tool-num">12</span><span class="tool-name">Kiểm soát & Sửa lỗi Prompt</span></li>
+          <li class="tool-item" data-id="giai-de-dap-an"><span class="tool-num">13</span><span class="tool-name">Giải đề & Làm đáp án chi tiết</span></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div id="topBannerArea"></div>
+
+    <div class="tool-head">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div class="kicker" id="kicker">Công cụ</div>
+          <h2 id="toolTitle" style="margin:0 0 4px;"></h2>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select id="headerThemeSelect" style="padding:6px 10px;border-radius:6px;border:1px solid var(--line);font-size:12px;background:var(--card-bg);color:var(--chalk);cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;">
+            <option value="ocean-blue">🎨 Theme: Xanh Nước Biển Nhạt</option>
+            <option value="classic-green">🌲 Theme: Bảng Phấn Xanh Cổ Điển</option>
+            <option value="dark-midnight">🌙 Theme: Hiện Đại Đêm</option>
+            <option value="soft-pastel">🌸 Theme: Hồng Đào</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" id="toolGuideBtn" style="font-size:12px;color:var(--yellow);border-color:rgba(242,193,78,0.45);">📘 Hướng dẫn chi tiết</button>
+        </div>
+      </div>
+      <p id="toolDesc" style="margin-top:6px;"></p>
+    </div>
+
+    <div id="sourceArea"></div>
+    <div id="formArea"></div>
+
+    <div class="output-wrap" id="outputWrap" style="display:none;">
+      <div class="output-header">
+        <div class="output-label">Kết quả xuất bản</div>
+        <div class="view-tabs" id="viewTabs" style="display:flex;">
+          <button class="view-tab active" id="tabText">📄 Xem văn bản</button>
+          <button class="view-tab" id="tabMath">📐 Xem công thức Toán</button>
+          <button class="view-tab" id="tabPreview" style="display:none;">👁 Xem trước giao diện</button>
+          <button class="view-tab" id="tabCode" style="display:none;">💻 Xem mã HTML</button>
+        </div>
+      </div>
+      <div class="sheet">
+        <div class="sheet-tear"></div>
+        <div class="sheet-body">
+          <pre id="outputText"></pre>
+          <textarea id="outputTextEdit" style="display:none;width:100%;min-height:360px;padding:12px;font-family:'JetBrains Mono','Be Vietnam Pro',monospace;font-size:13px;line-height:1.65;border:1px solid var(--paper-edge);border-radius:6px;background:#fff;color:var(--ink);box-sizing:border-box;resize:vertical;"></textarea>
+          <div id="mathPreview" style="display:none;background:#ffffff;color:#111827;font-family:'Be Vietnam Pro',sans-serif;font-size:14.5px;line-height:1.7;max-height:540px;overflow:auto;padding:20px;border-radius:6px;white-space:pre-wrap;word-break:break-word;"></div>
+          <div id="worksheetPreview" class="worksheet-preview-wrap" style="display:none;"></div>
+          <iframe class="preview-frame" id="previewFrame" style="display:none;" sandbox="allow-scripts allow-same-origin allow-modals"></iframe>
+          <div id="aiImageRenderWrap" class="ai-image-render-wrap" style="display:none;"></div>
+          <div id="tikzRenderWrap" class="tikz-render-wrap" style="display:none;"></div>
+        </div>
+        <div class="sheet-foot">
+          <span id="tokenStatus">Độ dài: 0 ký tự</span>
+          <span>Thiết kế bởi Math_DTH</span>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn btn-primary" id="copyBtn">📋 Sao chép</button>
+        <button class="btn btn-ghost" id="renderAiImgBtn" style="color:#F2C14E;border-color:rgba(242,193,78,0.5);">🎨 Biên dịch ảnh AI trực tiếp</button>
+        <button class="btn btn-ghost" id="renderTikzBtn" style="color:#70C7BA;border-color:rgba(112,199,186,0.5);">📐 Render TikZ / Đồ thị</button>
+        <button class="btn btn-ghost" id="editOutputBtn" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);">✏️ Chỉnh sửa prompt</button>
+        <button class="btn btn-primary" id="saveEditOutputBtn" style="display:none;background:#4EBA74;color:#fff;border:none;">💾 Lưu chỉnh sửa</button>
+        <button class="btn btn-ghost" id="cancelEditOutputBtn" style="display:none;color:#E1523D;border-color:rgba(225,82,61,0.5);">✖ Hủy</button>
+        <button class="btn btn-ghost" id="downloadBtn">💾 Tải file về máy</button>
+        <button class="btn btn-ghost" id="docBtn">📄 Xuất file Word (.doc)</button>
+        <button class="btn btn-ghost" id="saveArchiveBtn" style="color:var(--yellow);border-color:rgba(242,193,78,0.5);">⭐ Lưu vào kho</button>
+        <button class="btn btn-ghost" id="quickAuditBtn" style="color:#70C7BA;border-color:rgba(112,199,186,0.5);">🔍 Kiểm tra & Sửa lỗi prompt này</button>
+        <button class="btn btn-ghost" id="beautifyBtn" style="display:none;">✨ Định dạng JSON</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Cài đặt API Key -->
+<div id="settingsModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box">
+    <h3>⚙ Cài đặt API key Gemini</h3>
+    <p>
+      Dán API key Google Gemini của bạn (lấy miễn phí chính thức tại
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>).
+      <br><strong>Ứng dụng sử dụng API Key trực tiếp — bạn KHÔNG cần đăng nhập tài khoản nào trên ứng dụng này.</strong> Key được bảo mật an toàn trên trình duyệt của bạn.
+    </p>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Gemini API Key:</label>
+    <div class="pw-wrap">
+      <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+      <button type="button" class="pw-toggle" id="apiKeyToggle" title="Hiện/Ẩn key">👁</button>
+    </div>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Mô hình Gemini (Model):</label>
+    <select id="apiModelSelect" style="width:100%;padding:9px 10px;border-radius:6px;border:1px solid #c9c0a4;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;margin-bottom:12px;background:#fff;">
+      <option value="gemini-2.5-flash">Gemini 2.5 Flash (Mới nhất, siêu nhanh & tối ưu)</option>
+      <option value="gemini-2.5-pro">Gemini 2.5 Pro (Tư duy chuyên sâu, suy luận toán học đỉnh cao)</option>
+      <option value="gemini-2.0-flash">Gemini 2.0 Flash (Khuyên dùng, tốc độ cao)</option>
+      <option value="gemini-1.5-flash">Gemini 1.5 Flash (Ổn định, quota cao)</option>
+      <option value="gemini-1.5-pro">Gemini 1.5 Pro (Tư duy phân tích chuyên sâu)</option>
+      <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite (Tốc độ cực nhanh)</option>
+    </select>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#20281f;margin-bottom:4px;">Gam màu giao diện (Theme):</label>
+    <select id="themeSelect" style="width:100%;padding:9px 10px;border-radius:6px;border:1px solid #c9c0a4;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;margin-bottom:12px;background:#fff;">
+      <option value="ocean-blue">🌊 Xanh Nước Biển Nhạt (Mặc định)</option>
+      <option value="classic-green">🌲 Bảng Phấn Xanh Cổ Điển</option>
+      <option value="dark-midnight">🌙 Hiện Đại Đêm (Dark Mode)</option>
+      <option value="soft-pastel">🌸 Hồng Đào / Soft Pastel</option>
+    </select>
+
+    <div id="apiKeyStatus" style="font-size:12px;margin-bottom:10px;min-height:16px;color:#5a6350;"></div>
+    
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" id="settingsCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+      <button class="btn btn-primary btn-sm" id="settingsSaveBtn" type="button">Lưu cấu hình</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Lịch sử -->
+<div id="historyModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:620px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <h3 style="margin:0;">🗂 Lịch sử tạo prompt</h3>
+      <button class="btn btn-ghost btn-sm" id="clearHistoryBtn" style="color:#a83232;border-color:#e0b2b2;padding:3px 8px;font-size:11px;">Xóa lịch sử</button>
+    </div>
+    <div id="historyList" style="font-size:12.5px;line-height:1.6;max-height:55vh;overflow-y:auto;"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-ghost btn-sm" id="historyCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Hướng Dẫn Chi Tiết -->
+<div id="guideModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:640px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:8px;">
+      <h3 id="guideModalTitle" style="margin:0;color:#123832;">📘 Hướng dẫn chi tiết</h3>
+      <button class="btn btn-ghost btn-sm" id="guideCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+    <div id="guideModalBody" style="font-size:13px;line-height:1.7;color:#2c352b;max-height:65vh;overflow-y:auto;padding-right:6px;"></div>
+  </div>
+</div>
+
+<!-- Modal Kho Lưu Trữ Kết Quả -->
+<div id="archiveModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:760px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">📦 Kho lưu trữ kết quả (Prompt, File, Tài liệu)</h3>
+      <button class="btn btn-ghost btn-sm" id="archiveCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+    
+    <!-- Thanh tìm kiếm & lọc -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input type="text" id="archiveSearchInput" placeholder="🔍 Tìm kiếm theo tên bài, công cụ, từ khóa..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+      <select id="archiveFilterType" style="padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+        <option value="ALL">Tất cả loại</option>
+        <option value="PROMPT">Prompt / Kịch bản</option>
+        <option value="HTML">Game Quiz HTML</option>
+        <option value="DOC">Tài liệu / Đề thi</option>
+        <option value="NOTE">Ghi chú / Khác</option>
+      </select>
+      <button class="btn btn-primary btn-sm" id="addNoteArchiveBtn" type="button">+ Thêm ghi chú/tài liệu</button>
+    </div>
+
+    <!-- Ô thêm tài liệu/ghi chú nhanh -->
+    <div id="addArchiveForm" style="display:none;background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:12px;margin-bottom:14px;">
+      <h4 style="margin:0 0 8px;font-size:14px;">Lưu thêm tài liệu / Prompt / Ghi chú mới</h4>
+      <input type="text" id="newArchiveTitle" placeholder="Tiêu đề tài liệu / prompt..." style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:13px;box-sizing:border-box;">
+      <textarea id="newArchiveContent" placeholder="Nội dung prompt, liên kết hình ảnh, mã nguồn hoặc tài liệu..." style="width:100%;height:80px;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:13px;box-sizing:border-box;"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" id="cancelAddArchiveBtn" type="button">Hủy</button>
+        <button class="btn btn-primary btn-sm" id="saveNewArchiveBtn" type="button">Lưu vào kho</button>
+      </div>
+    </div>
+
+    <!-- Danh sách item -->
+    <div id="archiveList" style="font-size:12.5px;line-height:1.6;max-height:55vh;overflow-y:auto;"></div>
+
+    <div class="modal-actions" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span id="archiveCountStatus" style="font-size:12px;color:#73806a;">Đang tải kho lưu trữ...</span>
+      <button class="btn btn-ghost btn-sm" id="clearArchiveBtn" type="button" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;">Xóa toàn bộ kho</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Kho Nguồn Dữ Liệu Bài Học & Tài Liệu -->
+<div id="sourcesModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:760px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">📚 Kho Nguồn Dữ Liệu Bài Học & Tài Liệu</h3>
+      <button class="btn btn-ghost btn-sm" id="sourcesCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <!-- Thanh tìm kiếm & thao tác -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input type="text" id="sourcesSearchInput" placeholder="🔍 Tìm kiếm tên nguồn, môn học, tài liệu..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+      <button class="btn btn-primary btn-sm" id="addSourceToggleBtn" type="button">+ Thêm nguồn dữ liệu mới</button>
+    </div>
+
+    <!-- Khung Thêm Nguồn Mới -->
+    <div id="addSourceForm" style="display:none;background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:14px;margin-bottom:14px;">
+      <h4 style="margin:0 0 10px;font-size:14px;color:#123832;">➕ Thêm nguồn dữ liệu mới vào kho</h4>
+      
+      <!-- Thanh Nạp Tự Động Từ File PDF / Google Drive -->
+      <div style="background:rgba(2,132,199,0.08);border:1px dashed #0284C7;border-radius:6px;padding:8px 10px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:600;color:#0284C7;margin-bottom:6px;display:flex;align-items:center;gap:4px;">⚡ Nạp tự động vào mẫu bên dưới từ File PDF hoặc Google Drive:</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="file" id="newSourcePdfFile" accept=".pdf,.doc,.docx,.txt,.md,image/*" style="display:none;">
+          <button class="btn btn-ghost btn-sm" id="newSourcePdfFileBtn" type="button" style="font-size:11.5px;color:#0284C7;border-color:rgba(2,132,199,0.5);background:#fff;">📁 Chọn File PDF/Word từ máy</button>
+          <input type="text" id="newSourceDriveLink" placeholder="Dán link Google Drive PDF..." style="flex:1;min-width:160px;padding:5px 8px;font-size:12px;border-radius:4px;border:1px solid #c9c0a4;background:#fff;">
+          <button class="btn btn-ghost btn-sm" id="newSourceDriveLinkBtn" type="button" style="font-size:11.5px;color:#0284C7;border-color:rgba(2,132,199,0.5);background:#fff;">🔗 Trích xuất từ Drive</button>
+        </div>
+        <div id="newSourceExtractStatus" style="font-size:11.5px;margin-top:4px;min-height:14px;"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <input type="text" id="newSourceTitle" placeholder="Tên nguồn (VD: SGK Toán 12 Tập 1 - Bài 1)..." style="padding:8px 10px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+        <select id="newSourceType" style="padding:8px 10px;border-radius:6px;border:1px solid #c9c0a4;font-size:13px;background:#fff;">
+          <option value="SGK / Giáo trình">SGK / Giáo trình</option>
+          <option value="Tài liệu tham khảo">Tài liệu tham khảo</option>
+          <option value="Đề thi / Bài tập">Đề thi / Bài tập</option>
+          <option value="Link Google Drive / Web">Link Google Drive / Web</option>
+          <option value="Ghi chú khác">Ghi chú khác</option>
+        </select>
+      </div>
+      <textarea id="newSourceContent" placeholder="Nội dung chi tiết tài liệu nguồn, tóm tắt lý thuyết hoặc văn bản trích xuất..." style="width:100%;height:100px;padding:8px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:10px;font-size:13px;box-sizing:border-box;background:#fff;"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" id="cancelAddSourceBtn" type="button">Hủy</button>
+        <button class="btn btn-primary btn-sm" id="saveNewSourceBtn" type="button">💾 Lưu nguồn vào kho</button>
+      </div>
+    </div>
+
+    <!-- Danh sách Nguồn Dữ Liệu -->
+    <div id="sourcesList" style="font-size:12.5px;line-height:1.6;max-height:55vh;overflow-y:auto;"></div>
+
+    <div class="modal-actions" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span id="sourcesCountStatus" style="font-size:12px;color:#73806a;">Đang tải danh sách nguồn...</span>
+      <button class="btn btn-ghost btn-sm" id="clearSourcesBtn" type="button" style="color:#a83232;border-color:#e0b2b2;font-size:11.5px;">Xóa toàn bộ kho nguồn</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thả tim & Bình luận giao lưu -->
+<div id="socialModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:620px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">❤️ Thả tim & 💬 Giao lưu cộng đồng</h3>
+      <button class="btn btn-ghost btn-sm" id="socialCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <!-- Khối Thả tim & Chỉ số -->
+    <div style="background:#fff;border:1px solid #c9c0a4;border-radius:10px;padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:12px;color:#73806a;">Cộng đồng Giáo viên Toán TBS</div>
+        <div style="font-size:14px;font-weight:700;color:#123832;margin-top:2px;">
+          👥 <span id="modalVisitsCount">0</span> lượt sử dụng · ❤️ <span id="modalHeartsCount">0</span> tim đã thả
+        </div>
+      </div>
+      <button class="btn btn-primary" id="giveHeartBtn" type="button" style="background:#E1523D;color:#fff;border:none;padding:8px 16px;font-size:13px;border-radius:20px;box-shadow:0 3px 8px rgba(225,82,61,0.3);">
+        ❤️ Thả tim ủng hộ (<span id="btnHeartCount">0</span>)
+      </button>
+    </div>
+
+    <!-- Khối gửi Bình luận -->
+    <div style="background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:12px;margin-bottom:14px;">
+      <h4 style="margin:0 0 8px;font-size:13.5px;color:#123832;">✍️ BÌNH LUẬN GIAO LƯU</h4>
+      <input type="text" id="commentAuthorInput" placeholder="Tên / Biệt danh của bạn (VD: Thầy Hùng Toán)..." style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:12.5px;box-sizing:border-box;background:#fff;">
+      <textarea id="commentContentInput" placeholder="Nhập cảm nhận, chia sẻ ý tưởng tạo prompt hoặc giao lưu cùng quý thầy cô..." style="width:100%;height:65px;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:12.5px;box-sizing:border-box;background:#fff;"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="commentStatus" style="font-size:11.5px;color:#73806a;"></span>
+        <button class="btn btn-primary btn-sm" id="sendCommentBtn" type="button">🚀 Gửi bình luận</button>
+      </div>
+    </div>
+
+    <!-- Danh sách Bình luận -->
+    <div style="font-weight:600;font-size:12.5px;color:#123832;margin-bottom:8px;">💬 BÌNH LUẬN MỚI NHẤT FROM CỘNG ĐỒNG:</div>
+    <div id="commentsList" style="font-size:12.5px;line-height:1.6;max-height:40vh;overflow-y:auto;padding-right:4px;"></div>
+  </div>
+</div>
+
+<!-- Modal Link liên kết thao tác trực tiếp -->
+<div id="quickLinksModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:700px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">🔗 Link liên kết các trang tiện ích thao tác</h3>
+      <button class="btn btn-ghost btn-sm" id="quickLinksCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <p style="font-size:12.5px;color:#5a6350;margin-bottom:14px;">
+      Bấm vào đường link bên dưới để mở trực tiếp trang web tiện ích trong tab mới để thực thi Prompt hoặc lấy dữ liệu:
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:4px;">
+      
+      <!-- Nhóm 1: AI & Sinh Nội Dung -->
+      <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">🤖 TRANG AI & TẠO VIDEO / NỘI DUNG</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🔑 Google AI Studio (Lấy Key)
+          </a>
+          <a href="https://labs.google/fx/tools/videofx" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🎬 Google Veo 3 / VideoFX
+          </a>
+          <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            💬 ChatGPT Open AI
+          </a>
+          <a href="https://claude.ai/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🧠 Claude AI Anthropic
+          </a>
+          <a href="https://www.napkin.ai/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            📊 Napkin AI (Infographic)
+          </a>
+        </div>
+      </div>
+
+      <!-- Nhóm 2: Toán & Vẽ Hình -->
+      <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">📐 TRANG DỰNG HÌNH & TÍNH TOÁN TOÁN HỌC</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
+          <a href="https://www.geogebra.org/classic" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#20281f;background:#f5f0e1;border-color:#c9c0a4;">
+            📐 GeoGebra Classic (2D/3D)
+          </a>
+          <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#20281f;background:#f5f0e1;border-color:#c9c0a4;">
+            📈 Desmos Graphing Calculator
+          </a>
+          <a href="https://www.overleaf.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#20281f;background:#f5f0e1;border-color:#c9c0a4;">
+            📄 Overleaf (Soạn thảo LaTeX/TikZ)
+          </a>
+        </div>
+      </div>
+
+      <!-- Nhóm 3: Công cụ Hỗ trợ & Nền tảng AI -->
+      <div style="background:#fff;border:1px solid #c9c0a4;border-radius:8px;padding:12px;">
+        <h4 style="margin:0 0 10px;font-size:13.5px;color:#123832;display:flex;align-items:center;gap:6px;">🌐 NỀN TẢNG AI & TÀI LIỆU CHÍNH THỨC</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px;">
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            🔑 Lấy Google Gemini API Key
+          </a>
+          <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#002B49;background:#e0eefd;border-color:#b3d4fc;">
+            💬 ChatGPT (OpenAI)
+          </a>
+          <a href="https://docs.mathjax.org/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="justify-content:flex-start;text-align:left;color:#5a6350;background:#fcfbf7;border-color:#c9c0a4;">
+            🧮 Hướng dẫn MathJax LaTeX
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Quản Lý Link Mẫu Hay Dùng -->
+<div id="savedLinksManageModal" class="modal-backdrop" style="display:none;">
+  <div class="modal-box" style="max-width:640px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px dashed #c9c0a4;padding-bottom:10px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:6px;">🔗 Quản lý danh sách Link thường dùng</h3>
+      <button class="btn btn-ghost btn-sm" id="savedLinksManageCloseBtn" type="button" style="color:#20281f;border-color:#c9c0a4;">Đóng</button>
+    </div>
+
+    <!-- Form Thêm Link Mới -->
+    <div style="background:#f5f0e1;border:1px dashed #c9c0a4;border-radius:8px;padding:12px;margin-bottom:14px;">
+      <h4 style="margin:0 0 8px;font-size:13.5px;color:#123832;">➕ THÊM LINK THƯỜNG DÙNG MỚI</h4>
+      <input type="text" id="newQuickLinkTitle" placeholder="Tên gợi nhớ (VD: SGK Toán 12 Tập 1, Kho Đề Mẫu)..." style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:12.5px;box-sizing:border-box;background:#fff;">
+      <input type="text" id="newQuickLinkUrl" placeholder="Đường link URL (https://drive.google.com/... hoặc link web)..." style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid #c9c0a4;margin-bottom:8px;font-size:12.5px;box-sizing:border-box;background:#fff;">
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary btn-sm" id="saveQuickLinkBtn" type="button">💾 Lưu link mẫu</button>
+      </div>
+    </div>
+
+    <!-- Danh sách Link Đã Lưu -->
+    <div style="font-weight:600;font-size:12.5px;color:#123832;margin-bottom:8px;">📌 DANH SÁCH LINK ĐÃ LƯU:</div>
+    <div id="savedLinksList" style="font-size:12.5px;line-height:1.6;max-height:45vh;overflow-y:auto;padding-right:4px;"></div>
+  </div>
+</div>
+
+<!-- JS MODULE SCRIPTS -->
+<script src="js/config.js?v=10.1"></script>
+<script src="js/storage.js?v=10.1"></script>
+<script src="js/api.js?v=10.1"></script>
+<script src="js/prompts.js?v=10.1"></script>
+<script src="js/tools.js?v=10.1"></script>
+<script src="js/app.js?v=10.1"></script>
+</body>
+</html>
