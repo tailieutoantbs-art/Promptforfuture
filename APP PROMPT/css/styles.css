@@ -1,0 +1,1293 @@
+/* ==========================================================================
+   APP PROMPT - MODERN THEME ARCHITECTURE & COMPONENT STYLES
+   ========================================================================== */
+
+/* LIGHT OCEAN BLUE THEME (Default - Sleek & Modern) */
+:root, [data-theme="ocean-blue"] {
+  --board: #F1F5F9;
+  --board-2: #0F172A;
+  --chalk: #0F172A;
+  --chalk-dim: #475569;
+  --sidebar-bg: #0F172A;
+  --sidebar-chalk: #F8FAFC;
+  --sidebar-chalk-dim: #94A3B8;
+  --sidebar-line: rgba(255, 255, 255, 0.1);
+  --yellow: #0284C7;
+  --primary: #2563EB;
+  --primary-gradient: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);
+  --red: #EF4444;
+  --green: #10B981;
+  --line: #E2E8F0;
+  --paper: #FFFFFF;
+  --paper-edge: #CBD5E1;
+  --ink: #0F172A;
+  --ink-soft: #475569;
+  --card-bg: #FFFFFF;
+  --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --input-bg: #FFFFFF;
+  --input-text: #0F172A;
+}
+
+/* CLASSIC GREEN BOARD THEME */
+[data-theme="classic-green"] {
+  --board: #123832;
+  --board-2: #0e2d28;
+  --chalk: #F5F1E4;
+  --chalk-dim: #B9C4B9;
+  --sidebar-bg: #0e2d28;
+  --sidebar-chalk: #F5F1E4;
+  --sidebar-chalk-dim: #B9C4B9;
+  --sidebar-line: #2F5C51;
+  --yellow: #F2C14E;
+  --primary: #F2C14E;
+  --primary-gradient: linear-gradient(135deg, #F2C14E 0%, #E5B239 100%);
+  --red: #E1523D;
+  --green: #4EBA74;
+  --line: #2F5C51;
+  --paper: #FBF7EC;
+  --paper-edge: #EDE3C8;
+  --ink: #20261F;
+  --ink-soft: #5B6B5C;
+  --card-bg: rgba(245,241,228,.04);
+  --card-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  --input-bg: rgba(245,241,228,.06);
+  --input-text: #F5F1E4;
+}
+
+/* DARK MIDNIGHT THEME */
+[data-theme="dark-midnight"] {
+  --board: #0F172A;
+  --board-2: #1E293B;
+  --chalk: #F8FAFC;
+  --chalk-dim: #94A3B8;
+  --sidebar-bg: #1E293B;
+  --sidebar-chalk: #F8FAFC;
+  --sidebar-chalk-dim: #94A3B8;
+  --sidebar-line: #334155;
+  --yellow: #38BDF8;
+  --primary: #38BDF8;
+  --primary-gradient: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
+  --red: #F87171;
+  --green: #34D399;
+  --line: #334155;
+  --paper: #1E293B;
+  --paper-edge: #475569;
+  --ink: #F8FAFC;
+  --ink-soft: #94A3B8;
+  --card-bg: rgba(255,255,255,.05);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --input-bg: #1E293B;
+  --input-text: #F8FAFC;
+}
+
+/* SOFT PASTEL THEME */
+[data-theme="soft-pastel"] {
+  --board: #FFF5F5;
+  --board-2: #4A3E3D;
+  --chalk: #2D2424;
+  --chalk-dim: #7C6A6A;
+  --sidebar-bg: #4A3E3D;
+  --sidebar-chalk: #FFF5F5;
+  --sidebar-chalk-dim: #D6C7C7;
+  --sidebar-line: #635251;
+  --yellow: #E07A5F;
+  --primary: #E07A5F;
+  --primary-gradient: linear-gradient(135deg, #E07A5F 0%, #F4A261 100%);
+  --red: #E76F51;
+  --green: #2A9D8F;
+  --line: #E8D8D8;
+  --paper: #FFFFFF;
+  --paper-edge: #E8D8D8;
+  --ink: #2D2424;
+  --ink-soft: #7C6A6A;
+  --card-bg: #FFFFFF;
+  --card-shadow: 0 4px 20px -2px rgba(224, 122, 95, 0.08);
+  --input-bg: #FFFFFF;
+  --input-text: #2D2424;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--board);color:var(--chalk);
+  font-family:'Be Vietnam Pro', -apple-system, sans-serif;
+  min-height:100vh;
+}
+a{color:var(--yellow);text-decoration:underline;}
+
+/* Collapsible Sections Header */
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.collapsible-header .toggle-icon {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+.collapsed .collapsible-body {
+  display: none !important;
+}
+.collapsed .collapsible-header .toggle-icon {
+  transform: rotate(-90deg);
+}
+
+/* Mobile Bar */
+.mobile-bar{
+  display:none;padding:14px 20px;background:var(--sidebar-bg);border-bottom:1px solid var(--sidebar-line);
+  justify-content:space-between;align-items:center;position:sticky;top:0;z-index:40;
+}
+.mobile-bar .logo{font-family:'Plus Jakarta Sans','Baloo 2',sans-serif;font-size:18px;font-weight:800;color:var(--yellow);}
+.mobile-bar .menu-btn{background:transparent;border:1px solid var(--sidebar-line);color:var(--sidebar-chalk);padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;}
+
+.app{display:grid;grid-template-columns:310px 1fr;min-height:100vh;}
+@media (max-width:860px){
+  .mobile-bar{display:flex;}
+  .app{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .sidebar.open{display:block;}
+}
+
+/* Sidebar Styling */
+.sidebar{background:var(--sidebar-bg);border-right:1px solid var(--sidebar-line);position:relative;padding:26px 14px 26px 20px;}
+.brand{padding:0 12px 18px 4px;border-bottom:1px solid var(--sidebar-line);margin-bottom:16px;}
+.brand .eyebrow{
+  font-family:'Charm',cursive,sans-serif;font-size:20px;font-weight:700;
+  color:#002B49;background:linear-gradient(135deg, #D0E1FD 0%, #B3D4FC 100%);
+  padding:4px 14px;border-radius:10px;display:inline-block;letter-spacing:0.5px;
+  margin-bottom:6px;box-shadow:0 3px 8px rgba(0,0,0,0.12);
+}
+.brand h1{font-family:'Plus Jakarta Sans','Baloo 2',sans-serif;font-size:22px;line-height:1.2;margin:6px 0 4px;font-weight:800;color:var(--sidebar-chalk);letter-spacing:-0.02em;}
+.brand p{font-size:12.5px;color:var(--sidebar-chalk-dim);margin:0;line-height:1.5;}
+.nav-btns{display:flex;flex-direction:column;gap:7px;margin-top:14px;}
+
+/* Tool Group Accordion & Dropdown Styles */
+.tool-group-box {
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--sidebar-line);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.tool-group-header {
+  padding: 11px 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #38BDF8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.22);
+  border-bottom: 1px solid var(--sidebar-line);
+  letter-spacing: 0.01em;
+}
+.tool-group-header:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.tool-group-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tool-group-box.collapsed .tool-group-list {
+  display: none !important;
+}
+.tool-group-box.collapsed .grp-toggle {
+  transform: rotate(-90deg);
+}
+
+.tool-item{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;
+  border:1px solid transparent;transition:all .15s ease;
+}
+.tool-item:hover{background:rgba(255,255,255,.08);}
+.tool-item.active{
+  background:linear-gradient(135deg, rgba(2,132,199,.3) 0%, rgba(37,99,235,.3) 100%);
+  border-color:rgba(56,189,248,.45);
+}
+.tool-num{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:11px;
+  background:rgba(56,189,248,0.15);color:#38BDF8;padding:2px 7px;
+  border-radius:6px;border:1px solid rgba(56,189,248,0.25);min-width:26px;text-align:center;
+}
+.tool-name{font-size:13px;line-height:1.35;color:var(--sidebar-chalk);font-weight:500;}
+.tool-item:not(.active) .tool-name{color:var(--sidebar-chalk-dim);}
+
+/* Main Workspace */
+main{padding:32px 44px 60px;max-width:960px;}
+@media (max-width:860px){main{padding:20px 16px 50px;}}
+.tool-head{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:24px;}
+.tool-head .kicker{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--yellow);font-weight:700;margin-bottom:4px;
+}
+.tool-head h2{font-family:'Plus Jakarta Sans','Baloo 2',sans-serif;font-size:26px;margin:0 0 6px;font-weight:800;letter-spacing:-0.02em;}
+.tool-head p{color:var(--chalk-dim);margin:0;font-size:14px;max-width:700px;line-height:1.6;}
+
+/* Form & Fields Cards */
+.field{margin-bottom:18px;}
+.field label{
+  display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;
+  font-weight:600;color:var(--chalk);margin-bottom:7px;
+}
+.field label .req{color:var(--red);margin-left:3px;font-weight:800;}
+.field .hint{font-size:11.5px;color:var(--chalk-dim);margin-top:4px;}
+.field input[type=text], .field input[type=number], .field textarea, .field select{
+  width:100%;background:var(--input-bg, #ffffff);border:1px solid var(--line);color:var(--input-text, #0f172a);
+  border-radius:10px;padding:10px 14px;font-family:'Be Vietnam Pro',sans-serif;font-size:13.5px;box-sizing:border-box;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);transition:all 0.2s ease;
+}
+.field textarea{min-height:90px;resize:vertical;line-height:1.6;}
+.field input:focus, .field textarea:focus, .field select:focus{
+  border-color:var(--primary, #2563EB);outline:none;
+  box-shadow:0 0 0 3.5px rgba(37,99,235,0.18);
+}
+.field select{cursor:pointer;}
+.field select option{background:#ffffff;color:#0f172a;}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.row4{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;}
+@media (max-width:640px){.row2,.row3,.row4{grid-template-columns:1fr;}}
+
+.checkline{display:flex;align-items:center;gap:10px;}
+.checkline input{width:17px;height:17px;cursor:pointer;accent-color:var(--primary);}
+.checkline label{margin:0;font-size:13.5px;font-weight:500;color:var(--chalk);cursor:pointer;}
+
+/* Modern Buttons System */
+.btn{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer;
+  border-radius:10px;padding:10px 18px;border:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.06);
+}
+.btn:hover{transform:translateY(-1.5px);box-shadow:0 6px 16px rgba(0,0,0,0.12);}
+.btn:active{transform:scale(0.98);}
+.btn-primary{background:var(--primary-gradient);color:#FFFFFF;border:none;}
+.btn-primary:hover{opacity:.95;}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{background:rgba(255,255,255,0.6);color:var(--chalk);border:1px solid var(--line);}
+.btn-ghost:hover{border-color:var(--chalk-dim);background:rgba(255,255,255,0.9);}
+.sidebar .btn-ghost{color:var(--sidebar-chalk) !important;border-color:var(--sidebar-line) !important;background:rgba(255,255,255,0.04) !important;}
+.sidebar .btn-ghost:hover{background:rgba(255,255,255,0.12) !important;}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px;}
+
+.actions{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+.status{font-size:12.5px;color:var(--chalk-dim);font-weight:500;}
+.status.err{color:#EF4444;}
+.status.ok{color:#10B981;}
+.status.loading{color:var(--yellow);}
+
+/* Banner notification */
+.top-banner{
+  background:rgba(239,68,68,0.1);border:1px dashed var(--red);border-radius:10px;
+  padding:12px 16px;margin-bottom:20px;font-size:13px;color:#EF4444;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.top-banner button{background:transparent;border:none;color:var(--yellow);font-weight:700;cursor:pointer;text-decoration:underline;}
+
+/* Output "worksheet" panel */
+.output-wrap{margin-top:28px;}
+.output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.output-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--chalk-dim);font-weight:700;}
+.view-tabs{display:flex;gap:6px;}
+.view-tab{
+  background:rgba(255,255,255,0.6);border:1px solid var(--line);color:var(--chalk-dim);
+  padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;
+  transition:all 0.15s ease;
+}
+.view-tab.active{background:var(--primary-gradient);color:#FFFFFF;border-color:transparent;box-shadow:0 3px 8px rgba(37,99,235,0.3);}
+
+.sheet{
+  background:var(--paper);color:var(--ink);border-radius:16px;
+  box-shadow:0 20px 40px -10px rgba(0,0,0,0.08), 0 8px 16px -4px rgba(0,0,0,0.04);
+  border:1px solid var(--paper-edge);position:relative;overflow:hidden;
+}
+.sheet-tear{height:8px;background:linear-gradient(90deg, #2563EB, #0284C7, #10B981);}
+.sheet-body{padding:22px 26px;}
+.sheet pre{
+  white-space:pre-wrap;word-break:break-word;font-family:'JetBrains Mono',monospace;
+  font-size:13px;line-height:1.65;margin:0;color:var(--ink);max-height:560px;overflow:auto;
+}
+.sheet-foot{
+  display:flex;justify-content:space-between;align-items:center;padding:12px 26px;
+  border-top:1px dashed var(--paper-edge);font-size:11.5px;color:var(--ink-soft);font-weight:500;
+}
+.preview-frame{width:100%;height:540px;border:1px solid var(--paper-edge);border-radius:10px;background:#fff;}
+
+.info-card{background:rgba(255,255,255,0.7);border:1px dashed var(--line);border-radius:12px;padding:20px 24px;margin-bottom:18px;box-shadow:var(--card-shadow);}
+.info-card h3{font-family:'Plus Jakarta Sans','Baloo 2',sans-serif;margin:0 0 10px;font-size:18px;color:var(--primary);}
+.info-card ol{margin:0;padding-left:22px;font-size:13.5px;line-height:1.75;color:var(--chalk-dim);}
+.info-card a{font-weight:600;}
+
+/* Modals Modern Design */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(15,23,42,0.65);z-index:90;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(8px);
+}
+.modal-box{
+  background:#FFFFFF;color:#0F172A;max-width:520px;width:100%;
+  border-radius:18px;padding:24px 28px;font-family:'Be Vietnam Pro',sans-serif;
+  box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.25);max-height:88vh;overflow-y:auto;
+  border:1px solid rgba(226,232,240,0.8);
+}
+.modal-box h3{font-family:'Plus Jakarta Sans',sans-serif;margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-0.01em;}
+.modal-box p{font-size:13px;color:#475569;line-height:1.6;margin:0 0 16px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+.pw-wrap{position:relative;display:flex;align-items:center;margin-bottom:12px;}
+.pw-wrap input{
+  width:100%;padding:11px 40px 11px 14px;border-radius:10px;border:1px solid #CBD5E1;
+  font-family:'JetBrains Mono',monospace;font-size:13px;box-sizing:border-box;background:#fff;
+}
+.pw-toggle{
+  position:absolute;right:10px;background:none;border:none;cursor:pointer;
+  color:#64748B;font-size:15px;padding:4px 6px;
+}
+.pw-toggle:hover{color:#0F172A;}
+
+/* Spinner */
+.spinner{
+  display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);
+  border-top-color:#FFFFFF;border-radius:50%;animation:spin .6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Direct AI Image & TikZ Render Styles */
+.ai-image-render-wrap, .tikz-render-wrap {
+  margin-top: 16px;
+  background: #ffffff;
+  border: 1px solid var(--paper-edge);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.ai-image-render-wrap img, .tikz-render-wrap img {
+  max-width: 100%;
+  max-height: 520px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  margin-top: 12px;
+}
+.quick-link-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+.quick-link-select {
+  flex: 1;
+  background: var(--input-bg, #ffffff);
+  border: 1px solid var(--line);
+  color: var(--input-text, #0f172a);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.quick-link-select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+/* ==========================================================================
+   INFOGRAPHIC WORKSHEET COMPILER & PRINT STYLES
+   ========================================================================== */
+.worksheet-preview-wrap {
+  width: 100%;
+  box-sizing: border-box;
+  background: transparent;
+  padding: 0;
+}
+.worksheet-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid var(--paper-edge);
+  border-bottom: 2px solid #E2E8F0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+.worksheet-toolbar-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--chalk, #0F172A);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.worksheet-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Base Worksheet Container */
+.worksheet-container {
+  background: #ffffff;
+  color: #1E293B;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 28px 32px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Worksheet Header */
+.ws-school-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748B;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ws-header {
+  border-bottom: 2px dashed #CBD5E1;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.ws-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin: 4px 0 2px;
+  text-transform: uppercase;
+}
+.ws-subtitle {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+.ws-student-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px 16px;
+  background: #F8FAFC;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  font-size: 13px;
+  text-align: left;
+}
+
+/* Goals Box */
+.ws-goals-box {
+  background: #F0FDF4;
+  border-left: 4px solid #22C55E;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  color: #166534;
+}
+.ws-goals-box h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ws-goals-box ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* Stations */
+.ws-station {
+  background: #ffffff;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  page-break-inside: avoid;
+}
+.ws-station-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 18px;
+  background: #F1F5F9;
+  border-bottom: 1.5px solid #E2E8F0;
+  font-weight: 700;
+  font-size: 15px;
+}
+.ws-station-badge {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #E2E8F0;
+  color: #334155;
+}
+.ws-station-body {
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.ws-station-instruction {
+  font-style: italic;
+  color: #64748B;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+/* Question Items */
+.ws-item {
+  margin-bottom: 14px;
+}
+.ws-item:last-child {
+  margin-bottom: 0;
+}
+.ws-blank-slot {
+  display: inline-block;
+  min-width: 90px;
+  padding: 0 6px;
+  border-bottom: 1.5px solid #0F172A;
+  color: #0284C7;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Matching columns */
+.ws-match-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+.ws-match-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ws-match-card {
+  padding: 8px 12px;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ws-match-key {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  background: #0284C7;
+  color: #fff;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* True / False */
+.ws-tf-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.ws-tf-boxes {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ws-tf-box {
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid #94A3B8;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  background: #fff;
+}
+
+/* Multiple choice */
+.ws-mcq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+  padding-left: 12px;
+}
+.ws-mcq-opt {
+  padding: 6px 10px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.ws-mcq-opt:hover {
+  background: #EFF6FF;
+  border-color: #93C5FD;
+}
+
+/* Essay lines */
+.ws-essay-box {
+  min-height: 100px;
+  border: 1px dashed #CBD5E1;
+  background: repeating-linear-gradient(transparent, transparent 27px, #E2E8F0 28px);
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+/* Footer & Self Assessment */
+.ws-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 2px dashed #CBD5E1;
+  page-break-inside: avoid;
+}
+.ws-assessment-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 10px 0;
+}
+.ws-assessment-chip {
+  padding: 6px 14px;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* Solutions section */
+.ws-solutions-container {
+  margin-top: 30px;
+  border-top: 3px double #0284C7;
+  padding-top: 20px;
+  background: #FAF5FF;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #E9D5FF;
+}
+
+/* Theme Variances */
+/* 1. Pastel Theme */
+.ws-theme-pastel {
+  background: #FFFDF9;
+  border-color: #FDE68A;
+}
+.ws-theme-pastel .ws-title {
+  color: #D97706;
+}
+.ws-theme-pastel .ws-station {
+  border-color: #FDE68A;
+  border-radius: 16px;
+}
+.ws-theme-pastel .ws-station-head {
+  background: #FEF3C7;
+  color: #92400E;
+}
+.ws-theme-pastel .ws-station-badge {
+  background: #FCD34D;
+  color: #78350F;
+}
+
+/* 2. Gamification Theme */
+.ws-theme-gamification {
+  background: #FAFAFE;
+  border-color: #C7D2FE;
+}
+.ws-theme-gamification .ws-title {
+  color: #4F46E5;
+}
+.ws-theme-gamification .ws-station {
+  border: 2px solid #818CF8;
+  border-radius: 12px;
+}
+.ws-theme-gamification .ws-station-head {
+  background: #4F46E5;
+  color: #FFFFFF;
+}
+.ws-theme-gamification .ws-station-badge {
+  background: #22C55E;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* 3. Cornell Theme */
+.ws-theme-cornell {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+}
+.ws-theme-cornell .ws-title {
+  color: #0F172A;
+  font-family: 'Times New Roman', serif;
+}
+.ws-theme-cornell .ws-station-head {
+  background: #0F172A;
+  color: #F8FAFC;
+}
+.ws-theme-cornell .ws-station-badge {
+  background: #0284C7;
+  color: #FFFFFF;
+}
+
+/* 4. STEM Lab Theme */
+.ws-theme-stem {
+  background: #F0FDFA;
+  border-color: #99F6E4;
+}
+.ws-theme-stem .ws-title {
+  color: #0F766E;
+}
+.ws-theme-stem .ws-station-head {
+  background: #0D9488;
+  color: #FFFFFF;
+}
+.ws-theme-stem .ws-station-badge {
+  background: #14B8A6;
+  color: #FFFFFF;
+}
+
+/* Compiled AI Art Prompt Box */
+.compiled-prompt-card {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 14px;
+  margin: 12px 0;
+  text-align: left;
+}
+.compiled-prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+}
+.compiled-prompt-text {
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #0F172A;
+  max-height: 140px;
+  overflow-y: auto;
+  word-break: break-word;
+}
+
+/* Print Optimization */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .worksheet-preview-wrap, .worksheet-preview-wrap * {
+    visibility: visible;
+  }
+  .worksheet-toolbar, .actions, .sidebar, .brand-bar, .app-header {
+    display: none !important;
+  }
+  .worksheet-preview-wrap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .worksheet-container, .exam-container, .exam-solution-container {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+  .ws-station, .exam-question, .exam-ans-table {
+    page-break-inside: avoid !important;
+  }
+  .exam-page-break {
+    page-break-before: always !important;
+  }
+}
+
+/* ==========================================================================
+   UNIVERSAL COMPILER STYLES FOR ALL REMAINING TOOLS
+   ========================================================================== */
+
+/* 1. EXAM PAPER COMPILER (Đề kiểm tra chuẩn CV 7991) */
+.exam-container {
+  background: #ffffff;
+  color: #0F172A;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 32px 38px;
+  line-height: 1.65;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.exam-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.exam-header-left {
+  text-align: left;
+}
+.exam-header-right {
+  text-align: center;
+}
+.exam-org-title {
+  font-weight: 700;
+  font-size: 13.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+.exam-school-title {
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.exam-dept-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #334155;
+  margin-top: 2px;
+}
+.exam-code-box {
+  border: 1.5px solid #000;
+  display: inline-block;
+  padding: 3px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+  background: #fff;
+}
+.exam-name-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #0F172A;
+  margin: 0 0 3px;
+  line-height: 1.35;
+}
+.exam-sub-info {
+  font-size: 13.5px;
+  margin-top: 2px;
+}
+.exam-time-info {
+  font-size: 13px;
+  color: #334155;
+  margin-top: 3px;
+}
+.exam-divider-line {
+  height: 2px;
+  background: #000;
+  margin: 12px 0 16px;
+}
+.exam-student-info {
+  border: 1px solid #000;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: #fff;
+}
+.exam-part-header {
+  background: #F1F5F9;
+  border-left: 4px solid #0F172A;
+  padding: 8px 12px;
+  font-weight: 800;
+  font-size: 14.5px;
+  margin: 20px 0 10px;
+  font-family: 'Times New Roman', Times, serif;
+  color: #0F172A;
+}
+.exam-question {
+  margin-bottom: 14px;
+  font-size: 14.5px;
+  page-break-inside: avoid;
+}
+.exam-mcq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 6px 16px;
+  margin: 6px 0 0 16px;
+}
+.exam-mcq-opt {
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+.exam-mcq-opt:hover {
+  background: #EFF6FF;
+}
+.exam-tf-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 12px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+.exam-tf-tags {
+  display: flex;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.exam-tf-tag {
+  border: 1.5px solid #000;
+  padding: 1px 10px;
+  border-radius: 3px;
+  background: #fff;
+  color: #000;
+}
+.exam-short-ans-box {
+  margin-top: 6px;
+  padding: 8px 14px;
+  background: #F8FAFC;
+  border: 1px dashed #94A3B8;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.exam-solution-container {
+  margin-top: 26px;
+  padding: 24px 28px;
+  background: #F8FAFC;
+  border: 2px dashed #6366F1;
+  border-radius: 10px;
+}
+.exam-solution-header {
+  text-align: center;
+  border-bottom: 2px solid #4338CA;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+}
+.exam-ans-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 16px;
+  font-size: 13.5px;
+  background: #fff;
+}
+.exam-ans-table th {
+  background: #EEF2FF;
+  color: #1E1B4B;
+  border: 1px solid #94A3B8;
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: 700;
+}
+.exam-ans-table td {
+  border: 1px solid #CBD5E1;
+  padding: 6px 8px;
+  text-align: center;
+}
+.exam-page-break {
+  page-break-before: always;
+}
+
+/* 2. MINDMAP TREE COMPILER (Sơ đồ tư duy) */
+.mindmap-container {
+  background: #FFFDF9;
+  padding: 28px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.mm-center-card {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  color: #F8FAFC;
+  padding: 18px 24px;
+  border-radius: 14px;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 20px rgba(15,23,42,0.15);
+}
+.mm-center-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.mm-branches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+.mm-branch-card {
+  background: #ffffff;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+  transition: transform .15s ease;
+}
+.mm-branch-card:hover {
+  transform: translateY(-2px);
+}
+.mm-branch-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  border-bottom: 2px solid;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.mm-concept-item {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: #F8FAFC;
+  border-radius: 6px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* 3. THREE-COLUMN INFOGRAPHIC COMPILER (Bài tập thực tế) */
+.three-col-container {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.three-col-card {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 16px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  page-break-inside: avoid;
+}
+@media (max-width: 900px) {
+  .three-col-card {
+    grid-template-columns: 1fr;
+  }
+}
+.col-sec {
+  padding: 14px 16px;
+}
+.col-sec-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.col-sec-prob {
+  background: #F8FAFC;
+  border-right: 1px solid #E2E8F0;
+}
+.col-sec-illu {
+  background: #EFF6FF;
+  border-right: 1px solid #DBEAFE;
+  text-align: center;
+}
+.col-sec-sol {
+  background: #F0FDF4;
+}
+
+/* 4. COMIC STRIP COMPILER (Truyện tranh bài học) */
+.comic-container {
+  background: #FFFDF9;
+  padding: 24px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.comic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+.comic-panel {
+  background: #ffffff;
+  border: 3px solid #0F172A;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 #0F172A;
+  display: flex;
+  flex-direction: column;
+}
+.comic-panel-header {
+  background: #FEF08A;
+  padding: 8px 14px;
+  border-bottom: 2px solid #0F172A;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+.comic-panel-body {
+  padding: 14px;
+  flex: 1;
+}
+.comic-speech-bubble {
+  position: relative;
+  background: #F0FDF4;
+  border: 1.5px solid #16A34A;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.comic-speech-bubble strong {
+  color: #15803D;
+}
+
+/* 5. CLIL BILINGUAL CARDS (Dạy học song ngữ) */
+.clil-container {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.clil-vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.clil-card {
+  background: #F8FAFC;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 14px;
+  border-top: 4px solid #2563EB;
+}
+.clil-term-en {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1E40AF;
+}
+.clil-ipa {
+  font-family: 'Times New Roman', serif;
+  font-style: italic;
+  color: #64748B;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.clil-term-vi {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+/* 6. CHARACTER DOSSIER SHEET (Khóa nhân vật đồng nhất) */
+.character-dossier-wrap {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.dossier-card {
+  background: #F8FAFC;
+  border: 2px solid #0F172A;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 4px 4px 0 rgba(15,23,42,0.15);
+}
+.dossier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #CBD5E1;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.dossier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.dossier-item {
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  font-size: 13.5px;
+}
+
+/* 7. GEOGEBRA EMBED RUNNER (Script GeoGebra) */
+.geogebra-runner-wrap {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--paper-edge);
+  border-top: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.geogebra-box {
+  width: 100%;
+  min-height: 480px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F8FAFC;
+}
+
+
